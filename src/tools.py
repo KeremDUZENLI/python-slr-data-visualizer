@@ -1,32 +1,35 @@
+import csv
 from itertools import product
 
 
-def get_field_values(data, field_indices):
-    field_values_dict = []
+def get_field_values(csv_path, field_names):
+    field_values_list = []
 
-    for record in data:
-        field_value_list = []
+    with open(csv_path, "r", encoding="utf-8-sig") as f:
+        reader = csv.DictReader(f)
 
-        for idx in field_indices:
-            field_value_list.append(record[idx])
+        for row in reader:
+            values = []
+            for name in field_names:
+                values.append(row.get(name, ""))
+            field_values_list.append(tuple(values))
 
-        field_values_dict.append(tuple(field_value_list))
-
-    return field_values_dict
+    return field_values_list
 
 
-def map_field_values(dict, map, map_index):
-    mapped_dict = []
+def map_field_values(field_values_list, field_names, field_mapping, map):
+    mapped_list = []
 
-    for record in dict:
+    map_index = field_names.index(field_mapping)
+
+    for record in field_values_list:
         record_as_list = list(record)
         record_as_list[map_index] = map.get(
             record_as_list[map_index], record_as_list[map_index]
         )
+        mapped_list.append(tuple(record_as_list))
 
-        mapped_dict.append(tuple(record_as_list))
-
-    return mapped_dict
+    return mapped_list
 
 
 def count_field_values(field_values, field_indices=[0]):

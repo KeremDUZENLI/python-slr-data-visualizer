@@ -12,7 +12,7 @@ def print_field_values_count(field_values_list, field_values_freq, decimal=0):
         count = row[-1]
         print(_format_rows(labels, width_columns, count, total_records, decimal))
 
-    print("-" * width_max)
+    print("-" * (width_max))
     print(f"{'TOTAL RECORDS'.ljust(width_max)} : {total_records}")
     print(f"{'TOTAL FIELD VALUES'.ljust(width_max)} : {total_field_values}")
 

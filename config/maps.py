@@ -1,4 +1,4 @@
-country_to_region = {
+regions = {
     "France": "Europe",
     "Italy": "Europe",
     "Spain": "Europe",
