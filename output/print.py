@@ -9,9 +9,8 @@ def print_counts(dataset, decimal=0):
         rows.append(tuple(labels + [count]))
 
     width_columns, width_max = _compute_width_columns_counts(rows)
-    rows_sorted = sorted(rows, key=lambda x: str(x[:-1]).lower())
 
-    for row in rows_sorted:
+    for row in rows:
         labels = row[:-1]
         count = row[-1]
         print(_format_rows_counts(labels, width_columns, count, total_records, decimal))

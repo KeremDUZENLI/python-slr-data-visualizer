@@ -42,7 +42,7 @@ plot_chart_bar_group(
     dataset=dataset_counted_year_hst,
     x_axis="year",
     y_axis="count",
-    group_axis="historical_site_type",
+    grp_axis="historical_site_type",
     x_label="Year",
     y_label="Number of Publications",
     title="Timeline of Publications by Historical Site Categories (2015-2024)",
