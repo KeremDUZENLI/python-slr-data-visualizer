@@ -1,27 +1,28 @@
 def print_counts(dataset, decimal=0):
-    total_records = _sum_counts(dataset)
-    width_columns, width_max = _compute_width_columns_counts(dataset)
-    counts_sorted = sorted(dataset, key=lambda x: str(x[:-1]).lower())
+    field_names = [k for k in dataset.keys() if k != "count"]
+    total_records = sum(dataset["count"])
 
-    for row in counts_sorted:
+    rows = []
+    for i in range(len(dataset["count"])):
+        labels = [dataset[name][i] for name in field_names]
+        count = dataset["count"][i]
+        rows.append(tuple(labels + [count]))
+
+    width_columns, width_max = _compute_width_columns_counts(rows)
+    rows_sorted = sorted(rows, key=lambda x: str(x[:-1]).lower())
+
+    for row in rows_sorted:
         labels = row[:-1]
         count = row[-1]
         print(_format_rows_counts(labels, width_columns, count, total_records, decimal))
 
     print("-" * width_max)
-    print(f"{'TOTAL FIELD VALUES'.ljust(width_max)} : {total_records}")
+    print(f"{'TOTAL FIELD VALUES'.ljust(width_max)} : {total_records}\n\n\n")
 
 
-def _sum_counts(dataset):
-    total = 0
-    for row in dataset:
-        total += row[-1]
-    return total
-
-
-def _compute_width_columns_counts(dataset):
+def _compute_width_columns_counts(rows):
     columns = []
-    for row in dataset:
+    for row in rows:
         columns.append(row[:-1])
 
     if columns:

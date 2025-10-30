@@ -1,31 +1,53 @@
+import numpy as np
 import matplotlib.pyplot as plt
 
 
-def plot_chart_bar(dataset, x_index, y_index, x_label, y_label, title):
-    x_values = [item[x_index] for item in dataset]
-    y_values = [item[y_index] for item in dataset]
+def plot_chart_bar(dataset, x_axis, y_axis, x_label, y_label, title):
+    x_values = dataset[x_axis]
+    y_values = dataset[y_axis]
 
     plt.bar(x_values, y_values)
+
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
     plt.show()
 
 
-def prepare_grouped_data(field_values_count, x_index, y_index, group_index):
-    x_values_unique = sorted({item[x_index] for item in field_values_count})
-    groups = sorted({item[group_index] for item in field_values_count})
+def plot_chart_bar_group(dataset, x_axis, y_axis, group_axis, x_label, y_label, title):
+    x_values = sorted(set(dataset[x_axis]))
+    groups = sorted(set(dataset[group_axis]))
 
-    counts_by_year = []
-    for x in x_values_unique:
-        year_counts = []
-        for group in groups:
-            count = sum(
-                item[y_index]
-                for item in field_values_count
-                if item[x_index] == x and item[group_index] == group
-            )
-            year_counts.append(count)
-        counts_by_year.append(year_counts)
+    x_pos, width, tick_pos = _compute_positions(len(x_values), len(groups))
 
-    return x_values_unique, groups, counts_by_year
+    for i, group_value in enumerate(groups):
+        y_values = _get_group_values(
+            dataset, x_axis, y_axis, group_axis, x_values, group_value
+        )
+        plt.bar(x_pos + i * width, y_values, width, label=group_value)
+
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    plt.xticks(tick_pos, x_values)
+    plt.legend(title=group_axis)
+    plt.show()
+
+
+def _compute_positions(xCount, groupCount):
+    width = 0.8 / max(1, groupCount)
+    x_pos = np.arange(xCount)
+    tick_pos = x_pos + width * (groupCount - 1) / 2
+    return x_pos, width, tick_pos
+
+
+def _get_group_values(dataset, x_axis, y_axis, group_axis, x_values, group_value):
+    y_values = []
+    for x in x_values:
+        count = 0
+        for j in range(len(dataset[y_axis])):
+            if dataset[x_axis][j] == x and dataset[group_axis][j] == group_value:
+                count = dataset[y_axis][j]
+                break
+        y_values.append(count)
+    return y_values

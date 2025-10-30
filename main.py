@@ -1,39 +1,49 @@
-from config.maps import regions
-from src.tools import read_dataset, map_dataset, filter_dataset, count_dataset
+from src.tools import read_dataset, count_dataset
+from output.plot import plot_chart_bar, plot_chart_bar_group
 from output.print import print_counts
+
 
 dataset = read_dataset(
     csv_path="data/dataset.csv",
 )
 
-dataset_mapped = map_dataset(
+##### X:Year | Y:Count
+dataset_counted_year = count_dataset(
     dataset=dataset,
-    field="country",
-    map=regions,
+    fields=["year"],
 )
 
-dataset_filtered = filter_dataset(
-    dataset=dataset_mapped,
-    fields=["year", "country", "historical_site_type"],
+print_counts(
+    dataset=dataset_counted_year,
+    decimal=0,
 )
 
-dataset_counts = count_dataset(
-    dataset=dataset_filtered,
+plot_chart_bar(
+    dataset=dataset_counted_year,
+    x_axis="year",
+    y_axis="count",
+    x_label="Year",
+    y_label="Number of Publications",
+    title="Timeline of Publications (2015-2024)",
+)
+
+##### X:Year_HST | Y:Count
+dataset_counted_year_hst = count_dataset(
+    dataset=dataset,
     fields=["year", "historical_site_type"],
 )
 
+print_counts(
+    dataset=dataset_counted_year_hst,
+    decimal=0,
+)
 
-print_counts(dataset_counts)
-
-
-# plot_chart_bar(
-#     field_values_count,
-#     0,
-#     2,
-#     "Year",
-#     "Number of Publications",
-#     "Timeline of Publications by Historical Site Categories (2015-2024)",
-# )
-
-# x, y, z = prepare_grouped_data(field_values_count, 0, 2, 1)
-# print(x)
+plot_chart_bar_group(
+    dataset=dataset_counted_year_hst,
+    x_axis="year",
+    y_axis="count",
+    group_axis="historical_site_type",
+    x_label="Year",
+    y_label="Number of Publications",
+    title="Timeline of Publications by Historical Site Categories (2015-2024)",
+)
