@@ -1,10 +1,9 @@
-import numpy as np
 import matplotlib.pyplot as plt
 
 
-def plot_chart_bar(field_values_count, x_index, y_index, x_label, y_label, title):
-    x_values = [item[x_index] for item in field_values_count]
-    y_values = [item[y_index] for item in field_values_count]
+def plot_chart_bar(dataset, x_index, y_index, x_label, y_label, title):
+    x_values = [item[x_index] for item in dataset]
+    y_values = [item[y_index] for item in dataset]
 
     plt.bar(x_values, y_values)
     plt.xlabel(x_label)

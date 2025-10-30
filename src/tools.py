@@ -2,7 +2,7 @@ import csv
 from itertools import product
 
 
-def read_csv(csv_path):
+def read_dataset(csv_path):
     dataset = {}
 
     with open(csv_path, "r", encoding="utf-8-sig") as f:
@@ -19,23 +19,21 @@ def read_csv(csv_path):
     return dataset
 
 
-def map_csv(dataset, fields, maps):
+def map_dataset(dataset, field, map):
     dataset_mapped = {}
 
-    for field in dataset:
-        dataset_mapped[field] = list(dataset[field])
+    for column in dataset:
+        dataset_mapped[column] = list(dataset[column])
 
-    for i, field in enumerate(fields):
-        if field in dataset_mapped:
-            mapping = maps[i]
-            dataset_mapped[field] = [
-                mapping.get(value, value) for value in dataset_mapped[field]
-            ]
+    if field in dataset_mapped:
+        dataset_mapped[field] = [
+            map.get(value, value) for value in dataset_mapped[field]
+        ]
 
     return dataset_mapped
 
 
-def filter_fields(dataset, fields):
+def filter_dataset(dataset, fields):
     dataset_filtered = {}
 
     for field in fields:
@@ -45,7 +43,7 @@ def filter_fields(dataset, fields):
     return dataset_filtered
 
 
-def count_fields(dataset, fields):
+def count_dataset(dataset, fields):
     counts = {}
     rows = len(next(iter(dataset.values()), []))
 
