@@ -42,6 +42,18 @@ def filter_dataset(dataset, fields):
     return dataset_filtered
 
 
+def filter_dataset_value(dataset, field, value):
+    dataset_filtered = {k: [] for k in dataset}
+
+    rows = len(next(iter(dataset.values()), []))
+    for i in range(rows):
+        if dataset[field][i] == value:
+            for k in dataset:
+                dataset_filtered[k].append(dataset[k][i])
+
+    return dataset_filtered
+
+
 def count_dataset(dataset, fields):
     counts = {}
     rows = len(next(iter(dataset.values()), []))

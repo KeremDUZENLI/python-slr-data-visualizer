@@ -34,6 +34,32 @@ def plot_chart_bar_group(dataset, x_axis, y_axis, grp_axis, x_label, y_label, ti
     plt.show()
 
 
+def plot_chart_pie(dataset, field, count, title, decimal=0):
+    fields = dataset[field]
+    counts = dataset[count]
+
+    plt.pie(
+        counts,
+        labels=fields,
+        autopct=f"%1.{decimal}f%%",
+        startangle=90,
+        wedgeprops={"edgecolor": "black"},
+    )
+    plt.title(title)
+    plt.axis("equal")
+    plt.show()
+
+
+def _unique(seq):
+    out = []
+    seen = set()
+    for v in seq:
+        if v not in seen:
+            seen.add(v)
+            out.append(v)
+    return out
+
+
 def _compute_positions(xCount, groupCount):
     width = 0.8 / max(1, groupCount)
     x_pos = np.arange(xCount)
@@ -51,13 +77,3 @@ def _get_group_values(dataset, x_axis, y_axis, group_axis, x_values, grp_value):
                 break
         y_values.append(count)
     return y_values
-
-
-def _unique(seq):
-    out = []
-    seen = set()
-    for v in seq:
-        if v not in seen:
-            seen.add(v)
-            out.append(v)
-    return out
