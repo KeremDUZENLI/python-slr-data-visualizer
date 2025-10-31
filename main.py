@@ -157,47 +157,47 @@ dataset = read_dataset(
 # )
 
 
-### 2_1 ### Platforms - Publications
-dataset_counted_pp = count_dataset(
-    dataset=dataset,
-    fields=["platform", "device"],
-)
+# ### 2_1 ### Platforms - Publications
+# dataset_counted_pp = count_dataset(
+#     dataset=dataset,
+#     fields=["platform", "device"],
+# )
 
-print_counts(
-    dataset=dataset_counted_pp,
-    decimal=1,
-)
+# print_counts(
+#     dataset=dataset_counted_pp,
+#     decimal=1,
+# )
 
-plot_bar_group(
-    dataset=dataset_counted_pp,
-    x_axis="platform",
-    y_axis="count",
-    grp_axis="device",
-    x_label="Platform",
-    y_label="Number of Publications",
-    title="Distribution of Devices Across Platforms",
-)
+# plot_bar_group(
+#     dataset=dataset_counted_pp,
+#     x_axis="platform",
+#     y_axis="count",
+#     grp_axis="device",
+#     x_label="Platform",
+#     y_label="Number of Publications",
+#     title="Distribution of Devices Across Platforms",
+# )
 
-### 2_2 ### Devices - Publications
-dataset_counted_dp = count_dataset(
-    dataset=dataset,
-    fields=["device", "platform"],
-)
+# ### 2_2 ### Devices - Publications
+# dataset_counted_dp = count_dataset(
+#     dataset=dataset,
+#     fields=["device", "platform"],
+# )
 
-print_counts(
-    dataset=dataset_counted_dp,
-    decimal=1,
-)
+# print_counts(
+#     dataset=dataset_counted_dp,
+#     decimal=1,
+# )
 
-plot_bar_group(
-    dataset=dataset_counted_dp,
-    x_axis="device",
-    y_axis="count",
-    grp_axis="platform",
-    x_label="Platform",
-    y_label="Number of Publications",
-    title="Distribution of Platforms Across Devices",
-)
+# plot_bar_group(
+#     dataset=dataset_counted_dp,
+#     x_axis="device",
+#     y_axis="count",
+#     grp_axis="platform",
+#     x_label="Platform",
+#     y_label="Number of Publications",
+#     title="Distribution of Platforms Across Devices",
+# )
 
 
 # ### 2_3 ### Platforms_Year - Publications
@@ -243,21 +243,12 @@ plot_bar_group(
 
 
 ### 3_2 ### Technique - TechniqueSub
-# for i in dataset:
-#     print(i)
-#     print(dataset[i])
-
 dataset_mapped = map_dataset_hierarchy(
     dataset=dataset,
     field_parent="technique",
     field_child="technique_sub",
     map=map_technique_sub,
 )
-
-for i in dataset_mapped:
-    print(i)
-    print(dataset_mapped[i])
-
 
 dataset_counted_tts = count_dataset(
     dataset=dataset_mapped,

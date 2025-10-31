@@ -14,21 +14,25 @@ def read_dataset(csv_path):
 
         for row in reader:
             for field in fields:
-                dataset[field].append(row.get(field, ""))
+                cell = row.get(field, "")
+                tokens = [t.strip() for t in str(cell).split(";") if t.strip()]
+                dataset[field].append(tokens or [""])
 
     return dataset
 
 
 def map_dataset(dataset, field, map):
-    dataset_mapped = {}
-
-    for column in dataset:
-        dataset_mapped[column] = list(dataset[column])
+    dataset_mapped = {k: list(v) for k, v in dataset.items()}
 
     if field in dataset_mapped:
-        dataset_mapped[field] = [
-            map.get(value, value) for value in dataset_mapped[field]
-        ]
+        new_col = []
+        for value in dataset_mapped[field]:
+            if isinstance(value, list):
+                new_col.append([map.get(v, v) for v in value])
+            else:
+                new_col.append(map.get(value, value))
+
+        dataset_mapped[field] = new_col
 
     return dataset_mapped
 
@@ -38,12 +42,8 @@ def map_dataset_hierarchy(dataset, field_parent, field_child, map):
     rows = len(next(iter(dataset.values()), []))
 
     for i in range(rows):
-        parents = [
-            t.strip() for t in str(dataset[field_parent][i]).split(";") if t.strip()
-        ]
-        children = [
-            t.strip() for t in str(dataset[field_child][i]).split(";") if t.strip()
-        ]
+        parents = dataset[field_parent][i]
+        children = dataset[field_child][i]
 
         for p in parents:
             allowed = set(map.get(p, []))
@@ -86,18 +86,19 @@ def count_dataset(dataset, fields):
     for i in range(rows):
         token_lists = []
         for name in fields:
-            value = dataset.get(name, [""])[i]
-            tokens = [t.strip() for t in str(value).split(";") if t.strip()]
+            values = dataset.get(name, [[""]])[i]
+            tokens = values if isinstance(values, list) else [values]
             token_lists.append(tokens or [""])
+
         for combo in product(*token_lists):
             counts[combo] = counts.get(combo, 0) + 1
 
     dataset_counted = {name: [] for name in fields}
     dataset_counted["count"] = []
-
     for combo in sorted(counts.keys(), key=lambda x: str(x).lower()):
         for order, name in enumerate(fields):
             dataset_counted[name].append(combo[order])
+
         dataset_counted["count"].append(counts[combo])
 
     return dataset_counted
