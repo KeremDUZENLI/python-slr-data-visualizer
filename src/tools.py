@@ -1,4 +1,5 @@
 import csv
+from itertools import product
 
 
 def read_dataset(csv_path):
@@ -59,15 +60,20 @@ def count_dataset(dataset, fields):
     rows = len(next(iter(dataset.values()), []))
 
     for i in range(rows):
-        key = tuple(dataset.get(name, [""])[i] for name in fields)
-        counts[key] = counts.get(key, 0) + 1
+        token_lists = []
+        for name in fields:
+            value = dataset.get(name, [""])[i]
+            tokens = [t.strip() for t in str(value).split(";") if t.strip()]
+            token_lists.append(tokens or [""])
+        for combo in product(*token_lists):
+            counts[combo] = counts.get(combo, 0) + 1
 
     dataset_counted = {name: [] for name in fields}
     dataset_counted["count"] = []
 
     for combo in sorted(counts.keys(), key=lambda x: str(x).lower()):
-        for j, name in enumerate(fields):
-            dataset_counted[name].append(combo[j])
+        for order, name in enumerate(fields):
+            dataset_counted[name].append(combo[order])
         dataset_counted["count"].append(counts[combo])
 
     return dataset_counted

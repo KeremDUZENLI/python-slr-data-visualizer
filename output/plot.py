@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
 
-def plot_chart_bar(dataset, x_axis, y_axis, x_label, y_label, title):
+def plot_bar(dataset, x_axis, y_axis, x_label, y_label, title):
     x_values = dataset[x_axis]
     y_values = dataset[y_axis]
 
@@ -15,7 +15,7 @@ def plot_chart_bar(dataset, x_axis, y_axis, x_label, y_label, title):
     plt.show()
 
 
-def plot_chart_bar_group(dataset, x_axis, y_axis, grp_axis, x_label, y_label, title):
+def plot_bar_group(dataset, x_axis, y_axis, grp_axis, x_label, y_label, title):
     x_values = _unique(dataset[x_axis])
     grp_values = _unique(dataset[grp_axis])
 
@@ -35,7 +35,29 @@ def plot_chart_bar_group(dataset, x_axis, y_axis, grp_axis, x_label, y_label, ti
     plt.show()
 
 
-def plot_chart_pie(dataset, field, count, title, decimal=0):
+def plot_stacked(dataset, x_axis, y_axis, grp_axis, x_label, y_label, title):
+    x_values = _unique(dataset[x_axis])
+    grp_values = _unique(dataset[grp_axis])
+
+    series = []
+    for grp_value in grp_values:
+        y_values = _get_group_values(
+            dataset, x_axis, y_axis, grp_axis, x_values, grp_value
+        )
+        series.append(y_values)
+
+    x_pos = np.arange(len(x_values))
+    plt.stackplot(x_pos, *series, labels=grp_values)
+
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    plt.xticks(x_pos, x_values)
+    plt.legend(title=grp_axis)
+    plt.show()
+
+
+def plot_pie(dataset, field, count, title, decimal=0):
     inner_labels = dataset[field]
     inner_values = dataset[count]
 
@@ -54,9 +76,9 @@ def plot_chart_pie(dataset, field, count, title, decimal=0):
     plt.show()
 
 
-def plot_chart_pie_group(dataset, field, count, grp_axis, title, decimal=0):
-    inner_labels, inner_values, outer_labels, outer_values, _ = _get_hierarchy_values(
-        dataset, field, grp_axis, count
+def plot_pie_group(dataset, field, count, grp_axis, title, decimal=0):
+    inner_labels, inner_values, outer_labels, outer_values, _ = (
+        _get_hierarchy_values(dataset, field, grp_axis, count),
     )
 
     labels_outer = _autolabels(labels=outer_labels, decimal=decimal)
@@ -83,9 +105,9 @@ def plot_chart_pie_group(dataset, field, count, grp_axis, title, decimal=0):
     plt.show()
 
 
-def plot_chart_sunburst(dataset, field, count, grp_axis, title, decimal=0):
+def plot_sunburst(dataset, field, count, grp_axis, title, decimal=0):
     inner_labels, inner_values, outer_labels, outer_values, outer_parents = (
-        _get_hierarchy_values(dataset, field, grp_axis, count)
+        _get_hierarchy_values(dataset, field, grp_axis, count),
     )
 
     labels = inner_labels + outer_labels
@@ -126,6 +148,15 @@ def _compute_positions(x_count, grp_count):
     return x_pos, width, tick_pos
 
 
+def _autolabels(labels, decimal=0):
+    it = iter(labels)
+    return lambda pct: f"{next(it, '')}\n{pct:.{decimal}f}%"
+
+
+def _center_pctdistance(inner_radius, outer_radius):
+    return (inner_radius + outer_radius) / (2 * outer_radius)
+
+
 def _get_group_values(dataset, x_axis, y_axis, group_axis, x_values, grp_value):
     y_values = []
     for x in x_values:
@@ -156,12 +187,3 @@ def _get_hierarchy_values(dataset, field_parent, field_child, count):
         outer_parents.append(parent)
 
     return inner_labels, inner_values, outer_labels, outer_values, outer_parents
-
-
-def _autolabels(labels, decimal=0):
-    it = iter(labels)
-    return lambda pct: f"{next(it, '')}\n{pct:.{decimal}f}%"
-
-
-def _center_pctdistance(inner_radius, outer_radius):
-    return (inner_radius + outer_radius) / (2 * outer_radius)
