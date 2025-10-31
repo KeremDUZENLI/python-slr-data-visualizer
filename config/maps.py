@@ -1,4 +1,4 @@
-regions = {
+map_country = {
     "France": "Europe",
     "Italy": "Europe",
     "Spain": "Europe",
@@ -43,4 +43,43 @@ regions = {
     "Ethiopia": "Africa",
     "Australia": "Oceania",
     "New Zealand": "Oceania",
+}
+
+
+map_technique_sub = {
+    "3D Scanning": [
+        "Laser Scanning",
+        "RGB-D Imaging",
+        "Real-Time Volumetric Capture",
+    ],
+    "Image-Based Techniques": [
+        "Photogrammetry",
+        "Spherical Imaging",
+        "Image-Based Modelling (IBM)",
+        "Structure from Motion (SfM)",
+        "UAV Aerial Imaging",
+        "Multi-View Stereo (MVS)",
+    ],
+    "Geospatial Techniques": [
+        "Geographic Information System (GIS)",
+        "Global Navigation Satellite System (GNSS)",
+        "Digital Elevation Models (DEM)",
+        "Visual-Inertial SLAM",
+        "Beacon Localization",
+    ],
+    "Modeling & Reconstruction": [
+        "3D Modeling",
+        "BIM (Building Information Modeling)",
+        "HBIM (Historical Building Information Modeling)",
+        "Archaeological Data Integration",
+        "Stratigraphic Mapping",
+        "Virtual Anastylosis",
+    ],
+    "Data Processing": [
+        "Semantic Data Extraction",
+        "3D Texturing",
+        "Texture Mapping",
+        "Range-Based Modeling (RBM)",
+        "HDR Imaging",
+    ],
 }

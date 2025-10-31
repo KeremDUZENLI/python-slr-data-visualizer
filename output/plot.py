@@ -77,9 +77,8 @@ def plot_pie(dataset, field, count, title, decimal=0):
 
 
 def plot_pie_group(dataset, field, count, grp_axis, title, decimal=0):
-    inner_labels, inner_values, outer_labels, outer_values, _ = (
-        _get_hierarchy_values(dataset, field, grp_axis, count),
-    )
+    result = _get_hierarchy_values(dataset, field, grp_axis, count)
+    inner_labels, inner_values, outer_labels, outer_values, outer_parents = result
 
     labels_outer = _autolabels(labels=outer_labels, decimal=decimal)
     labels_inner = _autolabels(labels=inner_labels, decimal=decimal)
@@ -106,9 +105,8 @@ def plot_pie_group(dataset, field, count, grp_axis, title, decimal=0):
 
 
 def plot_sunburst(dataset, field, count, grp_axis, title, decimal=0):
-    inner_labels, inner_values, outer_labels, outer_values, outer_parents = (
-        _get_hierarchy_values(dataset, field, grp_axis, count),
-    )
+    result = _get_hierarchy_values(dataset, field, grp_axis, count)
+    inner_labels, inner_values, outer_labels, outer_values, outer_parents = result
 
     labels = inner_labels + outer_labels
     parents = [""] * len(inner_labels) + outer_parents
@@ -131,6 +129,85 @@ def plot_sunburst(dataset, field, count, grp_axis, title, decimal=0):
     fig.show()
 
 
+def plot_sankey(dataset, column1, column2, column3, title):
+    left_labels = _unique(dataset[column1])
+    mid_labels = _unique(dataset[column2])
+    right_labels = _unique(dataset[column3])
+    labels = left_labels + mid_labels + right_labels
+
+    offset_left = 0
+    offset_mid = len(left_labels)
+    offset_right = len(left_labels) + len(mid_labels)
+
+    idx = {}
+    for i, name in enumerate(left_labels):
+        idx[name] = offset_left + i
+    for i, name in enumerate(mid_labels):
+        idx[name] = offset_mid + i
+    for i, name in enumerate(right_labels):
+        idx[name] = offset_right + i
+
+    flows_lm = {}
+    flows_mr = {}
+
+    rows = len(dataset["count"])
+    for i in range(rows):
+        a = dataset[column1][i]
+        b = dataset[column2][i]
+        c = dataset[column3][i]
+        v = dataset["count"][i]
+
+        flows_lm[(a, b)] = flows_lm.get((a, b), 0) + v
+        flows_mr[(b, c)] = flows_mr.get((b, c), 0) + v
+
+    src = []
+    tgt = []
+    val = []
+
+    for (a, b), v in flows_lm.items():
+        src.append(idx[a])
+        tgt.append(idx[b])
+        val.append(v)
+
+    for (b, c), v in flows_mr.items():
+        src.append(idx[b])
+        tgt.append(idx[c])
+        val.append(v)
+
+    fig = go.Figure(
+        go.Sankey(
+            node=dict(label=labels),
+            link=dict(source=src, target=tgt, value=val),
+        )
+    )
+    fig.update_layout(
+        title=title,
+        margin=dict(t=80, l=0, r=0, b=0),
+        annotations=[
+            dict(
+                x=0.0,
+                y=1.0,
+                text=_clean_label(column1),
+                showarrow=False,
+            ),
+            dict(
+                x=0.5,
+                y=1.0,
+                text=_clean_label(column2),
+                showarrow=False,
+            ),
+            dict(
+                x=1.0,
+                y=1.0,
+                text=_clean_label(column3),
+                showarrow=False,
+            ),
+        ],
+    )
+
+    fig.show()
+
+
 def _unique(field):
     out = []
     seen = set()
@@ -141,11 +218,8 @@ def _unique(field):
     return out
 
 
-def _compute_positions(x_count, grp_count):
-    width = 0.8 / max(1, grp_count)
-    x_pos = np.arange(x_count)
-    tick_pos = x_pos + width * (grp_count - 1) / 2
-    return x_pos, width, tick_pos
+def _clean_label(name):
+    return str(name).replace("_", " ").strip().upper()
 
 
 def _autolabels(labels, decimal=0):
@@ -155,6 +229,13 @@ def _autolabels(labels, decimal=0):
 
 def _center_pctdistance(inner_radius, outer_radius):
     return (inner_radius + outer_radius) / (2 * outer_radius)
+
+
+def _compute_positions(x_count, grp_count):
+    width = 0.8 / max(1, grp_count)
+    x_pos = np.arange(x_count)
+    tick_pos = x_pos + width * (grp_count - 1) / 2
+    return x_pos, width, tick_pos
 
 
 def _get_group_values(dataset, x_axis, y_axis, group_axis, x_values, grp_value):

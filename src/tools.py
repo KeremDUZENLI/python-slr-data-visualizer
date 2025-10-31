@@ -33,6 +33,30 @@ def map_dataset(dataset, field, map):
     return dataset_mapped
 
 
+def map_dataset_hierarchy(dataset, field_parent, field_child, map):
+    dataset_mapped = {field_parent: [], field_child: []}
+    rows = len(next(iter(dataset.values()), []))
+
+    for i in range(rows):
+        parents = [
+            t.strip() for t in str(dataset[field_parent][i]).split(";") if t.strip()
+        ]
+        children = [
+            t.strip() for t in str(dataset[field_child][i]).split(";") if t.strip()
+        ]
+
+        for p in parents:
+            allowed = set(map.get(p, []))
+            if not allowed:
+                continue
+            for c in children:
+                if c in allowed:
+                    dataset_mapped[field_parent].append(p)
+                    dataset_mapped[field_child].append(c)
+
+    return dataset_mapped
+
+
 def filter_dataset(dataset, fields):
     dataset_filtered = {}
 

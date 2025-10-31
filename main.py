@@ -1,7 +1,6 @@
-from src.tools import (
-    read_dataset,
-    filter_dataset_value,
-    count_dataset,
+from config.maps import (
+    map_country,
+    map_technique_sub,
 )
 from output.plot import (
     plot_bar,
@@ -10,8 +9,19 @@ from output.plot import (
     plot_pie,
     plot_pie_group,
     plot_sunburst,
+    plot_sankey,
 )
-from output.print import print_counts
+from output.print import (
+    print_counts,
+)
+from src.tools import (
+    read_dataset,
+    map_dataset,
+    map_dataset_hierarchy,
+    filter_dataset,
+    filter_dataset_value,
+    count_dataset,
+)
 
 
 dataset = read_dataset(
@@ -29,7 +39,7 @@ dataset = read_dataset(
 #     decimal=0,
 # )
 
-# plot_chart_bar(
+# plot_bar(
 #     dataset=dataset_counted_year,
 #     x_axis="year",
 #     y_axis="count",
@@ -49,7 +59,7 @@ dataset = read_dataset(
 #     decimal=0,
 # )
 
-# plot_chart_bar_group(
+# plot_bar_group(
 #     dataset=dataset_counted_year_hst,
 #     x_axis="year",
 #     y_axis="count",
@@ -77,14 +87,14 @@ dataset = read_dataset(
 #     decimal=0,
 # )
 
-# plot_chart_bar_group(
+# plot_bar_group(
 #     dataset=dataset_counted_year_bs,
 #     x_axis="year",
 #     y_axis="count",
 #     grp_axis="historical_site_type_sub",
 #     x_label="Year",
 #     y_label="Number of Publications",
-#     title=""Timeline of Publications by Building Subcategories (2015-2024)",
+#     title="Timeline of Publications by Building Subcategories (2015-2024)",
 # )
 
 
@@ -99,7 +109,7 @@ dataset = read_dataset(
 #     decimal=0,
 # )
 
-# plot_chart_bar(
+# plot_bar(
 #     dataset=dataset_counted_sf,
 #     x_axis="study_focus",
 #     y_axis="count",
@@ -108,7 +118,7 @@ dataset = read_dataset(
 #     title="Study Focus Distribution",
 # )
 
-# plot_chart_pie(
+# plot_pie(
 #     dataset=dataset_counted_sf,
 #     field="study_focus",
 #     count="count",
@@ -128,7 +138,7 @@ dataset = read_dataset(
 #     decimal=1,
 # )
 
-# plot_chart_pie_group(
+# plot_pie_group(
 #     dataset=dataset_counted_hsts,
 #     field="historical_site_type",
 #     count="count",
@@ -137,7 +147,7 @@ dataset = read_dataset(
 #     decimal=1,
 # )
 
-# plot_chart_sunburst(
+# plot_sunburst(
 #     dataset=dataset_counted_hsts,
 #     field="historical_site_type",
 #     count="count",
@@ -147,66 +157,132 @@ dataset = read_dataset(
 # )
 
 
-# ### 2_1 ### Platforms - Publications
-# dataset_counted_pp = count_dataset(
-#     dataset=dataset,
-#     fields=["platform", "device"],
-# )
-
-# print_counts(
-#     dataset=dataset_counted_pp,
-#     decimal=1,
-# )
-
-# plot_chart_bar_group(
-#     dataset=dataset_counted_pp,
-#     x_axis="platform",
-#     y_axis="count",
-#     grp_axis="device",
-#     x_label="Platform",
-#     y_label="Number of Publications",
-#     title="Distribution of Devices Across Platforms",
-# )
-
-# ### 2_2 ### Devices - Publications
-# dataset_counted_dp = count_dataset(
-#     dataset=dataset,
-#     fields=["device", "platform"],
-# )
-
-# print_counts(
-#     dataset=dataset_counted_dp,
-#     decimal=1,
-# )
-
-# plot_chart_bar_group(
-#     dataset=dataset_counted_dp,
-#     x_axis="device",
-#     y_axis="count",
-#     grp_axis="platform",
-#     x_label="Platform",
-#     y_label="Number of Publications",
-#     title="Distribution of Platforms Across Devices",
-# )
-
-
-### 2_3 ### Platforms_Year - Publications
-dataset_counted_pyp = count_dataset(
+### 2_1 ### Platforms - Publications
+dataset_counted_pp = count_dataset(
     dataset=dataset,
-    fields=["year", "platform"],
+    fields=["platform", "device"],
 )
 
 print_counts(
-    dataset=dataset_counted_pyp,
+    dataset=dataset_counted_pp,
     decimal=1,
 )
 
-plot_stacked(
-    dataset_counted_pyp,
-    x_axis="year",
+plot_bar_group(
+    dataset=dataset_counted_pp,
+    x_axis="platform",
+    y_axis="count",
+    grp_axis="device",
+    x_label="Platform",
+    y_label="Number of Publications",
+    title="Distribution of Devices Across Platforms",
+)
+
+### 2_2 ### Devices - Publications
+dataset_counted_dp = count_dataset(
+    dataset=dataset,
+    fields=["device", "platform"],
+)
+
+print_counts(
+    dataset=dataset_counted_dp,
+    decimal=1,
+)
+
+plot_bar_group(
+    dataset=dataset_counted_dp,
+    x_axis="device",
     y_axis="count",
     grp_axis="platform",
-    x_label="Year",
+    x_label="Platform",
     y_label="Number of Publications",
-    title="Platform Adoption Over Time (2015-2024)",
+    title="Distribution of Platforms Across Devices",
+)
+
+
+# ### 2_3 ### Platforms_Year - Publications
+# dataset_counted_pyp = count_dataset(
+#     dataset=dataset,
+#     fields=["year", "platform"],
+# )
+
+# print_counts(
+#     dataset=dataset_counted_pyp,
+#     decimal=1,
+# )
+
+# plot_stacked(
+#     dataset_counted_pyp,
+#     x_axis="year",
+#     y_axis="count",
+#     grp_axis="platform",
+#     x_label="Year",
+#     y_label="Number of Publications",
+#     title="Platform Adoption Over Time (2015-2024)",
+# )
+
+
+# ### 3_1 ### SF - HST - T
+# dataset_counted_sfhstt = count_dataset(
+#     dataset=dataset,
+#     fields=["study_focus", "historical_site_type", "technique"],
+# )
+
+# print_counts(
+#     dataset=dataset_counted_sfhstt,
+#     decimal=1,
+# )
+
+# plot_sankey(
+#     dataset=dataset_counted_sfhstt,
+#     column1="study_focus",
+#     column2="historical_site_type",
+#     column3="technique",
+#     title="Sankey Diagram of Workflows",
+# )
+
+
+### 3_2 ### Technique - TechniqueSub
+# for i in dataset:
+#     print(i)
+#     print(dataset[i])
+
+dataset_mapped = map_dataset_hierarchy(
+    dataset=dataset,
+    field_parent="technique",
+    field_child="technique_sub",
+    map=map_technique_sub,
+)
+
+for i in dataset_mapped:
+    print(i)
+    print(dataset_mapped[i])
+
+
+dataset_counted_tts = count_dataset(
+    dataset=dataset_mapped,
+    fields=["technique", "technique_sub"],
+)
+
+print_counts(
+    dataset=dataset_counted_tts,
+    decimal=1,
+)
+
+plot_pie_group(
+    dataset=dataset_counted_tts,
+    field="technique",
+    count="count",
+    grp_axis="technique_sub",
+    title="Technique & Sub-Technique Distribution",
+    decimal=1,
+)
+
+plot_sunburst(
+    dataset=dataset_counted_tts,
+    field="technique",
+    count="count",
+    grp_axis="technique_sub",
+    title="Technique & Sub-Technique Distribution",
+    decimal=1,
 )
