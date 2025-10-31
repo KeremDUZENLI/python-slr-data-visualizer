@@ -1,5 +1,15 @@
-from src.tools import read_dataset, filter_dataset_value, count_dataset
-from output.plot import plot_chart_bar, plot_chart_bar_group, plot_chart_pie
+from src.tools import (
+    read_dataset,
+    filter_dataset_value,
+    count_dataset,
+)
+from output.plot import (
+    plot_chart_bar,
+    plot_chart_bar_group,
+    plot_chart_pie,
+    plot_chart_pie_group,
+    plot_chart_sunburst,
+)
 from output.print import print_counts
 
 
@@ -77,30 +87,60 @@ dataset = read_dataset(
 # )
 
 
+# ### 1_3 ### Study Focus - Percentage
+# dataset_counted_sf = count_dataset(
+#     dataset=dataset,
+#     fields=["study_focus"],
+# )
+
+# print_counts(
+#     dataset=dataset_counted_sf,
+#     decimal=0,
+# )
+
+# plot_chart_bar(
+#     dataset=dataset_counted_sf,
+#     x_axis="study_focus",
+#     y_axis="count",
+#     x_label="Year",
+#     y_label="Number of Publications",
+#     title="Study Focus Distribution",
+# )
+
+# plot_chart_pie(
+#     dataset=dataset_counted_sf,
+#     field="study_focus",
+#     count="count",
+#     title="Study Focus Distribution",
+#     decimal=1,
+# )
+
+
 ### 1_3 ### Study Focus - Percentage
-dataset_counted_sf = count_dataset(
+dataset_counted_hsts = count_dataset(
     dataset=dataset,
-    fields=["study_focus"],
+    fields=["historical_site_type", "historical_site_type_sub"],
 )
 
 print_counts(
-    dataset=dataset_counted_sf,
-    decimal=0,
+    dataset=dataset_counted_hsts,
+    decimal=1,
 )
 
-plot_chart_bar(
-    dataset=dataset_counted_sf,
-    x_axis="study_focus",
-    y_axis="count",
-    x_label="Year",
-    y_label="Number of Publications",
-    title="Study Focus Distribution",
-)
-
-plot_chart_pie(
-    dataset=dataset_counted_sf,
-    field="study_focus",
+plot_chart_pie_group(
+    dataset=dataset_counted_hsts,
+    field="historical_site_type",
     count="count",
-    title="Study Focus Distribution",
+    grp_axis="historical_site_type_sub",
+    title="Distribution of Historical Site Types",
+    decimal=1,
+)
+
+plot_chart_sunburst(
+    dataset=dataset_counted_hsts,
+    field="historical_site_type",
+    count="count",
+    grp_axis="historical_site_type_sub",
+    title="Distribution of Historical Site Types",
     decimal=1,
 )
