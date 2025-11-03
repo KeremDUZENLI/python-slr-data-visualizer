@@ -69,13 +69,14 @@ def filter_dataset(dataset, fields):
 
 def filter_dataset_value(dataset, field, value):
     dataset_filtered = {k: [] for k in dataset}
-
     rows = len(next(iter(dataset.values()), []))
+
     for i in range(rows):
-        if dataset[field][i] == value:
+        cell = dataset[field][i]
+        tokens = cell if isinstance(cell, list) else [cell]
+        if value in tokens:
             for k in dataset:
                 dataset_filtered[k].append(dataset[k][i])
-
     return dataset_filtered
 
 
@@ -95,6 +96,7 @@ def count_dataset(dataset, fields):
 
     dataset_counted = {name: [] for name in fields}
     dataset_counted["count"] = []
+
     for combo in sorted(counts.keys(), key=lambda x: str(x).lower()):
         for order, name in enumerate(fields):
             dataset_counted[name].append(combo[order])

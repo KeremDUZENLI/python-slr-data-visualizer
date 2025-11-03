@@ -10,6 +10,7 @@ from output.plot import (
     plot_pie_group,
     plot_sunburst,
     plot_sankey,
+    plot_heatmap,
 )
 from output.print import (
     print_counts,
@@ -212,13 +213,14 @@ dataset = read_dataset(
 # )
 
 # plot_stacked(
-#     dataset_counted_pyp,
+#     dataset=dataset_counted_pyp,
 #     x_axis="year",
 #     y_axis="count",
 #     grp_axis="platform",
 #     x_label="Year",
 #     y_label="Number of Publications",
 #     title="Platform Adoption Over Time (2015-2024)",
+#     kind="area",
 # )
 
 
@@ -242,38 +244,55 @@ dataset = read_dataset(
 # )
 
 
-### 3_2 ### Technique - TechniqueSub
-dataset_mapped = map_dataset_hierarchy(
+# ### 3_2 ### Technique - TechniqueSub
+# dataset_mapped = map_dataset_hierarchy(
+#     dataset=dataset,
+#     field_parent="technique",
+#     field_child="technique_sub",
+#     map=map_technique_sub,
+# )
+
+# dataset_counted_tts = count_dataset(
+#     dataset=dataset_mapped,
+#     fields=["technique", "technique_sub"],
+# )
+
+# print_counts(
+#     dataset=dataset_counted_tts,
+#     decimal=1,
+# )
+
+# plot_pie_group(
+#     dataset=dataset_counted_tts,
+#     field="technique",
+#     count="count",
+#     grp_axis="technique_sub",
+#     title="Technique & Sub-Technique Distribution",
+#     decimal=1,
+# )
+
+# plot_sunburst(
+#     dataset=dataset_counted_tts,
+#     field="technique",
+#     count="count",
+#     grp_axis="technique_sub",
+#     title="Technique & Sub-Technique Distribution",
+#     decimal=1,
+# )
+
+
+### 3_3 ### Technique x Historical Site Type — Heatmap
+dataset_counted_th = count_dataset(
     dataset=dataset,
-    field_parent="technique",
-    field_child="technique_sub",
-    map=map_technique_sub,
+    fields=["technique", "historical_site_type"],
 )
 
-dataset_counted_tts = count_dataset(
-    dataset=dataset_mapped,
-    fields=["technique", "technique_sub"],
-)
-
-print_counts(
-    dataset=dataset_counted_tts,
-    decimal=1,
-)
-
-plot_pie_group(
-    dataset=dataset_counted_tts,
-    field="technique",
-    count="count",
-    grp_axis="technique_sub",
-    title="Technique & Sub-Technique Distribution",
-    decimal=1,
-)
-
-plot_sunburst(
-    dataset=dataset_counted_tts,
-    field="technique",
-    count="count",
-    grp_axis="technique_sub",
-    title="Technique & Sub-Technique Distribution",
-    decimal=1,
+plot_heatmap(
+    dataset=dataset_counted_th,
+    x_axis="technique",
+    y_axis="historical_site_type",
+    count_axis="count",
+    x_label="Historical Site Type",
+    y_label="Technique",
+    title="Technique Usage Across Historical Site Types",
 )

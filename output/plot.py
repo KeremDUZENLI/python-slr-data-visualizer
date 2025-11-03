@@ -35,7 +35,7 @@ def plot_bar_group(dataset, x_axis, y_axis, grp_axis, x_label, y_label, title):
     plt.show()
 
 
-def plot_stacked(dataset, x_axis, y_axis, grp_axis, x_label, y_label, title):
+def plot_stacked(dataset, x_axis, y_axis, grp_axis, x_label, y_label, title, kind):
     x_values = _unique(dataset[x_axis])
     grp_values = _unique(dataset[grp_axis])
 
@@ -47,13 +47,54 @@ def plot_stacked(dataset, x_axis, y_axis, grp_axis, x_label, y_label, title):
         series.append(y_values)
 
     x_pos = np.arange(len(x_values))
-    plt.stackplot(x_pos, *series, labels=grp_values)
+
+    if kind == "area":
+        plt.stackplot(x_pos, *series, labels=grp_values)
+    if kind == "bar":
+        bottoms = np.zeros(len(x_values))
+        for idx, yvals in enumerate(series):
+            plt.bar(x_pos, yvals, bottom=bottoms, label=grp_values[idx])
+            bottoms = bottoms + np.array(yvals)
 
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
     plt.xticks(x_pos, x_values)
     plt.legend(title=grp_axis)
+    plt.show()
+
+
+def plot_heatmap(dataset, x_axis, y_axis, count_axis, x_label, y_label, title):
+    x_values = _unique(dataset[x_axis])
+    y_values = _unique(dataset[y_axis])
+
+    r_index = {r: i for i, r in enumerate(x_values)}
+    c_index = {c: i for i, c in enumerate(y_values)}
+    mat = np.zeros((len(x_values), len(y_values)), dtype=float)
+
+    n = len(dataset[count_axis])
+    for i in range(n):
+        r_val = dataset[x_axis][i]
+        c_val = dataset[y_axis][i]
+        v = dataset[count_axis][i]
+
+        r_vals = r_val if isinstance(r_val, list) else [r_val]
+        c_vals = c_val if isinstance(c_val, list) else [c_val]
+
+        for rv in r_vals:
+            if rv in r_index:
+                for cv in c_vals:
+                    if cv in c_index:
+                        mat[r_index[rv], c_index[cv]] += v
+
+    plt.imshow(mat, aspect="auto")
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
+    plt.title(title)
+    plt.xticks(np.arange(len(y_values)), y_values, rotation=45, ha="right")
+    plt.yticks(np.arange(len(x_values)), x_values)
+    plt.colorbar()
+    plt.tight_layout()
     plt.show()
 
 
@@ -223,8 +264,15 @@ def _clean_label(name):
 
 
 def _autolabels(labels, decimal=0):
-    it = iter(labels)
-    return lambda pct: f"{next(it, '')}\n{pct:.{decimal}f}%"
+    labels = list(labels)
+    i = {"v": -1}
+
+    def fmt(pct):
+        i["v"] += 1
+        lab = labels[i["v"]] if i["v"] < len(labels) else ""
+        return f"{lab}\n{pct:.{decimal}f}%"
+
+    return fmt
 
 
 def _center_pctdistance(inner_radius, outer_radius):
