@@ -21,7 +21,7 @@ def read_dataset(csv_path):
     return dataset
 
 
-def map_dataset(dataset, field, map):
+def map_dataset_column(dataset, field, map):
     dataset_mapped = {k: list(v) for k, v in dataset.items()}
 
     if field in dataset_mapped:
@@ -57,7 +57,7 @@ def map_dataset_hierarchy(dataset, field_parent, field_child, map):
     return dataset_mapped
 
 
-def filter_dataset(dataset, fields):
+def filter_dataset_by_field(dataset, fields):
     dataset_filtered = {}
 
     for field in fields:
@@ -67,16 +67,36 @@ def filter_dataset(dataset, fields):
     return dataset_filtered
 
 
-def filter_dataset_value(dataset, field, value):
+def filter_dataset_by_value(dataset, field, value, include=True):
     dataset_filtered = {k: [] for k in dataset}
     rows = len(next(iter(dataset.values()), []))
 
     for i in range(rows):
         cell = dataset[field][i]
         tokens = cell if isinstance(cell, list) else [cell]
-        if value in tokens:
-            for k in dataset:
-                dataset_filtered[k].append(dataset[k][i])
+        has_value = value in tokens
+
+        if (include and has_value) or (not include and not has_value):
+            for item in dataset:
+                dataset_filtered[item].append(dataset[item][i])
+
+    return dataset_filtered
+
+
+def filter_dataset_by_count(dataset, field, value, comparison):
+    dataset_filtered = {k: [] for k in dataset}
+    for i, v in enumerate(dataset[field]):
+        threshold = (
+            (comparison == ">=" and v >= value)
+            or (comparison == ">" and v > value)
+            or (comparison == "<=" and v <= value)
+            or (comparison == "<" and v < value)
+            or (comparison == "==" and v == value)
+        )
+        if threshold:
+            for item in dataset:
+                dataset_filtered[item].append(dataset[item][i])
+
     return dataset_filtered
 
 
@@ -104,3 +124,24 @@ def count_dataset(dataset, fields):
         dataset_counted["count"].append(counts[combo])
 
     return dataset_counted
+
+
+def stack_datasets(datasets, grp_1, grp_2):
+    datasets_stacked = {grp_1: [], grp_2: [], "count": []}
+
+    for ds in datasets:
+        keys = [k for k in ds.keys() if k != "count"]
+        if not keys:
+            continue
+        field = keys[0]
+
+        rows = len(ds.get(field, []))
+        for i in range(rows):
+            name = ds[field][i]
+            if name == "":
+                continue
+            datasets_stacked[grp_1].append(name)
+            datasets_stacked[grp_2].append(field)
+            datasets_stacked["count"].append(ds["count"][i])
+
+    return datasets_stacked

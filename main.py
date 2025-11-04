@@ -6,22 +6,24 @@ from output.plot import (
     plot_bar,
     plot_bar_group,
     plot_stacked,
+    plot_heatmap,
     plot_pie,
     plot_pie_group,
     plot_sunburst,
     plot_sankey,
-    plot_heatmap,
 )
 from output.print import (
     print_counts,
 )
 from src.tools import (
     read_dataset,
-    map_dataset,
+    map_dataset_column,
     map_dataset_hierarchy,
-    filter_dataset,
-    filter_dataset_value,
+    filter_dataset_by_field,
+    filter_dataset_by_value,
+    filter_dataset_by_count,
     count_dataset,
+    stack_datasets,
 )
 
 
@@ -47,6 +49,7 @@ dataset = read_dataset(
 #     x_label="Year",
 #     y_label="Number of Publications",
 #     title="Timeline of Publications (2015-2024)",
+#     orientation="v",
 # )
 
 # ### 1_1 ### X:Year_HST | Y:Count
@@ -64,15 +67,16 @@ dataset = read_dataset(
 #     dataset=dataset_counted_year_hst,
 #     x_axis="year",
 #     y_axis="count",
-#     grp_axis="historical_site_type",
 #     x_label="Year",
 #     y_label="Number of Publications",
 #     title="Timeline of Publications by Historical Site Categories (2015-2024)",
+#     orientation="v",
+#     grp_axis="historical_site_type",
 # )
 
 
 # ### 1_2 ### X:Year_BS | Y:Count
-# dataset_value_filtered = filter_dataset_value(
+# dataset_value_filtered = filter_dataset_by_value(
 #     dataset=dataset,
 #     field="historical_site_type",
 #     value="Building",
@@ -92,10 +96,11 @@ dataset = read_dataset(
 #     dataset=dataset_counted_year_bs,
 #     x_axis="year",
 #     y_axis="count",
-#     grp_axis="historical_site_type_sub",
 #     x_label="Year",
 #     y_label="Number of Publications",
 #     title="Timeline of Publications by Building Subcategories (2015-2024)",
+#     orientation="v",
+#     grp_axis="historical_site_type_sub",
 # )
 
 
@@ -117,6 +122,7 @@ dataset = read_dataset(
 #     x_label="Year",
 #     y_label="Number of Publications",
 #     title="Study Focus Distribution",
+#     orientation="v",
 # )
 
 # plot_pie(
@@ -173,10 +179,11 @@ dataset = read_dataset(
 #     dataset=dataset_counted_pp,
 #     x_axis="platform",
 #     y_axis="count",
-#     grp_axis="device",
 #     x_label="Platform",
 #     y_label="Number of Publications",
 #     title="Distribution of Devices Across Platforms",
+#     orientation="v",
+#     grp_axis="device",
 # )
 
 # ### 2_2 ### Devices - Publications
@@ -194,10 +201,11 @@ dataset = read_dataset(
 #     dataset=dataset_counted_dp,
 #     x_axis="device",
 #     y_axis="count",
-#     grp_axis="platform",
 #     x_label="Platform",
 #     y_label="Number of Publications",
 #     title="Distribution of Platforms Across Devices",
+#     orientation="v",
+#     grp_axis="platform",
 # )
 
 
@@ -216,11 +224,11 @@ dataset = read_dataset(
 #     dataset=dataset_counted_pyp,
 #     x_axis="year",
 #     y_axis="count",
-#     grp_axis="platform",
 #     x_label="Year",
 #     y_label="Number of Publications",
 #     title="Platform Adoption Over Time (2015-2024)",
 #     kind="area",
+#     grp_axis="platform",
 # )
 
 
@@ -281,18 +289,136 @@ dataset = read_dataset(
 # )
 
 
-### 3_3 ### Technique x Historical Site Type — Heatmap
-dataset_counted_th = count_dataset(
+# ### 3_3 ### Technique x Historical Site Type — Heatmap
+# dataset_counted_th = count_dataset(
+#     dataset=dataset,
+#     fields=["technique", "historical_site_type"],
+# )
+
+# plot_heatmap(
+#     dataset=dataset_counted_th,
+#     x_axis="technique",
+#     y_axis="historical_site_type",
+#     x_label="Historical Site Type",
+#     y_label="Technique",
+#     title="Technique Usage Across Historical Site Types",
+#     count_axis="count",
+# )
+
+
+# ### 3_4 ### Technique - Study Focus
+# dataset_counted_tsf = count_dataset(
+#     dataset=dataset,
+#     fields=["technique", "study_focus"],
+# )
+
+# plot_bar_group(
+#     dataset=dataset_counted_tsf,
+#     x_axis="technique",
+#     y_axis="count",
+#     x_label="Techniques",
+#     y_label="Frequency",
+#     title="Technique Used in Study Focus",
+#     orientation="v",
+#     grp_axis="study_focus",
+# )
+
+
+### 4_1 ### Software by Category (Horizontal)
+dataset_counted_sc_data = count_dataset(
     dataset=dataset,
-    fields=["technique", "historical_site_type"],
+    fields=["software_data"],
+)
+dataset_sc_data_filtered_by_count = filter_dataset_by_count(
+    dataset=dataset_counted_sc_data,
+    field="count",
+    value=5,
+    comparison=">=",
+)
+dataset_sc_data_filtered_by_value = filter_dataset_by_value(
+    dataset=dataset_sc_data_filtered_by_count,
+    field="software_data",
+    value="",
+    include=False,
+)
+print_counts(
+    dataset=dataset_sc_data_filtered_by_value,
+    decimal=1,
 )
 
-plot_heatmap(
-    dataset=dataset_counted_th,
-    x_axis="technique",
-    y_axis="historical_site_type",
-    count_axis="count",
-    x_label="Historical Site Type",
-    y_label="Technique",
-    title="Technique Usage Across Historical Site Types",
+dataset_counted_sc_modeling = count_dataset(
+    dataset=dataset,
+    fields=["software_modeling"],
+)
+dataset_sc_modeling_filtered_by_count = filter_dataset_by_count(
+    dataset=dataset_counted_sc_modeling,
+    field="count",
+    value=5,
+    comparison=">=",
+)
+dataset_sc_modeling_filtered_by_value = filter_dataset_by_value(
+    dataset=dataset_sc_modeling_filtered_by_count,
+    field="software_modeling",
+    value="",
+    include=False,
+)
+print_counts(
+    dataset=dataset_sc_modeling_filtered_by_value,
+    decimal=1,
+)
+
+dataset_counted_sc_render = count_dataset(
+    dataset=dataset,
+    fields=["software_render"],
+)
+dataset_sc_render_filtered_by_count = filter_dataset_by_count(
+    dataset=dataset_counted_sc_render,
+    field="count",
+    value=5,
+    comparison=">=",
+)
+dataset_sc_render_filtered_by_value = filter_dataset_by_value(
+    dataset=dataset_sc_render_filtered_by_count,
+    field="software_render",
+    value="",
+    include=False,
+)
+print_counts(
+    dataset=dataset_sc_render_filtered_by_value,
+    decimal=1,
+)
+
+dataset_sc_stacked = stack_datasets(
+    datasets=[
+        dataset_sc_data_filtered_by_value,
+        dataset_sc_modeling_filtered_by_value,
+        dataset_sc_render_filtered_by_value,
+    ],
+    grp_1="software",
+    grp_2="category",
+)
+print_counts(
+    dataset=dataset_sc_stacked,
+    decimal=1,
+)
+
+plot_bar(
+    dataset=dataset_sc_stacked,
+    x_axis="software",
+    y_axis="count",
+    x_label="Software",
+    y_label="Frequency",
+    title="Software Usage by Category",
+    orientation="v",
+    grp_axis="category",
+)
+plot_bar(
+    dataset=dataset_sc_stacked,
+    x_axis="software",
+    y_axis="count",
+    x_label="Software",
+    y_label="Frequency",
+    title="Software Usage by Category",
+    orientation="h",
+    grp_axis="category",
 )

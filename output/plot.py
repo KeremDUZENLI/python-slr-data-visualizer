@@ -3,19 +3,47 @@ import matplotlib.pyplot as plt
 import plotly.graph_objects as go
 
 
-def plot_bar(dataset, x_axis, y_axis, x_label, y_label, title):
+def plot_bar(
+    dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis=None
+):
     x_values = dataset[x_axis]
     y_values = dataset[y_axis]
 
-    plt.bar(x_values, y_values)
+    if grp_axis:
+        groups = _unique(dataset[grp_axis])
+        for g in groups:
+            mask = [v == g for v in dataset[grp_axis]]
+            xv = [x for x, m in zip(x_values, mask) if m]
+            yv = [y for y, m in zip(y_values, mask) if m]
+            if orientation == "v":
+                plt.bar(xv, yv, label=_clean_label(g))
+            if orientation == "h":
+                plt.barh(xv, yv, label=_clean_label(g))
+        plt.legend(title=_clean_label(grp_axis))
+    else:
+        if orientation == "v":
+            plt.bar(x_values, y_values)
+        if orientation == "h":
+            plt.barh(x_values, y_values)
 
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
+    if orientation == "v":
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.xticks(rotation=45, ha="right")
+    if orientation == "h":
+        plt.xlabel(y_label)
+        plt.ylabel(x_label)
+        plt.yticks()
+        plt.gca().invert_yaxis()
+
     plt.title(title)
+    plt.tight_layout()
     plt.show()
 
 
-def plot_bar_group(dataset, x_axis, y_axis, grp_axis, x_label, y_label, title):
+def plot_bar_group(
+    dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis
+):
     x_values = _unique(dataset[x_axis])
     grp_values = _unique(dataset[grp_axis])
 
@@ -25,17 +53,30 @@ def plot_bar_group(dataset, x_axis, y_axis, grp_axis, x_label, y_label, title):
         y_values = _get_group_values(
             dataset, x_axis, y_axis, grp_axis, x_values, grp_value
         )
-        plt.bar(x_pos + i * width, y_values, width, label=grp_value)
+        if orientation == "v":
+            plt.bar(x_pos + i * width, y_values, width, label=_clean_label(grp_value))
+        if orientation == "h":
+            plt.barh(
+                x_pos + i * width, y_values, height=width, label=_clean_label(grp_value)
+            )
 
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
+    if orientation == "v":
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.xticks(tick_pos, x_values, rotation=45, ha="right")
+    if orientation == "h":
+        plt.xlabel(y_label)
+        plt.ylabel(x_label)
+        plt.yticks(tick_pos, x_values)
+        plt.gca().invert_yaxis()
+
     plt.title(title)
-    plt.xticks(tick_pos, x_values)
-    plt.legend(title=grp_axis)
+    plt.legend(title=_clean_label(grp_axis))
+    plt.tight_layout()
     plt.show()
 
 
-def plot_stacked(dataset, x_axis, y_axis, grp_axis, x_label, y_label, title, kind):
+def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axis):
     x_values = _unique(dataset[x_axis])
     grp_values = _unique(dataset[grp_axis])
 
@@ -46,25 +87,26 @@ def plot_stacked(dataset, x_axis, y_axis, grp_axis, x_label, y_label, title, kin
         )
         series.append(y_values)
 
-    x_pos = np.arange(len(x_values))
+    x_pos, width, tick_pos = _compute_positions(len(x_values), 1)
 
     if kind == "area":
         plt.stackplot(x_pos, *series, labels=grp_values)
     if kind == "bar":
         bottoms = np.zeros(len(x_values))
         for idx, yvals in enumerate(series):
-            plt.bar(x_pos, yvals, bottom=bottoms, label=grp_values[idx])
+            plt.bar(x_pos, yvals, bottom=bottoms, label=_clean_label(grp_values[idx]))
             bottoms = bottoms + np.array(yvals)
 
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
     plt.xticks(x_pos, x_values)
-    plt.legend(title=grp_axis)
+    plt.legend(_clean_label(grp_axis))
+    plt.tight_layout()
     plt.show()
 
 
-def plot_heatmap(dataset, x_axis, y_axis, count_axis, x_label, y_label, title):
+def plot_heatmap(dataset, x_axis, y_axis, x_label, y_label, title, count_axis):
     x_values = _unique(dataset[x_axis])
     y_values = _unique(dataset[y_axis])
 
@@ -87,12 +129,15 @@ def plot_heatmap(dataset, x_axis, y_axis, count_axis, x_label, y_label, title):
                     if cv in c_index:
                         mat[r_index[rv], c_index[cv]] += v
 
+    x_pos, width, tick_pos_x = _compute_positions(len(y_values), 1)
+    y_pos, width, tick_pos_y = _compute_positions(len(x_values), 1)
+
     plt.imshow(mat, aspect="auto")
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
-    plt.xticks(np.arange(len(y_values)), y_values, rotation=45, ha="right")
-    plt.yticks(np.arange(len(x_values)), x_values)
+    plt.xticks(tick_pos_x, y_values, rotation=45, ha="right")
+    plt.yticks(tick_pos_y, x_values)
     plt.colorbar()
     plt.tight_layout()
     plt.show()
@@ -114,6 +159,7 @@ def plot_pie(dataset, field, count, title, decimal=0):
     )
     plt.title(title)
     plt.axis("equal")
+    plt.tight_layout()
     plt.show()
 
 
@@ -142,6 +188,7 @@ def plot_pie_group(dataset, field, count, grp_axis, title, decimal=0):
     )
     plt.title(title)
     plt.axis("equal")
+    plt.tight_layout()
     plt.show()
 
 
@@ -260,7 +307,7 @@ def _unique(field):
 
 
 def _clean_label(name):
-    return str(name).replace("_", " ").strip().upper()
+    return str(name).replace("_", " ").strip().title()
 
 
 def _autolabels(labels, decimal=0):
