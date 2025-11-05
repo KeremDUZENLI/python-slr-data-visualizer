@@ -87,8 +87,7 @@ def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axi
         )
         series.append(y_values)
 
-    x_pos, width, tick_pos = _compute_positions(len(x_values), 1)
-
+    x_pos = np.arange(len(x_values))
     if kind == "area":
         plt.stackplot(x_pos, *series, labels=grp_values)
     if kind == "bar":
@@ -106,18 +105,20 @@ def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axi
     plt.show()
 
 
-def plot_heatmap(dataset, x_axis, y_axis, x_label, y_label, title, count_axis):
+def plot_heatmap(
+    dataset, x_axis, y_axis, x_label, y_label, title, count_axis, grp_axis=None
+):
     x_values = _unique(dataset[x_axis])
     y_values = _unique(dataset[y_axis])
 
-    r_index = {r: i for i, r in enumerate(x_values)}
-    c_index = {c: i for i, c in enumerate(y_values)}
-    mat = np.zeros((len(x_values), len(y_values)), dtype=float)
+    r_index = {r: i for i, r in enumerate(y_values)}
+    c_index = {c: i for i, c in enumerate(x_values)}
+    mat = np.zeros((len(y_values), len(x_values)), dtype=float)
 
     n = len(dataset[count_axis])
     for i in range(n):
-        r_val = dataset[x_axis][i]
-        c_val = dataset[y_axis][i]
+        r_val = dataset[y_axis][i]
+        c_val = dataset[x_axis][i]
         v = dataset[count_axis][i]
 
         r_vals = r_val if isinstance(r_val, list) else [r_val]
@@ -129,15 +130,12 @@ def plot_heatmap(dataset, x_axis, y_axis, x_label, y_label, title, count_axis):
                     if cv in c_index:
                         mat[r_index[rv], c_index[cv]] += v
 
-    x_pos, width, tick_pos_x = _compute_positions(len(y_values), 1)
-    y_pos, width, tick_pos_y = _compute_positions(len(x_values), 1)
-
     plt.imshow(mat, aspect="auto")
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
-    plt.xticks(tick_pos_x, y_values, rotation=45, ha="right")
-    plt.yticks(tick_pos_y, x_values)
+    plt.xticks(np.arange(len(x_values)), x_values, rotation=45, ha="right")
+    plt.yticks(np.arange(len(y_values)), y_values)
     plt.colorbar()
     plt.tight_layout()
     plt.show()
