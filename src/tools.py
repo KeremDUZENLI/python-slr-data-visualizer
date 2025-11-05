@@ -67,72 +67,71 @@ def filter_dataset_by_field(dataset, fields):
     return dataset_filtered
 
 
-def filter_dataset_by_value(dataset, field, value, include=True):
+def filter_dataset_by_value(dataset, field, values, include=True):
     dataset_filtered = {k: [] for k in dataset}
     rows = len(next(iter(dataset.values()), []))
 
     for i in range(rows):
         cell = dataset[field][i]
         tokens = cell if isinstance(cell, list) else [cell]
-        has_value = value in tokens
+        has_value = any(t in values for t in tokens)
 
         if (include and has_value) or (not include and not has_value):
-            for item in dataset:
-                dataset_filtered[item].append(dataset[item][i])
-
-    return dataset_filtered
-
-
-def filter_dataset_by_count(dataset, field, value, comparison, aggregate_by=None):
-    if not aggregate_by:
-        dataset_filtered = {k: [] for k in dataset}
-        for i, v in enumerate(dataset[field]):
-            if _compare(v, value, comparison):
-                for key in dataset:
-                    dataset_filtered[key].append(dataset[key][i])
-        return dataset_filtered
-
-    totals = {}
-    for i, v in enumerate(dataset[field]):
-        labels = dataset[aggregate_by][i]
-        labels = labels if isinstance(labels, list) else [labels]
-        for label in labels:
-            totals[label] = totals.get(label, 0) + v
-
-    allowed = {
-        label for label, total in totals.items() if _compare(total, value, comparison)
-    }
-
-    dataset_filtered = {k: [] for k in dataset}
-    for i, v in enumerate(dataset[field]):
-        labels = dataset[aggregate_by][i]
-        labels = labels if isinstance(labels, list) else [labels]
-        if any(label in allowed for label in labels):
             for key in dataset:
                 dataset_filtered[key].append(dataset[key][i])
 
     return dataset_filtered
 
 
-def stack_datasets(datasets, grp_1, grp_2):
-    datasets_stacked = {grp_1: [], grp_2: [], "count": []}
+def filter_dataset_by_count(dataset, value, comparison):
+    dataset_filtered = {k: [] for k in dataset}
+    for i, count in enumerate(dataset["count"]):
+        if _compare(count, value, comparison):
+            for key in dataset:
+                dataset_filtered[key].append(dataset[key][i])
+    return dataset_filtered
+
+
+def stack_datasets(datasets, axis1, axis2):
+    datasets_stacked = {axis1: [], axis2: [], "count": []}
 
     for ds in datasets:
-        keys = [k for k in ds.keys() if k != "count"]
-        if not keys:
+        fields = [k for k in ds if k != "count"]
+        if len(fields) == 0:
             continue
-        field = keys[0]
+        field = fields[0]
 
         rows = len(ds.get(field, []))
         for i in range(rows):
             name = ds[field][i]
             if name == "":
                 continue
-            datasets_stacked[grp_1].append(name)
-            datasets_stacked[grp_2].append(field)
+            datasets_stacked[axis1].append(name)
+            datasets_stacked[axis2].append(field)
             datasets_stacked["count"].append(ds["count"][i])
 
     return datasets_stacked
+
+
+def stack_datasets(datasets, axes):
+    out = {a: [] for a in axes}
+    out["count"] = []
+
+    for ds, mapping in datasets:
+        if "count" not in ds:
+            continue
+        rows = len(ds["count"])
+        for i in range(rows):
+            for axis in axes:
+                src = mapping.get(axis, "")
+                if isinstance(src, str) and src in ds:
+                    val = ds[src][i]
+                else:
+                    val = src  # constant label (string or anything else)
+                out[axis].append(val)
+            out["count"].append(ds["count"][i])
+
+    return out
 
 
 def count_dataset(dataset, fields):

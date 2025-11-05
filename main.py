@@ -324,84 +324,100 @@ dataset = read_dataset(
 # )
 
 
-# ### 4_1 ### Software by Category (Horizontal)
-# dataset_counted_sc_data = count_dataset(
-#     dataset=dataset,
-#     fields=["software_data"],
-# )
-# dataset_sc_data_filtered_by_count = filter_dataset_by_count(
-#     dataset=dataset_counted_sc_data,
-#     field="count",
-#     value=5,
-#     comparison=">=",
-# )
-# dataset_sc_data_filtered_by_value = filter_dataset_by_value(
-#     dataset=dataset_sc_data_filtered_by_count,
-#     field="software_data",
-#     value="",
-#     include=False,
-# )
-# print_counts(
-#     dataset=dataset_sc_data_filtered_by_value,
-#     decimal=1,
-# )
+### 4_1 ### Software by Category (Horizontal)
+### software_data ###
+dataset_counted_sc_data = count_dataset(
+    dataset=dataset,
+    fields=["software_data"],
+)
+dataset_sc_data_filtered_by_count = filter_dataset_by_count(
+    dataset=dataset_counted_sc_data,
+    value=5,
+    comparison=">=",
+)
+dataset_sc_data_filtered_by_value = filter_dataset_by_value(
+    dataset=dataset_sc_data_filtered_by_count,
+    field="software_data",
+    values=[""],
+    include=False,
+)
+print_counts(
+    dataset=dataset_sc_data_filtered_by_value,
+    decimal=1,
+)
 
-# dataset_counted_sc_modeling = count_dataset(
-#     dataset=dataset,
-#     fields=["software_modeling"],
-# )
-# dataset_sc_modeling_filtered_by_count = filter_dataset_by_count(
-#     dataset=dataset_counted_sc_modeling,
-#     field="count",
-#     value=5,
-#     comparison=">=",
-# )
-# dataset_sc_modeling_filtered_by_value = filter_dataset_by_value(
-#     dataset=dataset_sc_modeling_filtered_by_count,
-#     field="software_modeling",
-#     value="",
-#     include=False,
-# )
-# print_counts(
-#     dataset=dataset_sc_modeling_filtered_by_value,
-#     decimal=1,
-# )
 
-# dataset_counted_sc_render = count_dataset(
-#     dataset=dataset,
-#     fields=["software_render"],
-# )
-# dataset_sc_render_filtered_by_count = filter_dataset_by_count(
-#     dataset=dataset_counted_sc_render,
-#     field="count",
-#     value=5,
-#     comparison=">=",
-# )
-# dataset_sc_render_filtered_by_value = filter_dataset_by_value(
-#     dataset=dataset_sc_render_filtered_by_count,
-#     field="software_render",
-#     value="",
-#     include=False,
-# )
-# print_counts(
-#     dataset=dataset_sc_render_filtered_by_value,
-#     decimal=1,
-# )
+### software_modeling ###
+dataset_counted_sc_modeling = count_dataset(
+    dataset=dataset,
+    fields=["software_modeling"],
+)
+dataset_sc_modeling_filtered_by_count = filter_dataset_by_count(
+    dataset=dataset_counted_sc_modeling,
+    value=5,
+    comparison=">=",
+)
+dataset_sc_modeling_filtered_by_value = filter_dataset_by_value(
+    dataset=dataset_sc_modeling_filtered_by_count,
+    field="software_modeling",
+    values=[""],
+    include=False,
+)
+print_counts(
+    dataset=dataset_sc_modeling_filtered_by_value,
+    decimal=1,
+)
 
-# dataset_sc_stacked = stack_datasets(
-#     datasets=[
-#         dataset_sc_data_filtered_by_value,
-#         dataset_sc_modeling_filtered_by_value,
-#         dataset_sc_render_filtered_by_value,
-#     ],
-#     grp_1="software",
-#     grp_2="category",
-# )
-# print_counts(
-#     dataset=dataset_sc_stacked,
-#     decimal=1,
-# )
 
+### software_render ###
+dataset_counted_sc_render = count_dataset(
+    dataset=dataset,
+    fields=["software_render"],
+)
+dataset_sc_render_filtered_by_count = filter_dataset_by_count(
+    dataset=dataset_counted_sc_render,
+    value=5,
+    comparison=">=",
+)
+dataset_sc_render_filtered_by_value = filter_dataset_by_value(
+    dataset=dataset_sc_render_filtered_by_count,
+    field="software_render",
+    values=[""],
+    include=False,
+)
+print_counts(
+    dataset=dataset_sc_render_filtered_by_value,
+    decimal=1,
+)
+
+for i in dataset_sc_data_filtered_by_value:
+    print(i)
+    print(dataset_sc_data_filtered_by_value[i])
+for i in dataset_sc_modeling_filtered_by_value:
+    print(i)
+    print(dataset_sc_modeling_filtered_by_value[i])
+for i in dataset_sc_render_filtered_by_value:
+    print(i)
+    print(dataset_sc_render_filtered_by_value[i])
+
+
+### stacked ###
+dataset_sc_stacked = stack_datasets(
+    datasets=[
+        dataset_sc_data_filtered_by_value,
+        dataset_sc_modeling_filtered_by_value,
+        dataset_sc_render_filtered_by_value,
+    ],
+    axis1="software",
+    axis2="category",
+)
+print_counts(
+    dataset=dataset_sc_stacked,
+    decimal=1,
+)
+
+
+# ### plot ###
 # plot_bar(
 #     dataset=dataset_sc_stacked,
 #     x_axis="software",
@@ -425,20 +441,20 @@ dataset = read_dataset(
 
 
 ### 4_2 ### Technique x Software — Heatmap
+### software_data ###
 dataset_counted_sc_data = count_dataset(
     dataset=dataset,
     fields=["software_data"],
 )
 dataset_sc_data_filtered_by_count = filter_dataset_by_count(
     dataset=dataset_counted_sc_data,
-    field="count",
     value=5,
-    comparison=">=",
+    comparison=">",
 )
 dataset_sc_data_filtered_by_value = filter_dataset_by_value(
     dataset=dataset_sc_data_filtered_by_count,
     field="software_data",
-    value="",
+    values="",
     include=False,
 )
 print_counts(
@@ -446,85 +462,138 @@ print_counts(
     decimal=1,
 )
 
-# 3) keep only rows whose software is allowed
-allowed_softwares = set(dataset_sc_data_filtered_by_value["software_data"])
-
 dataset_counted_ts_data = count_dataset(
     dataset=dataset,
     fields=["software_data", "technique"],
 )
+dataset_ts_data_filtered_by_value = filter_dataset_by_value(
+    dataset=dataset_counted_ts_data,
+    field="software_data",
+    values="",
+    include=False,
+)
 
-pairs_2d_filtered = {k: [] for k in dataset_counted_ts_data}
+dataset_ts_data_filtered = filter_dataset_by_value(
+    dataset=dataset_ts_data_filtered_by_value,
+    field="software_data",
+    values=dataset_sc_data_filtered_by_value["software_data"],
+    include=True,
+)
+print_counts(
+    dataset=dataset_ts_data_filtered,
+    decimal=1,
+)
 
-for i in range(len(dataset_counted_ts_data["count"])):
-    if dataset_counted_ts_data["software_data"][i] in allowed_softwares:
-        for k in dataset_counted_ts_data:
-            pairs_2d_filtered[k].append(dataset_counted_ts_data[k][i])
 
-print_counts(pairs_2d_filtered, decimal=1)
+### software_modeling ###
+dataset_counted_sc_modeling = count_dataset(
+    dataset=dataset,
+    fields=["software_modeling"],
+)
+dataset_sc_modeling_filtered_by_count = filter_dataset_by_count(
+    dataset=dataset_counted_sc_modeling,
+    value=5,
+    comparison=">",
+)
+dataset_sc_modeling_filtered_by_value = filter_dataset_by_value(
+    dataset=dataset_sc_modeling_filtered_by_count,
+    field="software_modeling",
+    values="",
+    include=False,
+)
+print_counts(
+    dataset=dataset_sc_modeling_filtered_by_value,
+    decimal=1,
+)
+
+dataset_counted_ts_modeling = count_dataset(
+    dataset=dataset,
+    fields=["software_modeling", "technique"],
+)
+dataset_ts_modeling_filtered_by_value = filter_dataset_by_value(
+    dataset=dataset_counted_ts_modeling,
+    field="software_modeling",
+    values="",
+    include=False,
+)
+
+dataset_ts_modeling_filtered = filter_dataset_by_value(
+    dataset=dataset_ts_modeling_filtered_by_value,
+    field="software_modeling",
+    values=dataset_sc_modeling_filtered_by_value["software_modeling"],
+    include=True,
+)
+print_counts(
+    dataset=dataset_ts_modeling_filtered,
+    decimal=1,
+)
 
 
-# dataset_counted_sc_modeling = count_dataset(
-#     dataset=dataset,
-#     fields=["software_modeling"],
-# )
-# dataset_sc_modeling_filtered_by_count = filter_dataset_by_count(
-#     dataset=dataset_counted_sc_modeling,
-#     field="count",
-#     value=5,
-#     comparison=">=",
-# )
-# dataset_sc_modeling_filtered_by_value = filter_dataset_by_value(
-#     dataset=dataset_sc_modeling_filtered_by_count,
-#     field="software_modeling",
-#     value="",
-#     include=False,
-# )
-# print_counts(
-#     dataset=dataset_sc_modeling_filtered_by_value,
-#     decimal=1,
-# )
+### software_render ###
+dataset_counted_sc_render = count_dataset(
+    dataset=dataset,
+    fields=["software_render"],
+)
+dataset_sc_render_filtered_by_count = filter_dataset_by_count(
+    dataset=dataset_counted_sc_render,
+    value=5,
+    comparison=">",
+)
+dataset_sc_render_filtered_by_value = filter_dataset_by_value(
+    dataset=dataset_sc_render_filtered_by_count,
+    field="software_render",
+    values="",
+    include=False,
+)
+print_counts(
+    dataset=dataset_sc_render_filtered_by_value,
+    decimal=1,
+)
 
-# dataset_counted_sc_render = count_dataset(
-#     dataset=dataset,
-#     fields=["software_render"],
-# )
-# dataset_sc_render_filtered_by_count = filter_dataset_by_count(
-#     dataset=dataset_counted_sc_render,
-#     field="count",
-#     value=5,
-#     comparison=">=",
-# )
-# dataset_sc_render_filtered_by_value = filter_dataset_by_value(
-#     dataset=dataset_sc_render_filtered_by_count,
-#     field="software_render",
-#     value="",
-#     include=False,
-# )
-# print_counts(
-#     dataset=dataset_sc_render_filtered_by_value,
-#     decimal=1,
-# )
+dataset_counted_ts_render = count_dataset(
+    dataset=dataset,
+    fields=["software_render", "technique"],
+)
+dataset_ts_render_filtered_by_value = filter_dataset_by_value(
+    dataset=dataset_counted_ts_render,
+    field="software_render",
+    values="",
+    include=False,
+)
 
-# dataset_sc_stacked = stack_datasets(
-#     datasets=[
-#         dataset_sc_data_filtered_by_value,
-#         dataset_sc_modeling_filtered_by_value,
-#         dataset_sc_render_filtered_by_value,
-#     ],
-#     grp_1="software",
-#     grp_2="category",
-# )
-# print_counts(
-#     dataset=dataset_sc_stacked,
-#     decimal=1,
-# )
+dataset_ts_render_filtered = filter_dataset_by_value(
+    dataset=dataset_ts_render_filtered_by_value,
+    field="software_render",
+    values=dataset_sc_render_filtered_by_value["software_render"],
+    include=True,
+)
+print_counts(
+    dataset=dataset_ts_render_filtered,
+    decimal=1,
+)
 
-# dataset_counted_ts = count_dataset(
-#     dataset=dataset,
-#     fields=["technique", "software_data"],
-# )
-# print_counts(
-#     dataset=dataset_counted_ts,
-#     decimal=1,
-# )
+for i in dataset_ts_data_filtered:
+    print(i)
+    print(dataset_ts_data_filtered[i])
+for i in dataset_ts_modeling_filtered:
+    print(i)
+    print(dataset_ts_modeling_filtered[i])
+for i in dataset_ts_render_filtered:
+    print(i)
+    print(dataset_ts_render_filtered[i])
+
+
+### stacked ###
+dataset_sc_stacked = stack_datasets(
+    datasets=[
+        dataset_ts_data_filtered,
+        dataset_ts_modeling_filtered,
+        dataset_ts_render_filtered,
+    ],
+    axis1="software",
+    axis2="category",
+)
+print_counts(
+    dataset=dataset_sc_stacked,
+    decimal=1,
+)
