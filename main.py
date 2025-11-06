@@ -390,26 +390,34 @@ print_counts(
     decimal=1,
 )
 
-for i in dataset_sc_data_filtered_by_value:
-    print(i)
-    print(dataset_sc_data_filtered_by_value[i])
-for i in dataset_sc_modeling_filtered_by_value:
-    print(i)
-    print(dataset_sc_modeling_filtered_by_value[i])
-for i in dataset_sc_render_filtered_by_value:
-    print(i)
-    print(dataset_sc_render_filtered_by_value[i])
-
 
 ### stacked ###
 dataset_sc_stacked = stack_datasets(
     datasets=[
-        dataset_sc_data_filtered_by_value,
-        dataset_sc_modeling_filtered_by_value,
-        dataset_sc_render_filtered_by_value,
+        (
+            dataset_sc_data_filtered_by_value,
+            {
+                "software": "software_data",
+                "count": "count",
+            },
+        ),
+        (
+            dataset_sc_modeling_filtered_by_value,
+            {
+                "software": "software_modeling",
+                "count": "count",
+            },
+        ),
+        (
+            dataset_sc_render_filtered_by_value,
+            {
+                "software": "software_render",
+                "count": "count",
+            },
+        ),
     ],
-    axis1="software",
-    axis2="category",
+    stack_by={"category": "software"},
+    axes=["category", "software", "count"],
 )
 print_counts(
     dataset=dataset_sc_stacked,
@@ -417,27 +425,27 @@ print_counts(
 )
 
 
-# ### plot ###
-# plot_bar(
-#     dataset=dataset_sc_stacked,
-#     x_axis="software",
-#     y_axis="count",
-#     x_label="Software",
-#     y_label="Frequency",
-#     title="Software Usage by Category",
-#     orientation="v",
-#     grp_axis="category",
-# )
-# plot_bar(
-#     dataset=dataset_sc_stacked,
-#     x_axis="software",
-#     y_axis="count",
-#     x_label="Software",
-#     y_label="Frequency",
-#     title="Software Usage by Category",
-#     orientation="h",
-#     grp_axis="category",
-# )
+### plot ###
+plot_bar(
+    dataset=dataset_sc_stacked,
+    x_axis="software",
+    y_axis="count",
+    x_label="Software",
+    y_label="Frequency",
+    title="Software Usage by Category",
+    orientation="v",
+    grp_axis="category",
+)
+plot_bar(
+    dataset=dataset_sc_stacked,
+    x_axis="software",
+    y_axis="count",
+    x_label="Software",
+    y_label="Frequency",
+    title="Software Usage by Category",
+    orientation="h",
+    grp_axis="category",
+)
 
 
 ### 4_2 ### Technique x Software — Heatmap
@@ -572,28 +580,50 @@ print_counts(
     decimal=1,
 )
 
-for i in dataset_ts_data_filtered:
-    print(i)
-    print(dataset_ts_data_filtered[i])
-for i in dataset_ts_modeling_filtered:
-    print(i)
-    print(dataset_ts_modeling_filtered[i])
-for i in dataset_ts_render_filtered:
-    print(i)
-    print(dataset_ts_render_filtered[i])
-
 
 ### stacked ###
 dataset_sc_stacked = stack_datasets(
     datasets=[
-        dataset_ts_data_filtered,
-        dataset_ts_modeling_filtered,
-        dataset_ts_render_filtered,
+        (
+            dataset_ts_data_filtered,
+            {
+                "software": "software_data",
+                "technique": "technique",
+                "count": "count",
+            },
+        ),
+        (
+            dataset_ts_modeling_filtered,
+            {
+                "software": "software_modeling",
+                "technique": "technique",
+                "count": "count",
+            },
+        ),
+        (
+            dataset_ts_render_filtered,
+            {
+                "software": "software_render",
+                "technique": "technique",
+                "count": "count",
+            },
+        ),
     ],
-    axis1="software",
-    axis2="category",
+    stack_by={"category": "software"},
+    axes=["category", "software", "technique", "count"],
 )
 print_counts(
     dataset=dataset_sc_stacked,
     decimal=1,
+)
+
+plot_heatmap(
+    dataset=dataset_sc_stacked,
+    x_axis="software",
+    y_axis="technique",
+    x_label="Software",
+    y_label="Technique",
+    title="Technique Used with Different Software",
+    count_axis="count",
+    grp_axis="category",
 )

@@ -4,22 +4,47 @@ import plotly.graph_objects as go
 
 
 def plot_bar(
-    dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis=None
+    dataset,
+    x_axis,
+    y_axis,
+    x_label,
+    y_label,
+    title,
+    orientation,
+    grp_axis=None,
 ):
     x_values = dataset[x_axis]
     y_values = dataset[y_axis]
 
     if grp_axis:
-        groups = _unique(dataset[grp_axis])
+        groups = _unique(
+            field=dataset[grp_axis],
+        )
         for g in groups:
             mask = [v == g for v in dataset[grp_axis]]
             xv = [x for x, m in zip(x_values, mask) if m]
             yv = [y for y, m in zip(y_values, mask) if m]
             if orientation == "v":
-                plt.bar(xv, yv, label=_clean_label(g))
+                plt.bar(
+                    xv,
+                    yv,
+                    label=_clean_label(
+                        name=g,
+                    ),
+                )
             if orientation == "h":
-                plt.barh(xv, yv, label=_clean_label(g))
-        plt.legend(title=_clean_label(grp_axis))
+                plt.barh(
+                    xv,
+                    yv,
+                    label=_clean_label(
+                        name=g,
+                    ),
+                )
+        plt.legend(
+            title=_clean_label(
+                name=grp_axis,
+            )
+        )
     else:
         if orientation == "v":
             plt.bar(x_values, y_values)
@@ -41,23 +66,143 @@ def plot_bar(
     plt.show()
 
 
-def plot_bar_group(
-    dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis
+def plot_bar(
+    dataset,
+    x_axis,
+    y_axis,
+    x_label,
+    y_label,
+    title,
+    orientation,
+    grp_axis=None,
 ):
-    x_values = _unique(dataset[x_axis])
-    grp_values = _unique(dataset[grp_axis])
+    x_values = dataset[x_axis]
+    y_values = dataset[y_axis]
 
-    x_pos, width, tick_pos = _compute_positions(len(x_values), len(grp_values))
+    group_colors = {}
+
+    if grp_axis:
+        groups = _unique(field=dataset[grp_axis])
+        for g in groups:
+            mask = [v == g for v in dataset[grp_axis]]
+            xv = [x for x, m in zip(x_values, mask) if m]
+            yv = [y for y, m in zip(y_values, mask) if m]
+
+            if orientation == "v":
+                bars = plt.bar(
+                    xv,
+                    yv,
+                    label=_clean_label(name=g),
+                )
+            if orientation == "h":
+                bars = plt.barh(
+                    xv,
+                    yv,
+                    label=_clean_label(name=g),
+                )
+
+            # NEW: remember the color Matplotlib picked for this group
+            if len(bars) > 0:
+                group_colors[g] = bars[0].get_facecolor()
+
+        plt.legend(title=_clean_label(name=grp_axis))
+    else:
+        if orientation == "v":
+            plt.bar(x_values, y_values)
+        if orientation == "h":
+            plt.barh(x_values, y_values)
+
+    # Labels / ticks
+    ax = plt.gca()
+    if orientation == "v":
+        plt.xlabel(x_label)
+        plt.ylabel(y_label)
+        plt.xticks(rotation=45, ha="right")
+
+        # NEW: color x-axis tick labels by group
+        if grp_axis:
+            # map each category label to its first-seen group
+            x_to_group = {}
+            for x, g in zip(dataset[x_axis], dataset[grp_axis]):
+                if x not in x_to_group:
+                    x_to_group[x] = g
+            for tick in ax.get_xticklabels():
+                key = tick.get_text()
+                g = x_to_group.get(key)
+                if g in group_colors:
+                    tick.set_color(group_colors[g])
+
+    if orientation == "h":
+        plt.xlabel(y_label)
+        plt.ylabel(x_label)
+        plt.yticks()
+        plt.gca().invert_yaxis()
+
+        # NEW: color y-axis tick labels by group
+        if grp_axis:
+            y_to_group = {}
+            for y, g in zip(dataset[x_axis], dataset[grp_axis]):
+                if y not in y_to_group:
+                    y_to_group[y] = g
+            for tick in ax.get_yticklabels():
+                key = tick.get_text()
+                g = y_to_group.get(key)
+                if g in group_colors:
+                    tick.set_color(group_colors[g])
+
+    plt.title(title)
+    plt.tight_layout()
+    plt.show()
+
+
+def plot_bar_group(
+    dataset,
+    x_axis,
+    y_axis,
+    x_label,
+    y_label,
+    title,
+    orientation,
+    grp_axis,
+):
+    x_values = _unique(
+        field=dataset[x_axis],
+    )
+    grp_values = _unique(
+        field=dataset[grp_axis],
+    )
+
+    x_pos, width, tick_pos = _compute_positions(
+        x_count=len(x_values),
+        grp_count=len(grp_values),
+    )
 
     for i, grp_value in enumerate(grp_values):
         y_values = _get_group_values(
-            dataset, x_axis, y_axis, grp_axis, x_values, grp_value
+            dataset=dataset,
+            x_axis=x_axis,
+            y_axis=y_axis,
+            grp_axis=grp_axis,
+            x_values=x_values,
+            grp_value=grp_value,
         )
         if orientation == "v":
-            plt.bar(x_pos + i * width, y_values, width, label=_clean_label(grp_value))
+            plt.bar(
+                x_pos + i * width,
+                y_values,
+                width,
+                label=_clean_label(
+                    name=grp_value,
+                ),
+            )
         if orientation == "h":
             plt.barh(
-                x_pos + i * width, y_values, height=width, label=_clean_label(grp_value)
+                x_pos + i * width,
+                y_values,
+                height=width,
+                label=_clean_label(
+                    name=grp_value,
+                ),
             )
 
     if orientation == "v":
@@ -71,19 +216,41 @@ def plot_bar_group(
         plt.gca().invert_yaxis()
 
     plt.title(title)
-    plt.legend(title=_clean_label(grp_axis))
+    plt.legend(
+        title=_clean_label(
+            name=grp_axis,
+        )
+    )
     plt.tight_layout()
     plt.show()
 
 
-def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axis):
-    x_values = _unique(dataset[x_axis])
-    grp_values = _unique(dataset[grp_axis])
+def plot_stacked(
+    dataset,
+    x_axis,
+    y_axis,
+    x_label,
+    y_label,
+    title,
+    kind,
+    grp_axis,
+):
+    x_values = _unique(
+        field=dataset[x_axis],
+    )
+    grp_values = _unique(
+        field=dataset[grp_axis],
+    )
 
     series = []
     for grp_value in grp_values:
         y_values = _get_group_values(
-            dataset, x_axis, y_axis, grp_axis, x_values, grp_value
+            dataset=dataset,
+            x_axis=x_axis,
+            y_axis=y_axis,
+            grp_axis=grp_axis,
+            x_values=x_values,
+            grp_value=grp_value,
         )
         series.append(y_values)
 
@@ -93,23 +260,45 @@ def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axi
     if kind == "bar":
         bottoms = np.zeros(len(x_values))
         for idx, yvals in enumerate(series):
-            plt.bar(x_pos, yvals, bottom=bottoms, label=_clean_label(grp_values[idx]))
+            plt.bar(
+                x_pos,
+                yvals,
+                bottom=bottoms,
+                label=_clean_label(
+                    name=grp_values[idx],
+                ),
+            )
             bottoms = bottoms + np.array(yvals)
 
     plt.xlabel(x_label)
     plt.ylabel(y_label)
     plt.title(title)
     plt.xticks(x_pos, x_values)
-    plt.legend(_clean_label(grp_axis))
+    plt.legend(
+        _clean_label(
+            name=grp_axis,
+        )
+    )
     plt.tight_layout()
     plt.show()
 
 
 def plot_heatmap(
-    dataset, x_axis, y_axis, x_label, y_label, title, count_axis, grp_axis=None
+    dataset,
+    x_axis,
+    y_axis,
+    x_label,
+    y_label,
+    title,
+    count_axis,
+    grp_axis=None,
 ):
-    x_values = _unique(dataset[x_axis])
-    y_values = _unique(dataset[y_axis])
+    x_values = _unique(
+        field=dataset[x_axis],
+    )
+    y_values = _unique(
+        field=dataset[y_axis],
+    )
 
     r_index = {r: i for i, r in enumerate(y_values)}
     c_index = {c: i for i, c in enumerate(x_values)}
@@ -137,16 +326,33 @@ def plot_heatmap(
     plt.xticks(np.arange(len(x_values)), x_values, rotation=45, ha="right")
     plt.yticks(np.arange(len(y_values)), y_values)
     plt.colorbar()
+    plt.legend(
+        _clean_label(
+            name=grp_axis,
+        )
+    )
     plt.tight_layout()
     plt.show()
 
 
-def plot_pie(dataset, field, count, title, decimal=0):
+def plot_pie(
+    dataset,
+    field,
+    count,
+    title,
+    decimal=0,
+):
     inner_labels = dataset[field]
     inner_values = dataset[count]
 
-    labels = _autolabels(labels=inner_labels, decimal=decimal)
-    pct = _center_pctdistance(inner_radius=0.0, outer_radius=1.0)
+    labels = _autolabels(
+        labels=inner_labels,
+        decimal=decimal,
+    )
+    pct = _center_pctdistance(
+        inner_radius=0.0,
+        outer_radius=1.0,
+    )
 
     plt.pie(
         inner_values,
@@ -161,14 +367,38 @@ def plot_pie(dataset, field, count, title, decimal=0):
     plt.show()
 
 
-def plot_pie_group(dataset, field, count, grp_axis, title, decimal=0):
-    result = _get_hierarchy_values(dataset, field, grp_axis, count)
+def plot_pie_group(
+    dataset,
+    field,
+    count,
+    grp_axis,
+    title,
+    decimal=0,
+):
+    result = _get_hierarchy_values(
+        dataset=dataset,
+        field_parent=field,
+        field_child=grp_axis,
+        count=count,
+    )
     inner_labels, inner_values, outer_labels, outer_values, outer_parents = result
 
-    labels_outer = _autolabels(labels=outer_labels, decimal=decimal)
-    labels_inner = _autolabels(labels=inner_labels, decimal=decimal)
-    pct_outer = _center_pctdistance(inner_radius=0.5, outer_radius=1.0)
-    pct_inner = _center_pctdistance(inner_radius=0.0, outer_radius=0.5)
+    labels_outer = _autolabels(
+        labels=outer_labels,
+        decimal=decimal,
+    )
+    labels_inner = _autolabels(
+        labels=inner_labels,
+        decimal=decimal,
+    )
+    pct_outer = _center_pctdistance(
+        inner_radius=0.5,
+        outer_radius=1.0,
+    )
+    pct_inner = _center_pctdistance(
+        inner_radius=0.0,
+        outer_radius=0.5,
+    )
 
     plt.pie(
         outer_values,
@@ -190,8 +420,20 @@ def plot_pie_group(dataset, field, count, grp_axis, title, decimal=0):
     plt.show()
 
 
-def plot_sunburst(dataset, field, count, grp_axis, title, decimal=0):
-    result = _get_hierarchy_values(dataset, field, grp_axis, count)
+def plot_sunburst(
+    dataset,
+    field,
+    count,
+    grp_axis,
+    title,
+    decimal=0,
+):
+    result = _get_hierarchy_values(
+        dataset=dataset,
+        field_parent=field,
+        field_child=grp_axis,
+        count=count,
+    )
     inner_labels, inner_values, outer_labels, outer_values, outer_parents = result
 
     labels = inner_labels + outer_labels
@@ -215,10 +457,22 @@ def plot_sunburst(dataset, field, count, grp_axis, title, decimal=0):
     fig.show()
 
 
-def plot_sankey(dataset, column1, column2, column3, title):
-    left_labels = _unique(dataset[column1])
-    mid_labels = _unique(dataset[column2])
-    right_labels = _unique(dataset[column3])
+def plot_sankey(
+    dataset,
+    column1,
+    column2,
+    column3,
+    title,
+):
+    left_labels = _unique(
+        field=dataset[column1],
+    )
+    mid_labels = _unique(
+        field=dataset[column2],
+    )
+    right_labels = _unique(
+        field=dataset[column3],
+    )
     labels = left_labels + mid_labels + right_labels
 
     offset_left = 0
@@ -273,19 +527,25 @@ def plot_sankey(dataset, column1, column2, column3, title):
             dict(
                 x=0.0,
                 y=1.0,
-                text=_clean_label(column1),
+                text=_clean_label(
+                    name=column1,
+                ),
                 showarrow=False,
             ),
             dict(
                 x=0.5,
                 y=1.0,
-                text=_clean_label(column2),
+                text=_clean_label(
+                    name=column2,
+                ),
                 showarrow=False,
             ),
             dict(
                 x=1.0,
                 y=1.0,
-                text=_clean_label(column3),
+                text=_clean_label(
+                    name=column3,
+                ),
                 showarrow=False,
             ),
         ],
@@ -294,7 +554,9 @@ def plot_sankey(dataset, column1, column2, column3, title):
     fig.show()
 
 
-def _unique(field):
+def _unique(
+    field,
+):
     out = []
     seen = set()
     for value in field:
@@ -304,11 +566,16 @@ def _unique(field):
     return out
 
 
-def _clean_label(name):
+def _clean_label(
+    name,
+):
     return str(name).replace("_", " ").strip().title()
 
 
-def _autolabels(labels, decimal=0):
+def _autolabels(
+    labels,
+    decimal=0,
+):
     labels = list(labels)
     i = {"v": -1}
 
@@ -320,18 +587,31 @@ def _autolabels(labels, decimal=0):
     return fmt
 
 
-def _center_pctdistance(inner_radius, outer_radius):
+def _center_pctdistance(
+    inner_radius,
+    outer_radius,
+):
     return (inner_radius + outer_radius) / (2 * outer_radius)
 
 
-def _compute_positions(x_count, grp_count):
+def _compute_positions(
+    x_count,
+    grp_count,
+):
     width = 0.8 / max(1, grp_count)
     x_pos = np.arange(x_count)
     tick_pos = x_pos + width * (grp_count - 1) / 2
     return x_pos, width, tick_pos
 
 
-def _get_group_values(dataset, x_axis, y_axis, group_axis, x_values, grp_value):
+def _get_group_values(
+    dataset,
+    x_axis,
+    y_axis,
+    group_axis,
+    x_values,
+    grp_value,
+):
     y_values = []
     for x in x_values:
         count = 0
@@ -343,8 +623,15 @@ def _get_group_values(dataset, x_axis, y_axis, group_axis, x_values, grp_value):
     return y_values
 
 
-def _get_hierarchy_values(dataset, field_parent, field_child, count):
-    inner_labels = _unique(dataset[field_parent])
+def _get_hierarchy_values(
+    dataset,
+    field_parent,
+    field_child,
+    count,
+):
+    inner_labels = _unique(
+        field=dataset[field_parent],
+    )
     idx_map = {p: i for i, p in enumerate(inner_labels)}
     inner_values = [0] * len(inner_labels)
 
