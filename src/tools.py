@@ -2,9 +2,7 @@ import csv
 from itertools import product
 
 
-def read_dataset(
-    csv_path,
-):
+def read_dataset(csv_path):
     dataset = {}
 
     with open(csv_path, "r", encoding="utf-8-sig") as f:
@@ -23,11 +21,7 @@ def read_dataset(
     return dataset
 
 
-def map_dataset_column(
-    dataset,
-    field,
-    map,
-):
+def map_dataset_column(dataset, field, map):
     dataset_mapped = {k: list(v) for k, v in dataset.items()}
 
     if field in dataset_mapped:
@@ -43,12 +37,7 @@ def map_dataset_column(
     return dataset_mapped
 
 
-def map_dataset_hierarchy(
-    dataset,
-    field_parent,
-    field_child,
-    map,
-):
+def map_dataset_hierarchy(dataset, field_parent, field_child, map):
     dataset_mapped = {field_parent: [], field_child: []}
     rows = len(next(iter(dataset.values()), []))
 
@@ -68,10 +57,7 @@ def map_dataset_hierarchy(
     return dataset_mapped
 
 
-def filter_dataset_by_field(
-    dataset,
-    fields,
-):
+def filter_dataset_by_field(dataset, fields):
     dataset_filtered = {}
 
     for field in fields:
@@ -81,12 +67,7 @@ def filter_dataset_by_field(
     return dataset_filtered
 
 
-def filter_dataset_by_value(
-    dataset,
-    field,
-    values,
-    include=True,
-):
+def filter_dataset_by_value(dataset, field, values, include=True):
     dataset_filtered = {k: [] for k in dataset}
     rows = len(next(iter(dataset.values()), []))
 
@@ -102,28 +83,16 @@ def filter_dataset_by_value(
     return dataset_filtered
 
 
-def filter_dataset_by_count(
-    dataset,
-    value,
-    comparison,
-):
+def filter_dataset_by_count(dataset, value, comparison):
     dataset_filtered = {k: [] for k in dataset}
     for i, count in enumerate(dataset["count"]):
-        if _compare(
-            a=count,
-            b=value,
-            op=comparison,
-        ):
+        if _compare(a=count, b=value, op=comparison):
             for key in dataset:
                 dataset_filtered[key].append(dataset[key][i])
     return dataset_filtered
 
 
-def stack_datasets(
-    datasets,
-    stack_by,
-    axes,
-):
+def stack_datasets(datasets, stack_by, axes):
     datasets_stacked = {ax: [] for ax in axes}
 
     for ds, mapping in datasets:
@@ -153,10 +122,7 @@ def stack_datasets(
     return datasets_stacked
 
 
-def count_dataset(
-    dataset,
-    fields,
-):
+def count_dataset(dataset, fields):
     counts = {}
     rows = len(next(iter(dataset.values()), []))
 
@@ -182,11 +148,7 @@ def count_dataset(
     return dataset_counted
 
 
-def _compare(
-    a,
-    b,
-    op,
-):
+def _compare(a, b, op):
     if op == ">=":
         return a >= b
     if op == ">":
