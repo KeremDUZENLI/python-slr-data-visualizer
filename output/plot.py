@@ -11,9 +11,9 @@ def plot_bar(
     y_values = dataset[y_axis]
 
     if grp_axis:
-        labels = _get_unique_labels(field=dataset[grp_axis])
-        colors = _apply_bar_color(labels=labels)
-        for group in labels:
+        values = _get_unique_values(field=dataset[grp_axis])
+        colors = _apply_bar_color(grp_axis=grp_axis, values=values)
+        for group in values:
             mask = [v == group for v in dataset[grp_axis]]
             x_value = [x for x, m in zip(x_values, mask) if m]
             y_value = [y for y, m in zip(y_values, mask) if m]
@@ -46,23 +46,23 @@ def plot_bar_group(
     dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis
 ):
     bar = _apply_bar_orient(orientation)
-    x_values = _get_unique_labels(field=dataset[x_axis])
-    labels = _get_unique_labels(field=dataset[grp_axis])
+    x_values = _get_unique_values(field=dataset[x_axis])
+    values = _get_unique_values(field=dataset[grp_axis])
     y_values_stacked = _stack_group_values(
         dataset=dataset,
         x_axis=x_axis,
         y_axis=y_axis,
         grp_axis=grp_axis,
         x_values=x_values,
-        grp_values=labels,
+        grp_values=values,
     )
     width, axis_pos, tick_pos = _compute_label_positions(
         axis_count=len(x_values),
-        grp_count=len(labels),
+        grp_count=len(values),
     )
+    colors = _apply_bar_color(grp_axis=grp_axis, values=values)
 
-    colors = _apply_bar_color(labels=labels)
-    for i, grp_value in enumerate(labels):
+    for i, grp_value in enumerate(values):
         x_values_pos = axis_pos + i * width
         size = _apply_bar_size(orientation, width)
         bar(
@@ -89,8 +89,8 @@ def plot_bar_group(
 
 
 def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axis):
-    x_values = _get_unique_labels(field=dataset[x_axis])
-    label_values = _get_unique_labels(field=dataset[grp_axis])
+    x_values = _get_unique_values(field=dataset[x_axis])
+    label_values = _get_unique_values(field=dataset[grp_axis])
     y_values_stacked = _stack_group_values(
         dataset=dataset,
         x_axis=x_axis,
@@ -125,8 +125,8 @@ def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axi
 def plot_heatmap(
     dataset, x_axis, y_axis, x_label, y_label, title, count_axis, grp_axis=None
 ):
-    x_values = _get_unique_labels(field=dataset[x_axis])
-    y_values = _get_unique_labels(field=dataset[y_axis])
+    x_values = _get_unique_values(field=dataset[x_axis])
+    y_values = _get_unique_values(field=dataset[y_axis])
 
     r_index = {r: i for i, r in enumerate(y_values)}
     c_index = {c: i for i, c in enumerate(x_values)}
@@ -234,9 +234,9 @@ def plot_sunburst(dataset, field, count, grp_axis, title, decimal=0):
 
 
 def plot_sankey(dataset, column1, column2, column3, title):
-    left_labels = _get_unique_labels(field=dataset[column1])
-    mid_labels = _get_unique_labels(field=dataset[column2])
-    right_labels = _get_unique_labels(field=dataset[column3])
+    left_labels = _get_unique_values(field=dataset[column1])
+    mid_labels = _get_unique_values(field=dataset[column2])
+    right_labels = _get_unique_values(field=dataset[column3])
     labels = left_labels + mid_labels + right_labels
 
     offset_left = 0
@@ -330,7 +330,7 @@ def _stack_group_values(dataset, x_axis, y_axis, grp_axis, x_values, grp_values)
 
 
 def _get_hierarchy_values(dataset, field_parent, field_child, count):
-    inner_labels = _get_unique_labels(field=dataset[field_parent])
+    inner_labels = _get_unique_values(field=dataset[field_parent])
     idx_map = {p: i for i, p in enumerate(inner_labels)}
     inner_values = [0] * len(inner_labels)
 
@@ -349,7 +349,7 @@ def _get_hierarchy_values(dataset, field_parent, field_child, count):
     return inner_labels, inner_values, outer_labels, outer_values, outer_parents
 
 
-def _get_unique_labels(field):
+def _get_unique_values(field):
     labels = []
     seen = set()
     for value in field:
@@ -415,7 +415,7 @@ def _apply_bar_axes(
         plt.gca().invert_yaxis()
 
 
-CUSTOM_COLORS = {
+COLORS = {
     "study_focus": {
         "Reconstruction": "#1f77b4",
         "Restoration": "#2ca02c",
@@ -427,7 +427,7 @@ CUSTOM_COLORS = {
         "Building": "#669ec6",
         "Natural Space": "#579d57",
     },
-    "software": {
+    "softwares": {
         "software_data": "#1f77b4",
         "software_modeling": "#2ca02c",
         "software_render": "#d62728",
@@ -435,14 +435,12 @@ CUSTOM_COLORS = {
 }
 
 
-def _apply_bar_color(labels):
+def _apply_bar_color(grp_axis, values):
     colors = {}
+    colors_set = COLORS[grp_axis]
 
-    for label in labels:
-        for keys in CUSTOM_COLORS.values():
-            if label in keys:
-                colors[label] = keys[label]
-                break
+    for value in values:
+        colors[value] = colors_set[value]
 
     return colors
 

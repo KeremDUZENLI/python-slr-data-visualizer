@@ -416,8 +416,8 @@ dataset_sc_stacked = stack_datasets(
             },
         ),
     ],
-    stack_by={"category": "software"},
-    axes=["category", "software", "count"],
+    stack_by={"softwares": "software"},
+    axes=["softwares", "software", "count"],
 )
 print_counts(
     dataset=dataset_sc_stacked,
@@ -434,7 +434,7 @@ plot_bar(
     y_label="Frequency",
     title="Software Usage by Category",
     orientation="v",
-    grp_axis="category",
+    grp_axis="softwares",
 )
 plot_bar(
     dataset=dataset_sc_stacked,
@@ -444,7 +444,7 @@ plot_bar(
     y_label="Frequency",
     title="Software Usage by Category",
     orientation="h",
-    grp_axis="category",
+    grp_axis="softwares",
 )
 
 
@@ -609,8 +609,8 @@ dataset_sc_stacked = stack_datasets(
             },
         ),
     ],
-    stack_by={"category": "software"},
-    axes=["category", "software", "technique", "count"],
+    stack_by={"softwares": "software"},
+    axes=["softwares", "software", "technique", "count"],
 )
 print_counts(
     dataset=dataset_sc_stacked,
@@ -625,5 +625,5 @@ plot_heatmap(
     y_label="Technique",
     title="Technique Used with Different Software",
     count_axis="count",
-    grp_axis="category",
+    grp_axis="softwares",
 )
