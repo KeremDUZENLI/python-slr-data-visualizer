@@ -11,20 +11,29 @@ def plot_bar(
     y_values = dataset[y_axis]
 
     if grp_axis:
-        groups = _get_unique_labels(field=dataset[grp_axis])
-        for group in groups:
+        labels = _get_unique_labels(field=dataset[grp_axis])
+        colors = _apply_bar_color(labels=labels)
+        for group in labels:
             mask = [v == group for v in dataset[grp_axis]]
             x_value = [x for x, m in zip(x_values, mask) if m]
             y_value = [y for y, m in zip(y_values, mask) if m]
-            bar(x_value, y_value, label=group)
+            bar(
+                x_value,
+                y_value,
+                label=group,
+                color=colors[group],
+            )
     else:
-        bar(x_values, y_values)
+        bar(
+            x_values,
+            y_values,
+        )
 
     _apply_bar_axes(
         orientation=orientation,
         x_label=x_label,
         y_label=y_label,
-        rotation=0,
+        rotation=45,
     )
 
     plt.title(title)
@@ -38,24 +47,31 @@ def plot_bar_group(
 ):
     bar = _apply_bar_orient(orientation)
     x_values = _get_unique_labels(field=dataset[x_axis])
-    label_values = _get_unique_labels(field=dataset[grp_axis])
-    y_values_stacked = _get_group_values(
+    labels = _get_unique_labels(field=dataset[grp_axis])
+    y_values_stacked = _stack_group_values(
         dataset=dataset,
         x_axis=x_axis,
         y_axis=y_axis,
         grp_axis=grp_axis,
         x_values=x_values,
-        grp_values=label_values,
+        grp_values=labels,
     )
     width, axis_pos, tick_pos = _compute_label_positions(
         axis_count=len(x_values),
-        grp_count=len(label_values),
+        grp_count=len(labels),
     )
 
-    for i, grp_value in enumerate(label_values):
+    colors = _apply_bar_color(labels=labels)
+    for i, grp_value in enumerate(labels):
         x_values_pos = axis_pos + i * width
         size = _apply_bar_size(orientation, width)
-        bar(x_values_pos, y_values_stacked[i], label=grp_value, **size)
+        bar(
+            x_values_pos,
+            y_values_stacked[i],
+            label=grp_value,
+            color=colors[grp_value],
+            **size,
+        )
 
     _apply_bar_axes(
         orientation=orientation,
@@ -75,7 +91,7 @@ def plot_bar_group(
 def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axis):
     x_values = _get_unique_labels(field=dataset[x_axis])
     label_values = _get_unique_labels(field=dataset[grp_axis])
-    y_values_stacked = _get_group_values(
+    y_values_stacked = _stack_group_values(
         dataset=dataset,
         x_axis=x_axis,
         y_axis=y_axis,
@@ -97,7 +113,7 @@ def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axi
         y_label=y_label,
         tick_pos=x_pos,
         tick_labels=x_values,
-        rotation=0,
+        rotation=45,
     )
 
     plt.title(title)
@@ -296,7 +312,7 @@ def plot_sankey(dataset, column1, column2, column3, title):
     fig.show()
 
 
-def _get_group_values(dataset, x_axis, y_axis, grp_axis, x_values, grp_values):
+def _stack_group_values(dataset, x_axis, y_axis, grp_axis, x_values, grp_values):
     values_stacked = []
 
     for g in grp_values:
@@ -390,7 +406,8 @@ def _apply_bar_axes(
     if orientation == "v":
         plt.xlabel(x_label)
         plt.ylabel(y_label)
-        plt.xticks(tick_pos, tick_labels, rotation=rotation, ha="center")
+        ha = "right" if rotation else "center"
+        plt.xticks(tick_pos, tick_labels, rotation=rotation, ha=ha)
     if orientation == "h":
         plt.xlabel(y_label)
         plt.ylabel(x_label)
@@ -398,16 +415,48 @@ def _apply_bar_axes(
         plt.gca().invert_yaxis()
 
 
+CUSTOM_COLORS = {
+    "study_focus": {
+        "Reconstruction": "#1f77b4",
+        "Restoration": "#2ca02c",
+        "Visualization": "#d62728",
+    },
+    "historical_site_type": {
+        "Archaeological Site": "#ff7f0e",
+        "Artistic Feature": "#a1b45e",
+        "Building": "#669ec6",
+        "Natural Space": "#579d57",
+    },
+    "software": {
+        "software_data": "#1f77b4",
+        "software_modeling": "#2ca02c",
+        "software_render": "#d62728",
+    },
+}
+
+
+def _apply_bar_color(labels):
+    colors = {}
+
+    for label in labels:
+        for keys in CUSTOM_COLORS.values():
+            if label in keys:
+                colors[label] = keys[label]
+                break
+
+    return colors
+
+
 def _apply_graph_kind(kind, x_pos, values, label_values):
     if kind == "area":
         plt.stackplot(x_pos, *values, labels=label_values)
     if kind == "bar":
         bottoms = np.zeros(len(x_pos))
-        for idx, yvals in enumerate(values):
+        for idx, y_values in enumerate(values):
             plt.bar(
                 x_pos,
-                yvals,
+                y_values,
                 bottom=bottoms,
                 label=label_values[idx],
             )
-            bottoms = bottoms + np.array(yvals)
+            bottoms = bottoms + np.array(y_values)
