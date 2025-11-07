@@ -6,12 +6,12 @@ import plotly.graph_objects as go
 def plot_bar(
     dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis=None
 ):
+    bar = _apply_bar_orient(orientation)
     x_values = dataset[x_axis]
     y_values = dataset[y_axis]
-    bar = _orient_bar(orientation)
 
     if grp_axis:
-        groups = _unique(field=dataset[grp_axis])
+        groups = _get_unique_labels(field=dataset[grp_axis])
         for group in groups:
             mask = [v == group for v in dataset[grp_axis]]
             x_value = [x for x, m in zip(x_values, mask) if m]
@@ -36,8 +36,9 @@ def plot_bar(
 def plot_bar_group(
     dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis
 ):
-    x_values = _unique(field=dataset[x_axis])
-    label_values = _unique(field=dataset[grp_axis])
+    bar = _apply_bar_orient(orientation)
+    x_values = _get_unique_labels(field=dataset[x_axis])
+    label_values = _get_unique_labels(field=dataset[grp_axis])
     y_values_stacked = _get_group_values(
         dataset=dataset,
         x_axis=x_axis,
@@ -46,15 +47,14 @@ def plot_bar_group(
         x_values=x_values,
         grp_values=label_values,
     )
-    width, x_pos, tick_pos = _compute_positions(
-        x_count=len(x_values),
+    width, axis_pos, tick_pos = _compute_label_positions(
+        axis_count=len(x_values),
         grp_count=len(label_values),
     )
-    bar = _orient_bar(orientation)
 
     for i, grp_value in enumerate(label_values):
-        x_values_pos = x_pos + i * width
-        size = _size_bar(orientation, width)
+        x_values_pos = axis_pos + i * width
+        size = _apply_bar_size(orientation, width)
         bar(x_values_pos, y_values_stacked[i], label=grp_value, **size)
 
     _apply_bar_axes(
@@ -73,8 +73,8 @@ def plot_bar_group(
 
 
 def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axis):
-    x_values = _unique(field=dataset[x_axis])
-    label_values = _unique(field=dataset[grp_axis])
+    x_values = _get_unique_labels(field=dataset[x_axis])
+    label_values = _get_unique_labels(field=dataset[grp_axis])
     y_values_stacked = _get_group_values(
         dataset=dataset,
         x_axis=x_axis,
@@ -83,10 +83,13 @@ def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axi
         x_values=x_values,
         grp_values=label_values,
     )
-
     x_pos = np.arange(len(x_values))
-    _choose_kind(
-        kind=kind, x_pos=x_pos, values=y_values_stacked, label_values=label_values
+
+    _apply_graph_kind(
+        kind=kind,
+        x_pos=x_pos,
+        values=y_values_stacked,
+        label_values=label_values,
     )
     _apply_bar_axes(
         orientation="v",
@@ -106,8 +109,8 @@ def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axi
 def plot_heatmap(
     dataset, x_axis, y_axis, x_label, y_label, title, count_axis, grp_axis=None
 ):
-    x_values = _unique(field=dataset[x_axis])
-    y_values = _unique(field=dataset[y_axis])
+    x_values = _get_unique_labels(field=dataset[x_axis])
+    y_values = _get_unique_labels(field=dataset[y_axis])
 
     r_index = {r: i for i, r in enumerate(y_values)}
     c_index = {c: i for i, c in enumerate(x_values)}
@@ -143,16 +146,10 @@ def plot_pie(dataset, field, count, title, decimal=0):
     inner_labels = dataset[field]
     inner_values = dataset[count]
 
-    labels = _autolabels(labels=inner_labels, decimal=decimal)
-    pct = _center_pctdistance(inner_radius=0.0, outer_radius=1.0)
+    lbls = _format_label(labels=inner_labels, decimal=decimal)
+    pcnt = _center_label_percent(inner_radius=0.0, outer_radius=1.0)
 
-    plt.pie(
-        inner_values,
-        autopct=labels,
-        startangle=90,
-        radius=1.0,
-        pctdistance=pct,
-    )
+    plt.pie(inner_values, autopct=lbls, startangle=90, radius=1.0, pctdistance=pcnt)
     plt.title(title)
     plt.axis("equal")
     plt.tight_layout()
@@ -160,32 +157,25 @@ def plot_pie(dataset, field, count, title, decimal=0):
 
 
 def plot_pie_group(dataset, field, count, grp_axis, title, decimal=0):
-    result = _get_hierarchy_values(
-        dataset=dataset,
-        field_parent=field,
-        field_child=grp_axis,
-        count=count,
+    inner_labels, inner_values, outer_labels, outer_values, outer_parents = (
+        _get_hierarchy_values(
+            dataset=dataset,
+            field_parent=field,
+            field_child=grp_axis,
+            count=count,
+        )
     )
-    inner_labels, inner_values, outer_labels, outer_values, outer_parents = result
 
-    labels_outer = _autolabels(labels=outer_labels, decimal=decimal)
-    labels_inner = _autolabels(labels=inner_labels, decimal=decimal)
-    pct_outer = _center_pctdistance(inner_radius=0.5, outer_radius=1.0)
-    pct_inner = _center_pctdistance(inner_radius=0.0, outer_radius=0.5)
+    lbls_out = _format_label(labels=outer_labels, decimal=decimal)
+    lbls_inn = _format_label(labels=inner_labels, decimal=decimal)
+    pcnt_out = _center_label_percent(inner_radius=0.5, outer_radius=1.0)
+    pcnt_inn = _center_label_percent(inner_radius=0.0, outer_radius=0.5)
 
     plt.pie(
-        outer_values,
-        autopct=labels_outer,
-        startangle=90,
-        radius=1.0,
-        pctdistance=pct_outer,
+        outer_values, autopct=lbls_out, startangle=90, radius=1.0, pctdistance=pcnt_out
     )
     plt.pie(
-        inner_values,
-        autopct=labels_inner,
-        startangle=90,
-        radius=0.5,
-        pctdistance=pct_inner,
+        inner_values, autopct=lbls_inn, startangle=90, radius=0.5, pctdistance=pcnt_inn
     )
     plt.title(title)
     plt.axis("equal")
@@ -194,13 +184,14 @@ def plot_pie_group(dataset, field, count, grp_axis, title, decimal=0):
 
 
 def plot_sunburst(dataset, field, count, grp_axis, title, decimal=0):
-    result = _get_hierarchy_values(
-        dataset=dataset,
-        field_parent=field,
-        field_child=grp_axis,
-        count=count,
+    inner_labels, inner_values, outer_labels, outer_values, outer_parents = (
+        _get_hierarchy_values(
+            dataset=dataset,
+            field_parent=field,
+            field_child=grp_axis,
+            count=count,
+        )
     )
-    inner_labels, inner_values, outer_labels, outer_values, outer_parents = result
 
     labels = inner_labels + outer_labels
     parents = [""] * len(inner_labels) + outer_parents
@@ -219,14 +210,17 @@ def plot_sunburst(dataset, field, count, grp_axis, title, decimal=0):
             insidetextorientation="auto",
         )
     )
-    fig.update_layout(title=title, margin=dict(t=60, l=0, r=0, b=0))
+    fig.update_layout(
+        title=title,
+        margin=dict(t=60, l=0, r=0, b=0),
+    )
     fig.show()
 
 
 def plot_sankey(dataset, column1, column2, column3, title):
-    left_labels = _unique(field=dataset[column1])
-    mid_labels = _unique(field=dataset[column2])
-    right_labels = _unique(field=dataset[column3])
+    left_labels = _get_unique_labels(field=dataset[column1])
+    mid_labels = _get_unique_labels(field=dataset[column2])
+    right_labels = _get_unique_labels(field=dataset[column3])
     labels = left_labels + mid_labels + right_labels
 
     offset_left = 0
@@ -254,24 +248,24 @@ def plot_sankey(dataset, column1, column2, column3, title):
         flows_lm[(a, b)] = flows_lm.get((a, b), 0) + v
         flows_mr[(b, c)] = flows_mr.get((b, c), 0) + v
 
-    src = []
-    tgt = []
-    val = []
+    source = []
+    target = []
+    values = []
 
     for (a, b), v in flows_lm.items():
-        src.append(idx[a])
-        tgt.append(idx[b])
-        val.append(v)
+        source.append(idx[a])
+        target.append(idx[b])
+        values.append(v)
 
     for (b, c), v in flows_mr.items():
-        src.append(idx[b])
-        tgt.append(idx[c])
-        val.append(v)
+        source.append(idx[b])
+        target.append(idx[c])
+        values.append(v)
 
     fig = go.Figure(
         go.Sankey(
             node=dict(label=labels),
-            link=dict(source=src, target=tgt, value=val),
+            link=dict(source=source, target=target, value=values),
         )
     )
     fig.update_layout(
@@ -320,7 +314,7 @@ def _get_group_values(dataset, x_axis, y_axis, grp_axis, x_values, grp_values):
 
 
 def _get_hierarchy_values(dataset, field_parent, field_child, count):
-    inner_labels = _unique(field=dataset[field_parent])
+    inner_labels = _get_unique_labels(field=dataset[field_parent])
     idx_map = {p: i for i, p in enumerate(inner_labels)}
     inner_values = [0] * len(inner_labels)
 
@@ -339,21 +333,21 @@ def _get_hierarchy_values(dataset, field_parent, field_child, count):
     return inner_labels, inner_values, outer_labels, outer_values, outer_parents
 
 
-def _unique(field):
-    out = []
+def _get_unique_labels(field):
+    labels = []
     seen = set()
     for value in field:
         if value not in seen:
             seen.add(value)
-            out.append(value)
-    return out
+            labels.append(value)
+    return labels
 
 
 def _clean_label(name):
     return str(name).replace("_", " ").strip().title()
 
 
-def _autolabels(labels, decimal=0):
+def _format_label(labels, decimal=0):
     labels = list(labels)
     i = {"v": -1}
 
@@ -365,25 +359,25 @@ def _autolabels(labels, decimal=0):
     return fmt
 
 
-def _center_pctdistance(inner_radius, outer_radius):
+def _center_label_percent(inner_radius, outer_radius):
     return (inner_radius + outer_radius) / (2 * outer_radius)
 
 
-def _compute_positions(x_count, grp_count):
+def _compute_label_positions(axis_count, grp_count):
     width = 0.8 / max(1, grp_count)
-    x_pos = np.arange(x_count)
-    tick_pos = x_pos + width * (grp_count - 1) / 2
-    return width, x_pos, tick_pos
+    axis_pos = np.arange(axis_count)
+    tick_pos = axis_pos + width * (grp_count - 1) / 2
+    return width, axis_pos, tick_pos
 
 
-def _orient_bar(orientation):
+def _apply_bar_orient(orientation):
     if orientation == "v":
         return plt.bar
     if orientation == "h":
         return plt.barh
 
 
-def _size_bar(orientation, size):
+def _apply_bar_size(orientation, size):
     if orientation == "v":
         return {"width": size}
     if orientation == "h":
@@ -404,7 +398,7 @@ def _apply_bar_axes(
         plt.gca().invert_yaxis()
 
 
-def _choose_kind(kind, x_pos, values, label_values):
+def _apply_graph_kind(kind, x_pos, values, label_values):
     if kind == "area":
         plt.stackplot(x_pos, *values, labels=label_values)
     if kind == "bar":
