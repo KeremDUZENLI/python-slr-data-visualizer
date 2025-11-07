@@ -289,21 +289,21 @@ dataset = read_dataset(
 # )
 
 
-### 3_3 ### Technique x Historical Site Type — Heatmap
-dataset_counted_th = count_dataset(
-    dataset=dataset,
-    fields=["technique", "historical_site_type"],
-)
+# ### 3_3 ### Technique x Historical Site Type — Heatmap
+# dataset_counted_th = count_dataset(
+#     dataset=dataset,
+#     fields=["technique", "historical_site_type"],
+# )
 
-plot_heatmap(
-    dataset=dataset_counted_th,
-    x_axis="historical_site_type",
-    y_axis="technique",
-    x_label="Historical Site Type",
-    y_label="Technique",
-    title="Technique Usage Across Historical Site Types",
-    count_axis="count",
-)
+# plot_heatmap(
+#     dataset=dataset_counted_th,
+#     x_axis="historical_site_type",
+#     y_axis="technique",
+#     x_label="Historical Site Type",
+#     y_label="Technique",
+#     title="Technique Usage Across Historical Site Types",
+#     count_axis="count",
+# )
 
 
 ### 3_4 ### Technique - Study Focus

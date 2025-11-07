@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+from matplotlib.patches import Patch
 
 
 def plot_bar(
@@ -10,19 +11,23 @@ def plot_bar(
     x_values = dataset[x_axis]
     y_values = dataset[y_axis]
 
+    label_colors = {}
     if grp_axis:
         values = _get_unique_values(field=dataset[grp_axis])
-        colors = _apply_bar_color(grp_axis=grp_axis, values=values)
-        for group in values:
-            mask = [v == group for v in dataset[grp_axis]]
-            x_value = [x for x, m in zip(x_values, mask) if m]
-            y_value = [y for y, m in zip(y_values, mask) if m]
+        colors = _apply_bar_colors(grp_axis=grp_axis, values=values)
+        for value in values:
+            mask = [v == value for v in dataset[grp_axis]]
+            x_values_list = [x for x, m in zip(x_values, mask) if m]
+            y_values_list = [y for y, m in zip(y_values, mask) if m]
             bar(
-                x_value,
-                y_value,
-                label=group,
-                color=colors[group],
+                x_values_list,
+                y_values_list,
+                label=value,
+                color=colors[value],
             )
+            for x_value in x_values_list:
+                if x_value not in label_colors:
+                    label_colors[x_value] = colors[value]
     else:
         bar(
             x_values,
@@ -36,8 +41,11 @@ def plot_bar(
         rotation=45,
     )
 
+    if grp_axis:
+        _apply_axis_colors(orientation=orientation, colors=label_colors)
+        plt.legend(title=_clean_label(name=grp_axis))
+
     plt.title(title)
-    plt.legend(title=_clean_label(name=grp_axis))
     plt.tight_layout()
     plt.show()
 
@@ -60,16 +68,16 @@ def plot_bar_group(
         axis_count=len(x_values),
         grp_count=len(values),
     )
-    colors = _apply_bar_color(grp_axis=grp_axis, values=values)
+    colors = _apply_bar_colors(grp_axis=grp_axis, values=values)
 
-    for i, grp_value in enumerate(values):
+    for i, value in enumerate(values):
         x_values_pos = axis_pos + i * width
         size = _apply_bar_size(orientation, width)
         bar(
             x_values_pos,
             y_values_stacked[i],
-            label=grp_value,
-            color=colors[grp_value],
+            label=value,
+            color=colors[value],
             **size,
         )
 
@@ -132,6 +140,11 @@ def plot_heatmap(
     c_index = {c: i for i, c in enumerate(x_values)}
     mat = np.zeros((len(y_values), len(x_values)), dtype=float)
 
+    label_colors = {}
+    if grp_axis:
+        grp_values = _get_unique_values(field=dataset[grp_axis])
+        colors = _apply_bar_colors(grp_axis=grp_axis, values=grp_values)
+
     n = len(dataset[count_axis])
     for i in range(n):
         r_val = dataset[y_axis][i]
@@ -143,17 +156,35 @@ def plot_heatmap(
 
         for rv in r_vals:
             if rv in r_index:
-                for cv in c_vals:
-                    if cv in c_index:
-                        mat[r_index[rv], c_index[cv]] += v
+                for c_val in c_vals:
+                    if c_val in c_index:
+                        mat[r_index[rv], c_index[c_val]] += v
+
+        if grp_axis:
+            group = dataset[grp_axis][i]
+            color = colors.get(group)
+            if color:
+                for c_val in c_vals:
+                    if c_val not in label_colors:
+                        label_colors[c_val] = color
 
     plt.imshow(mat, aspect="auto")
+    plt.title(title)
     plt.xlabel(x_label)
     plt.ylabel(y_label)
-    plt.title(title)
     plt.xticks(np.arange(len(x_values)), x_values, rotation=45, ha="right")
     plt.yticks(np.arange(len(y_values)), y_values)
     plt.colorbar()
+
+    if grp_axis:
+        _apply_axis_colors(orientation="v", colors=label_colors)
+        handles = [
+            Patch(facecolor=colors[value], edgecolor="none", label=value)
+            for value in grp_values
+            if colors.get(value)
+        ]
+        plt.legend(handles=handles, title=_clean_label(name=grp_axis))
+
     plt.tight_layout()
     plt.show()
 
@@ -422,10 +453,10 @@ COLORS = {
         "Visualization": "#d62728",
     },
     "historical_site_type": {
-        "Archaeological Site": "#ff7f0e",
-        "Artistic Feature": "#a1b45e",
-        "Building": "#669ec6",
-        "Natural Space": "#579d57",
+        "Archaeological Site": "#6aa84f",
+        "Artistic Feature": "#f6b26b",
+        "Building": "#4a86e8",
+        "Natural Space": "#8e7cc3",
     },
     "softwares": {
         "software_data": "#1f77b4",
@@ -435,14 +466,27 @@ COLORS = {
 }
 
 
-def _apply_bar_color(grp_axis, values):
+def _apply_bar_colors(grp_axis, values):
     colors = {}
-    colors_set = COLORS[grp_axis]
+    colors_set = COLORS.get(grp_axis, {})
 
     for value in values:
-        colors[value] = colors_set[value]
+        colors[value] = colors_set.get(value, None)
 
     return colors
+
+
+def _apply_axis_colors(orientation, colors):
+    ax = plt.gca()
+    if orientation == "v":
+        ticks = ax.get_xticklabels()
+    if orientation == "h":
+        ticks = ax.get_yticklabels()
+
+    for tick in ticks:
+        color = colors.get(tick.get_text())
+        if color:
+            tick.set_color(color)
 
 
 def _apply_graph_kind(kind, x_pos, values, label_values):
