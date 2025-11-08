@@ -4,6 +4,26 @@ import plotly.graph_objects as go
 from matplotlib.patches import Patch
 
 
+COLORS = {
+    "study_focus": {
+        "Reconstruction": "#1f77b4",
+        "Restoration": "#2ca02c",
+        "Visualization": "#d62728",
+    },
+    "historical_site_type": {
+        "Archaeological Site": "#6aa84f",
+        "Artistic Feature": "#f6b26b",
+        "Building": "#4a86e8",
+        "Natural Space": "#8e7cc3",
+    },
+    "software_category": {
+        "software_data": "#1f77b4",
+        "software_modeling": "#2ca02c",
+        "software_render": "#d62728",
+    },
+}
+
+
 def plot_bar(
     dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis=None
 ):
@@ -189,11 +209,11 @@ def plot_heatmap(
     plt.show()
 
 
-def plot_pie(dataset, field, count, title, decimal=0):
+def plot_pie(dataset, field, count, title):
     inner_labels = dataset[field]
     inner_values = dataset[count]
 
-    lbls = _format_label(labels=inner_labels, decimal=decimal)
+    lbls = _format_label(labels=inner_labels, decimal=1)
     pcnt = _center_label_percent(inner_radius=0.0, outer_radius=1.0)
 
     plt.pie(inner_values, autopct=lbls, startangle=90, radius=1.0, pctdistance=pcnt)
@@ -203,7 +223,7 @@ def plot_pie(dataset, field, count, title, decimal=0):
     plt.show()
 
 
-def plot_pie_group(dataset, field, count, grp_axis, title, decimal=0):
+def plot_pie_group(dataset, field, count, title, grp_axis):
     inner_labels, inner_values, outer_labels, outer_values, outer_parents = (
         _get_hierarchy_values(
             dataset=dataset,
@@ -213,8 +233,8 @@ def plot_pie_group(dataset, field, count, grp_axis, title, decimal=0):
         )
     )
 
-    lbls_out = _format_label(labels=outer_labels, decimal=decimal)
-    lbls_inn = _format_label(labels=inner_labels, decimal=decimal)
+    lbls_out = _format_label(labels=outer_labels, decimal=1)
+    lbls_inn = _format_label(labels=inner_labels, decimal=1)
     pcnt_out = _center_label_percent(inner_radius=0.5, outer_radius=1.0)
     pcnt_inn = _center_label_percent(inner_radius=0.0, outer_radius=0.5)
 
@@ -230,7 +250,7 @@ def plot_pie_group(dataset, field, count, grp_axis, title, decimal=0):
     plt.show()
 
 
-def plot_sunburst(dataset, field, count, grp_axis, title, decimal=0):
+def plot_sunburst(dataset, field, count, title, grp_axis):
     inner_labels, inner_values, outer_labels, outer_values, outer_parents = (
         _get_hierarchy_values(
             dataset=dataset,
@@ -243,7 +263,7 @@ def plot_sunburst(dataset, field, count, grp_axis, title, decimal=0):
     labels = inner_labels + outer_labels
     parents = [""] * len(inner_labels) + outer_parents
     values = inner_values + outer_values
-    fmt = f"%{{label}}<br>%{{percentRoot:.{decimal}%}}"
+    fmt = f"%{{label}}<br>%{{percentRoot:.{1}%}}"
 
     fig = go.Figure(
         go.Sunburst(
@@ -264,7 +284,7 @@ def plot_sunburst(dataset, field, count, grp_axis, title, decimal=0):
     fig.show()
 
 
-def plot_sankey(dataset, column1, column2, column3, title):
+def plot_sankey(dataset, title, column1, column2, column3):
     left_labels = _get_unique_values(field=dataset[column1])
     mid_labels = _get_unique_values(field=dataset[column2])
     right_labels = _get_unique_values(field=dataset[column3])
@@ -444,26 +464,6 @@ def _apply_bar_axes(
         plt.ylabel(x_label)
         plt.yticks(tick_pos, tick_labels)
         plt.gca().invert_yaxis()
-
-
-COLORS = {
-    "study_focus": {
-        "Reconstruction": "#1f77b4",
-        "Restoration": "#2ca02c",
-        "Visualization": "#d62728",
-    },
-    "historical_site_type": {
-        "Archaeological Site": "#6aa84f",
-        "Artistic Feature": "#f6b26b",
-        "Building": "#4a86e8",
-        "Natural Space": "#8e7cc3",
-    },
-    "softwares": {
-        "software_data": "#1f77b4",
-        "software_modeling": "#2ca02c",
-        "software_render": "#d62728",
-    },
-}
 
 
 def _apply_bar_colors(grp_axis, values):

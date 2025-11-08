@@ -104,224 +104,220 @@ dataset = read_dataset(
 # )
 
 
-### 1_3 ### Study Focus - Percentage
-dataset_counted_sf = count_dataset(
-    dataset=dataset,
-    fields=["study_focus"],
-)
+# ### 1_3 ### Study Focus - Percentage
+# dataset_counted_sf = count_dataset(
+#     dataset=dataset,
+#     fields=["study_focus"],
+# )
 
-print_counts(
-    dataset=dataset_counted_sf,
-    decimal=0,
-)
+# print_counts(
+#     dataset=dataset_counted_sf,
+#     decimal=0,
+# )
 
-plot_bar(
-    dataset=dataset_counted_sf,
-    x_axis="study_focus",
-    y_axis="count",
-    x_label="Year",
-    y_label="Number of Publications",
-    title="Study Focus Distribution",
-    orientation="v",
-)
+# plot_bar(
+#     dataset=dataset_counted_sf,
+#     x_axis="study_focus",
+#     y_axis="count",
+#     x_label="Year",
+#     y_label="Number of Publications",
+#     title="Study Focus Distribution",
+#     orientation="v",
+# )
 
-plot_pie(
-    dataset=dataset_counted_sf,
-    field="study_focus",
-    count="count",
-    title="Study Focus Distribution",
-    decimal=1,
-)
-
-
-### 1_4 ### Historical Site Type - Percentage
-dataset_counted_hsts = count_dataset(
-    dataset=dataset,
-    fields=["historical_site_type", "historical_site_type_sub"],
-)
-
-print_counts(
-    dataset=dataset_counted_hsts,
-    decimal=1,
-)
-
-plot_pie_group(
-    dataset=dataset_counted_hsts,
-    field="historical_site_type",
-    count="count",
-    grp_axis="historical_site_type_sub",
-    title="Distribution of Historical Site Types",
-    decimal=1,
-)
-
-plot_sunburst(
-    dataset=dataset_counted_hsts,
-    field="historical_site_type",
-    count="count",
-    grp_axis="historical_site_type_sub",
-    title="Distribution of Historical Site Types",
-    decimal=1,
-)
+# plot_pie(
+#     dataset=dataset_counted_sf,
+#     field="study_focus",
+#     count="count",
+#     title="Study Focus Distribution",
+#     decimal=1,
+# )
 
 
-### 2_1 ### Platforms - Publications
-dataset_counted_pp = count_dataset(
-    dataset=dataset,
-    fields=["platform", "device"],
-)
+# ### 1_4 ### Historical Site Type - Percentage
+# dataset_counted_hsts = count_dataset(
+#     dataset=dataset,
+#     fields=["historical_site_type", "historical_site_type_sub"],
+# )
 
-print_counts(
-    dataset=dataset_counted_pp,
-    decimal=1,
-)
+# print_counts(
+#     dataset=dataset_counted_hsts,
+#     decimal=1,
+# )
 
-plot_bar_group(
-    dataset=dataset_counted_pp,
-    x_axis="platform",
-    y_axis="count",
-    x_label="Platform",
-    y_label="Number of Publications",
-    title="Distribution of Devices Across Platforms",
-    orientation="v",
-    grp_axis="device",
-)
+# plot_pie_group(
+#     dataset=dataset_counted_hsts,
+#     field="historical_site_type",
+#     count="count",
+#     title="Distribution of Historical Site Types",
+#     grp_axis="historical_site_type_sub",
+# )
 
-### 2_2 ### Devices - Publications
-dataset_counted_dp = count_dataset(
-    dataset=dataset,
-    fields=["device", "platform"],
-)
-
-print_counts(
-    dataset=dataset_counted_dp,
-    decimal=1,
-)
-
-plot_bar_group(
-    dataset=dataset_counted_dp,
-    x_axis="device",
-    y_axis="count",
-    x_label="Platform",
-    y_label="Number of Publications",
-    title="Distribution of Platforms Across Devices",
-    orientation="v",
-    grp_axis="platform",
-)
+# plot_sunburst(
+#     dataset=dataset_counted_hsts,
+#     field="historical_site_type",
+#     count="count",
+#     title="Distribution of Historical Site Types",
+#     grp_axis="historical_site_type_sub",
+# )
 
 
-### 2_3 ### Platforms_Year - Publications
-dataset_counted_pyp = count_dataset(
-    dataset=dataset,
-    fields=["year", "platform"],
-)
+# ### 2_1 ### Platforms - Publications
+# dataset_counted_pp = count_dataset(
+#     dataset=dataset,
+#     fields=["platform", "device"],
+# )
 
-print_counts(
-    dataset=dataset_counted_pyp,
-    decimal=1,
-)
+# print_counts(
+#     dataset=dataset_counted_pp,
+#     decimal=1,
+# )
 
-plot_stacked(
-    dataset=dataset_counted_pyp,
-    x_axis="year",
-    y_axis="count",
-    x_label="Year",
-    y_label="Number of Publications",
-    title="Platform Adoption Over Time (2015-2024)",
-    kind="area",
-    grp_axis="platform",
-)
+# plot_bar_group(
+#     dataset=dataset_counted_pp,
+#     x_axis="platform",
+#     y_axis="count",
+#     x_label="Platform",
+#     y_label="Number of Publications",
+#     title="Distribution of Devices Across Platforms",
+#     orientation="v",
+#     grp_axis="device",
+# )
 
+# ### 2_2 ### Devices - Publications
+# dataset_counted_dp = count_dataset(
+#     dataset=dataset,
+#     fields=["device", "platform"],
+# )
 
-### 3_1 ### SF - HST - T
-dataset_counted_sfhstt = count_dataset(
-    dataset=dataset,
-    fields=["study_focus", "historical_site_type", "technique"],
-)
+# print_counts(
+#     dataset=dataset_counted_dp,
+#     decimal=1,
+# )
 
-print_counts(
-    dataset=dataset_counted_sfhstt,
-    decimal=1,
-)
-
-plot_sankey(
-    dataset=dataset_counted_sfhstt,
-    column1="study_focus",
-    column2="historical_site_type",
-    column3="technique",
-    title="Sankey Diagram of Workflows",
-)
-
-
-### 3_2 ### Technique - TechniqueSub
-dataset_mapped = map_dataset_hierarchy(
-    dataset=dataset,
-    field_parent="technique",
-    field_child="technique_sub",
-    map=map_technique_sub,
-)
-
-dataset_counted_tts = count_dataset(
-    dataset=dataset_mapped,
-    fields=["technique", "technique_sub"],
-)
-
-print_counts(
-    dataset=dataset_counted_tts,
-    decimal=1,
-)
-
-plot_pie_group(
-    dataset=dataset_counted_tts,
-    field="technique",
-    count="count",
-    grp_axis="technique_sub",
-    title="Technique & Sub-Technique Distribution",
-    decimal=1,
-)
-
-plot_sunburst(
-    dataset=dataset_counted_tts,
-    field="technique",
-    count="count",
-    grp_axis="technique_sub",
-    title="Technique & Sub-Technique Distribution",
-    decimal=1,
-)
+# plot_bar_group(
+#     dataset=dataset_counted_dp,
+#     x_axis="device",
+#     y_axis="count",
+#     x_label="Device",
+#     y_label="Number of Publications",
+#     title="Distribution of Platforms Across Devices",
+#     orientation="v",
+#     grp_axis="platform",
+# )
 
 
-### 3_3 ### Technique x Historical Site Type — Heatmap
-dataset_counted_th = count_dataset(
-    dataset=dataset,
-    fields=["technique", "historical_site_type"],
-)
+# ### 2_3 ### Platforms_Year - Publications
+# dataset_counted_pyp = count_dataset(
+#     dataset=dataset,
+#     fields=["year", "platform"],
+# )
 
-plot_heatmap(
-    dataset=dataset_counted_th,
-    x_axis="historical_site_type",
-    y_axis="technique",
-    x_label="Historical Site Type",
-    y_label="Technique",
-    title="Technique Usage Across Historical Site Types",
-    count_axis="count",
-)
+# print_counts(
+#     dataset=dataset_counted_pyp,
+#     decimal=1,
+# )
+
+# plot_stacked(
+#     dataset=dataset_counted_pyp,
+#     x_axis="year",
+#     y_axis="count",
+#     x_label="Year",
+#     y_label="Number of Publications",
+#     title="Platform Adoption Over Time (2015-2024)",
+#     kind="area",
+#     grp_axis="platform",
+# )
 
 
-### 3_4 ### Technique - Study Focus
-dataset_counted_tsf = count_dataset(
-    dataset=dataset,
-    fields=["technique", "study_focus"],
-)
+# ### 3_1 ### SF - HST - T
+# dataset_counted_sfhstt = count_dataset(
+#     dataset=dataset,
+#     fields=["study_focus", "historical_site_type", "technique"],
+# )
 
-plot_bar_group(
-    dataset=dataset_counted_tsf,
-    x_axis="technique",
-    y_axis="count",
-    x_label="Techniques",
-    y_label="Frequency",
-    title="Technique Used in Study Focus",
-    orientation="v",
-    grp_axis="study_focus",
-)
+# print_counts(
+#     dataset=dataset_counted_sfhstt,
+#     decimal=1,
+# )
+
+# plot_sankey(
+#     dataset=dataset_counted_sfhstt,
+#     title="Sankey Diagram of Workflows",
+#     column1="study_focus",
+#     column2="historical_site_type",
+#     column3="technique",
+# )
+
+
+# ### 3_2 ### Technique - TechniqueSub
+# dataset_mapped = map_dataset_hierarchy(
+#     dataset=dataset,
+#     field_parent="technique",
+#     field_child="technique_sub",
+#     map=map_technique_sub,
+# )
+
+# dataset_counted_tts = count_dataset(
+#     dataset=dataset_mapped,
+#     fields=["technique", "technique_sub"],
+# )
+
+# print_counts(
+#     dataset=dataset_counted_tts,
+#     decimal=1,
+# )
+
+# plot_pie_group(
+#     dataset=dataset_counted_tts,
+#     field="technique",
+#     count="count",
+#     title="Technique & Sub-Technique Distribution",
+#     grp_axis="technique_sub",
+# )
+
+# plot_sunburst(
+#     dataset=dataset_counted_tts,
+#     field="technique",
+#     count="count",
+#     title="Technique & Sub-Technique Distribution",
+#     grp_axis="technique_sub",
+# )
+
+
+# ### 3_3 ### Technique x Historical Site Type — Heatmap
+# dataset_counted_th = count_dataset(
+#     dataset=dataset,
+#     fields=["technique", "historical_site_type"],
+# )
+
+# plot_heatmap(
+#     dataset=dataset_counted_th,
+#     x_axis="historical_site_type",
+#     y_axis="technique",
+#     x_label="Historical Site Type",
+#     y_label="Technique",
+#     title="Technique Usage Across Historical Site Types",
+#     count_axis="count",
+# )
+
+
+# ### 3_4 ### Technique - Study Focus
+# dataset_counted_tsf = count_dataset(
+#     dataset=dataset,
+#     fields=["technique", "study_focus"],
+# )
+
+# plot_bar_group(
+#     dataset=dataset_counted_tsf,
+#     x_axis="technique",
+#     y_axis="count",
+#     x_label="Techniques",
+#     y_label="Frequency",
+#     title="Technique Used in Study Focus",
+#     orientation="v",
+#     grp_axis="study_focus",
+# )
 
 
 ### 4_1 ### Software by Category (Horizontal)
