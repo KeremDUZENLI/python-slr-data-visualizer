@@ -140,13 +140,13 @@ def plot_heatmap(
     c_index = {c: i for i, c in enumerate(x_values)}
     mat = np.zeros((len(y_values), len(x_values)), dtype=float)
 
-    label_colors = {}
     if grp_axis:
         grp_values = _get_unique_values(field=dataset[grp_axis])
         colors = _apply_bar_colors(grp_axis=grp_axis, values=grp_values)
 
-    n = len(dataset[count_axis])
-    for i in range(n):
+    number = len(dataset[count_axis])
+    label_colors = {}
+    for i in range(number):
         r_val = dataset[y_axis][i]
         c_val = dataset[x_axis][i]
         v = dataset[count_axis][i]

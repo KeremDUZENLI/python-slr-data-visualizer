@@ -69,9 +69,9 @@ def filter_dataset_by_field(dataset, fields):
 
 def filter_dataset_by_value(dataset, field, values, include=True):
     dataset_filtered = {k: [] for k in dataset}
-    rows = len(next(iter(dataset.values()), []))
+    num_rows = len(next(iter(dataset.values()), []))
 
-    for i in range(rows):
+    for i in range(num_rows):
         cell = dataset[field][i]
         tokens = cell if isinstance(cell, list) else [cell]
         has_value = any(t in values for t in tokens)
@@ -83,9 +83,9 @@ def filter_dataset_by_value(dataset, field, values, include=True):
     return dataset_filtered
 
 
-def filter_dataset_by_count(dataset, value, comparison):
+def filter_dataset_by_count(dataset, field, value, comparison):
     dataset_filtered = {k: [] for k in dataset}
-    for i, count in enumerate(dataset["count"]):
+    for i, count in enumerate(dataset[field]):
         if _compare(a=count, b=value, op=comparison):
             for key in dataset:
                 dataset_filtered[key].append(dataset[key][i])
@@ -157,6 +157,6 @@ def _compare(a, b, op):
         return a <= b
     if op == "<":
         return a < b
-    if op == "==":
+    if op == "=":
         return a == b
     return False
