@@ -70,15 +70,22 @@ def filter_dataset_by_field(dataset, fields):
 def filter_dataset_by_value(dataset, field, values, include=True):
     dataset_filtered = {k: [] for k in dataset}
     num_rows = len(next(iter(dataset.values()), []))
+    allowed = set(values)
 
     for i in range(num_rows):
         cell = dataset[field][i]
         tokens = cell if isinstance(cell, list) else [cell]
-        has_value = any(t in values for t in tokens)
 
-        if (include and has_value) or (not include and not has_value):
-            for key in dataset:
-                dataset_filtered[key].append(dataset[key][i])
+        kept = [t for t in tokens if (t in allowed) == include]
+
+        if not kept:
+            continue
+
+        for k in dataset:
+            if k == field:
+                dataset_filtered[k].append(kept if isinstance(cell, list) else kept[0])
+            else:
+                dataset_filtered[k].append(dataset[k][i])
 
     return dataset_filtered
 

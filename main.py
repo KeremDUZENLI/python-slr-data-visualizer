@@ -6,6 +6,7 @@ from src.tools import (
     read_dataset,
     map_dataset_hierarchy,
     filter_dataset_by_field,
+    filter_dataset_by_value,
     filter_dataset_by_count,
     stack_datasets,
     count_dataset,
@@ -20,6 +21,7 @@ from setup import (
     chart_sunburst,
     chart_sankey,
 )
+from output.print import print_counts, print_simple
 
 
 PATH = "data/dataset.csv"
@@ -37,7 +39,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     title="Timeline of Publications (2015-2024)",
 #     orientation="v",
 #     grp_axis=None,
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -53,7 +55,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     title="Timeline of Publications by Historical Site Categories (2015-2024)",
 #     orientation="v",
 #     grp_axis="historical_site_type",
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -69,7 +71,9 @@ DATASET = read_dataset(csv_path=PATH)
 #     title="Timeline of Publications by Building Categories (2015-2024)",
 #     orientation="v",
 #     grp_axis="historical_site_type_sub",
-#     filter_value="historical_site_type=Building",
+#     filter_values=[
+#         "historical_site_type==Building",
+#     ],
 #     filter_count=None,
 # )
 
@@ -85,7 +89,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     title="Study Focus Distribution",
 #     orientation="v",
 #     grp_axis=None,
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -94,7 +98,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     fields=["study_focus"],
 #     count="count",
 #     title="Study Focus Distribution",
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -106,7 +110,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     count="count",
 #     title="Distribution of Historical Site Types",
 #     grp_axis="historical_site_type_sub",
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -116,7 +120,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     count="count",
 #     title="Distribution of Historical Site Types",
 #     grp_axis="historical_site_type_sub",
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -132,7 +136,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     title="Distribution of Devices Across Platforms",
 #     orientation="v",
 #     grp_axis="device",
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -148,7 +152,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     title="Distribution of Platforms Across Devices",
 #     orientation="v",
 #     grp_axis="platform",
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -164,7 +168,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     title="Platform Adoption Over Time (2015-2024)",
 #     kind="area",
 #     grp_axis="platform",
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -178,7 +182,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     title="Platform Adoption Over Time (2015-2024)",
 #     kind="bar",
 #     grp_axis="platform",
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -208,7 +212,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     count="count",
 #     title="Technique & Sub-Technique Distribution",
 #     grp_axis="technique_sub",
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -218,7 +222,7 @@ DATASET = read_dataset(csv_path=PATH)
 #     count="count",
 #     title="Technique & Sub-Technique Distribution",
 #     grp_axis="technique_sub",
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
@@ -234,6 +238,8 @@ DATASET = read_dataset(csv_path=PATH)
 #     title="Technique Usage Across Historical Site Types",
 #     count_axis="count",
 #     grp_axis=None,
+#     filter_values=None,
+#     filter_count=None,
 # )
 
 
@@ -248,72 +254,136 @@ DATASET = read_dataset(csv_path=PATH)
 #     title="Technique Used in Study Focus",
 #     orientation="v",
 #     grp_axis="study_focus",
-#     filter_value=None,
+#     filter_values=None,
 #     filter_count=None,
 # )
 
 
-# 4_1 # BAR CHART # X:Software/Y:Count
+# # 4_1 # BAR CHART # X:Software/Y:Count
+# dataset_stacked = stack_datasets(
+#     datasets=[
+#         (
+#             DATASET,
+#             {
+#                 "software": "software_data",
+#                 "technique": "technique",
+#             },
+#         ),
+#         (
+#             DATASET,
+#             {
+#                 "software": "software_modeling",
+#                 "technique": "technique",
+#             },
+#         ),
+#         (
+#             DATASET,
+#             {
+#                 "software": "software_render",
+#                 "technique": "technique",
+#             },
+#         ),
+#     ],
+#     stack_by={"software_category": "software"},
+#     axes=["software_category", "software", "technique"],
+# )
+
+# chart_bar(
+#     dataset=dataset_stacked,
+#     fields=["software_category", "software"],
+#     x_axis="software",
+#     y_axis="count",
+#     x_label="Software",
+#     y_label="Frequency",
+#     title="Software Usage by Category",
+#     orientation="v",
+#     grp_axis="software_category",
+#     filter_values=[
+#         "software!=",
+#     ],
+#     filter_count="count>=5",
+# )
+
+# chart_bar(
+#     dataset=dataset_stacked,
+#     fields=["software_category", "software"],
+#     x_axis="software",
+#     y_axis="count",
+#     x_label="Software",
+#     y_label="Frequency",
+#     title="Software Usage by Category",
+#     orientation="h",
+#     grp_axis="software_category",
+#     filter_values=[
+#         "software!=",
+#     ],
+#     filter_count="count>=5",
+# )
+
+
+# # 4_2 # HEATMAP CHART # X:Software/Y:Technique
+# chart_heatmap(
+#     dataset=dataset_stacked,
+#     fields=["software_category", "software", "technique"],
+#     x_axis="software",
+#     y_axis="technique",
+#     x_label="Software",
+#     y_label="Technique",
+#     title="Technique Used with Different Software",
+#     count_axis="count",
+#     grp_axis="software_category",
+#     filter_values=[
+#         "software==Agisoft Metashape,ArcGIS,Autodesk ReCap,Leica Cyclone,QGIS,Reality Capture,Autodesk 3ds Max,Autodesk AutoCAD,Autodesk Revit,Blender,Rhinoceros,ZBrush,Unity,Unreal Engine",
+#     ],
+#     filter_count=None,
+# )
+
+
+# # 4_3 # HEATMAP CHART # X:Software_Modeling/Y:Software_Data
+# chart_heatmap(
+#     dataset=DATASET,
+#     fields=["software_modeling", "software_data"],
+#     x_axis="software_modeling",
+#     y_axis="software_data",
+#     x_label="Software for Modeling",
+#     y_label="Software for Data",
+#     title="Software for Modeling - Software for Data",
+#     count_axis="count",
+#     grp_axis=None,
+#     filter_values=[
+#         "software_modeling==Autodesk 3ds Max,Autodesk AutoCAD,Autodesk Revit,Blender,Rhinoceros,ZBrush",
+#         "software_data==Agisoft Metashape,ArcGIS,Autodesk ReCap,Leica Cyclone,QGIS,Reality Capture",
+#     ],
+#     filter_count=None,
+# )
+
+
+# # 4_4 # HEATMAP CHART # X:Software_Modeling/Y:Software_Render
+# chart_heatmap(
+#     dataset=DATASET,
+#     fields=["software_modeling", "software_render"],
+#     x_axis="software_modeling",
+#     y_axis="software_render",
+#     x_label="Software for Modeling",
+#     y_label="Software for Render",
+#     title="Software for Modeling - Software for Render",
+#     count_axis="count",
+#     grp_axis=None,
+#     filter_values=[
+#         "software_modeling==Autodesk 3ds Max,Autodesk AutoCAD,Autodesk Revit,Blender,Rhinoceros,ZBrush",
+#         "software_render==Unity,Unreal Engine,Lumion,Twinmotion,V-Ray",
+#     ],
+#     filter_count=None,
+# )
+
+
+# 4_5 # STACKED BAR CHART # X:Year/Y:Count
 dataset_stacked = stack_datasets(
     datasets=[
         (
             DATASET,
             {
-                "software": "software_data",
-            },
-        ),
-        (
-            DATASET,
-            {
-                "software": "software_modeling",
-            },
-        ),
-        (
-            DATASET,
-            {
-                "software": "software_render",
-            },
-        ),
-    ],
-    stack_by={"software_category": "software"},
-    axes=["software_category", "software"],
-)
-
-chart_bar(
-    dataset=dataset_stacked,
-    fields=["software_category", "software"],
-    x_axis="software",
-    y_axis="count",
-    x_label="Software",
-    y_label="Frequency",
-    title="Software Usage by Category",
-    orientation="v",
-    grp_axis="software_category",
-    filter_value="software!=",
-    filter_count="count>=5",
-)
-
-chart_bar(
-    dataset=dataset_stacked,
-    fields=["software_category", "software"],
-    x_axis="software",
-    y_axis="count",
-    x_label="Software",
-    y_label="Frequency",
-    title="Software Usage by Category",
-    orientation="h",
-    grp_axis="software_category",
-    filter_value="software!=",
-    filter_count="count>=5",
-)
-
-
-# 4_2 # HEATMAP CHART # X:Software/Y:Technique
-dataset_stacked = stack_datasets(
-    datasets=[
-        (
-            DATASET,
-            {
+                "year": "year",
                 "software": "software_data",
                 "technique": "technique",
             },
@@ -321,6 +391,7 @@ dataset_stacked = stack_datasets(
         (
             DATASET,
             {
+                "year": "year",
                 "software": "software_modeling",
                 "technique": "technique",
             },
@@ -328,41 +399,43 @@ dataset_stacked = stack_datasets(
         (
             DATASET,
             {
+                "year": "year",
                 "software": "software_render",
                 "technique": "technique",
             },
         ),
     ],
     stack_by={"software_category": "software"},
-    axes=["software_category", "software", "technique"],
+    axes=["software_category", "year", "software", "technique"],
 )
 
-chart_heatmap(
+chart_stacked(
     dataset=dataset_stacked,
-    fields=["software_category", "software", "technique"],
-    x_axis="software",
-    y_axis="technique",
-    x_label="Software",
-    y_label="Technique",
-    title="Technique Used with Different Software",
-    count_axis="count",
-    grp_axis="software_category",
-    filter_value="software!=",
-    filter_count="count>=3",
+    fields=["year", "software"],
+    x_axis="year",
+    y_axis="count",
+    x_label="Year",
+    y_label="Number of Uses",
+    title="Software Usage Trend Over Time (2015-2024)",
+    kind="area",
+    grp_axis="software",
+    filter_values=[
+        "software==Agisoft Metashape,ArcGIS,Autodesk ReCap,Leica Cyclone,QGIS,Reality Capture,Autodesk 3ds Max,Autodesk AutoCAD,Autodesk Revit,Blender,Rhinoceros,ZBrush,Unity,Unreal Engine",
+    ],
+    filter_count="count>=4",
 )
 
 
-# 4_3 # HEATMAP CHART # X:Software_Modeling/Y:Software_Data
-chart_heatmap(
+chart_stacked(
     dataset=DATASET,
-    fields=["software_modeling", "software_data"],
-    x_axis="software_modeling",
-    y_axis="software_data",
-    x_label="Software for Modeling",
-    y_label="Software for Data",
-    title="Software for Modeling - Software for Data",
-    count_axis="count",
-    grp_axis=None,
-    filter_value="software_modeling!=",
-    filter_count="count>2",
+    fields=["year", "platform"],
+    x_axis="year",
+    y_axis="count",
+    x_label="Year",
+    y_label="Number of Publications",
+    title="Platform Adoption Over Time (2015-2024)",
+    kind="area",
+    grp_axis="platform",
+    filter_values=None,
+    filter_count=None,
 )

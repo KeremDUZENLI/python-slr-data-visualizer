@@ -1,3 +1,9 @@
+def print_simple(dataset):
+    for item in dataset:
+        print(item)
+        print(dataset[item])
+
+
 def print_counts(dataset, decimal=0):
     field_names = [k for k in dataset.keys() if k != "count"]
     total_records = sum(dataset["count"])

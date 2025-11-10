@@ -28,13 +28,13 @@ def chart_bar(
     title,
     orientation,
     grp_axis=None,
-    filter_value=None,
+    filter_values=None,
     filter_count=None,
 ):
     dict_prepared = _prepare_dict(
         dataset=dataset,
         fields=fields,
-        filter_value=filter_value,
+        filter_values=filter_values,
         filter_count=filter_count,
     )
     print_counts(
@@ -63,13 +63,13 @@ def chart_bar_group(
     title,
     orientation,
     grp_axis,
-    filter_value=None,
+    filter_values=None,
     filter_count=None,
 ):
     dict_prepared = _prepare_dict(
         dataset=dataset,
         fields=fields,
-        filter_value=filter_value,
+        filter_values=filter_values,
         filter_count=filter_count,
     )
     print_counts(
@@ -98,13 +98,13 @@ def chart_stacked(
     title,
     kind,
     grp_axis,
-    filter_value=None,
+    filter_values=None,
     filter_count=None,
 ):
     dict_prepared = _prepare_dict(
         dataset=dataset,
         fields=fields,
-        filter_value=filter_value,
+        filter_values=filter_values,
         filter_count=filter_count,
     )
     print_counts(
@@ -133,13 +133,13 @@ def chart_heatmap(
     title,
     count_axis,
     grp_axis,
-    filter_value=None,
+    filter_values=None,
     filter_count=None,
 ):
     dict_prepared = _prepare_dict(
         dataset=dataset,
         fields=fields,
-        filter_value=filter_value,
+        filter_values=filter_values,
         filter_count=filter_count,
     )
     print_counts(
@@ -163,13 +163,13 @@ def chart_pie(
     fields,
     count,
     title,
-    filter_value=None,
+    filter_values=None,
     filter_count=None,
 ):
     dict_prepared = _prepare_dict(
         dataset=dataset,
         fields=fields,
-        filter_value=filter_value,
+        filter_values=filter_values,
         filter_count=filter_count,
     )
     print_counts(
@@ -190,13 +190,13 @@ def chart_pie_group(
     count,
     title,
     grp_axis,
-    filter_value=None,
+    filter_values=None,
     filter_count=None,
 ):
     dict_prepared = _prepare_dict(
         dataset=dataset,
         fields=fields,
-        filter_value=filter_value,
+        filter_values=filter_values,
         filter_count=filter_count,
     )
     print_counts(
@@ -218,13 +218,13 @@ def chart_sunburst(
     count,
     title,
     grp_axis,
-    filter_value=None,
+    filter_values=None,
     filter_count=None,
 ):
     dict_prepared = _prepare_dict(
         dataset=dataset,
         fields=fields,
-        filter_value=filter_value,
+        filter_values=filter_values,
         filter_count=filter_count,
     )
     print_counts(
@@ -268,17 +268,18 @@ def chart_sankey(
 def _prepare_dict(
     dataset,
     fields,
-    filter_value=None,
+    filter_values=None,
     filter_count=None,
 ):
-    if filter_value:
-        field, operation, values = _parse_string(text=filter_value)
-        dataset = filter_dataset_by_value(
-            dataset=dataset,
-            field=field,
-            values=values,
-            include=operation,
-        )
+    if filter_values:
+        for fv in filter_values:
+            field, operation, values = _parse_string(text=fv)
+            dataset = filter_dataset_by_value(
+                dataset=dataset,
+                field=field,
+                values=values,
+                include=operation,
+            )
 
     dataset_prepared = count_dataset(
         dataset=dataset,
@@ -309,7 +310,14 @@ def _parse_string(text):
     left, right = text.split(found_op, 1)
     field = left.strip()
     right = right.strip()
-    values = [v.strip() for v in right.split(",")]
+    values_raw = [v.strip() for v in right.split(",")]
+
+    values = []
+    for v in values_raw:
+        if v in ("''", '""'):
+            values.append("")
+        else:
+            values.append(v)
 
     if len(values) == 1 and values[0] == "":
         values = [""]
