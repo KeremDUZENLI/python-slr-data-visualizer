@@ -21,6 +21,16 @@ COLORS = {
         "software_modeling": "#2ca02c",
         "software_render": "#d62728",
     },
+    "software": {
+        "Agisoft Metashape": "#1f77b4",
+        "Autodesk ReCap": "#1f77b4",
+        "Leica Cyclone": "#1f77b4",
+        "Autodesk 3ds Max": "#2ca02c",
+        "Autodesk Revit": "#2ca02c",
+        "Blender": "#2ca02c",
+        "Unity": "#d62728",
+        "Unreal Engine": "#d62728",
+    },
 }
 
 
@@ -34,7 +44,7 @@ def plot_bar(
     label_colors = {}
     if grp_axis:
         values = _get_unique_values(field=dataset[grp_axis])
-        colors = _apply_bar_colors(grp_axis=grp_axis, values=values)
+        colors = _apply_colors(grp_axis=grp_axis, values=values)
         for value in values:
             mask = [v == value for v in dataset[grp_axis]]
             x_values_list = [x for x, m in zip(x_values, mask) if m]
@@ -88,7 +98,7 @@ def plot_bar_group(
         axis_count=len(x_values),
         grp_count=len(values),
     )
-    colors = _apply_bar_colors(grp_axis=grp_axis, values=values)
+    colors = _apply_colors(grp_axis=grp_axis, values=values)
 
     for i, value in enumerate(values):
         x_values_pos = axis_pos + i * width
@@ -118,22 +128,24 @@ def plot_bar_group(
 
 def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axis):
     x_values = _get_unique_values(field=dataset[x_axis])
-    label_values = _get_unique_values(field=dataset[grp_axis])
+    grp_values = _get_unique_values(field=dataset[grp_axis])
     y_values_stacked = _stack_group_values(
         dataset=dataset,
         x_axis=x_axis,
         y_axis=y_axis,
         grp_axis=grp_axis,
         x_values=x_values,
-        grp_values=label_values,
+        grp_values=grp_values,
     )
     x_pos = np.arange(len(x_values))
+    colors = _apply_colors(grp_axis=grp_axis, values=grp_values)
 
     _apply_graph_kind(
         kind=kind,
         x_pos=x_pos,
         values=y_values_stacked,
-        label_values=label_values,
+        label_values=grp_values,
+        colors=colors,
     )
     _apply_bar_axes(
         orientation="v",
@@ -144,10 +156,15 @@ def plot_stacked(dataset, x_axis, y_axis, x_label, y_label, title, kind, grp_axi
         rotation=45,
     )
 
+    legend = plt.legend(
+        title=_clean_label(name=grp_axis),
+        loc="lower right",
+        bbox_to_anchor=(1, 0),
+    )
+    plt.gca().add_artist(legend)
     plt.title(title)
-    plt.legend(title=_clean_label(name=grp_axis))
     plt.tight_layout()
-    plt.show()
+    # plt.show()
 
 
 def plot_heatmap(
@@ -162,7 +179,7 @@ def plot_heatmap(
 
     if grp_axis:
         grp_values = _get_unique_values(field=dataset[grp_axis])
-        colors = _apply_bar_colors(grp_axis=grp_axis, values=grp_values)
+        colors = _apply_colors(grp_axis=grp_axis, values=grp_values)
 
     number = len(dataset[count_axis])
     label_colors = {}
@@ -199,7 +216,11 @@ def plot_heatmap(
     if grp_axis:
         _apply_axis_colors(orientation="v", colors=label_colors)
         handles = [
-            Patch(facecolor=colors[value], edgecolor="none", label=value)
+            Patch(
+                facecolor=colors[value],
+                edgecolor="none",
+                label=value,
+            )
             for value in grp_values
             if colors.get(value)
         ]
@@ -466,16 +487,6 @@ def _apply_bar_axes(
         plt.gca().invert_yaxis()
 
 
-def _apply_bar_colors(grp_axis, values):
-    colors = {}
-    colors_set = COLORS.get(grp_axis, {})
-
-    for value in values:
-        colors[value] = colors_set.get(value, None)
-
-    return colors
-
-
 def _apply_axis_colors(orientation, colors):
     ax = plt.gca()
     if orientation == "v":
@@ -489,9 +500,26 @@ def _apply_axis_colors(orientation, colors):
             tick.set_color(color)
 
 
-def _apply_graph_kind(kind, x_pos, values, label_values):
+def _apply_colors(grp_axis, values):
+    colors = {}
+    colors_set = COLORS.get(grp_axis, {})
+
+    for value in values:
+        colors[value] = colors_set.get(value, None)
+
+    return colors
+
+
+def _apply_graph_kind(kind, x_pos, values, label_values, colors=None):
     if kind == "area":
-        plt.stackplot(x_pos, *values, labels=label_values)
+        color_list = [colors.get(label) for label in label_values]
+        plt.stackplot(
+            x_pos,
+            *values,
+            labels=label_values,
+            colors=color_list,
+            alpha=0.9,
+        )
     if kind == "bar":
         bottoms = np.zeros(len(x_pos))
         for idx, y_values in enumerate(values):
@@ -500,5 +528,6 @@ def _apply_graph_kind(kind, x_pos, values, label_values):
                 y_values,
                 bottom=bottoms,
                 label=label_values[idx],
+                color=colors[label_values[idx]],
             )
             bottoms = bottoms + np.array(y_values)
