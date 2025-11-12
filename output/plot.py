@@ -17,19 +17,17 @@ COLORS = {
         "Natural Space": "#8e7cc3",
     },
     "software_category": {
-        "software_data": "#1f77b4",
-        "software_modeling": "#2ca02c",
-        "software_render": "#d62728",
+        "software_data": "#0000ff",
+        "software_modeling": "#008000",
+        "software_render": "#ff0000",
     },
     "software": {
-        "Agisoft Metashape": "#1f77b4",
-        "Autodesk ReCap": "#1f77b4",
-        "Leica Cyclone": "#1f77b4",
-        "Autodesk 3ds Max": "#2ca02c",
-        "Autodesk Revit": "#2ca02c",
-        "Blender": "#2ca02c",
-        "Unity": "#d62728",
-        "Unreal Engine": "#d62728",
+        "Agisoft Metashape": "#c4deed",
+        "Autodesk ReCap": "#72aad2",
+        "Autodesk 3ds Max": "#c6e7c1",
+        "Blender": "#72bc87",
+        "Unity": "#fcbca7",
+        "Unreal Engine": "#eb6d67",
     },
 }
 
@@ -487,29 +485,6 @@ def _apply_bar_axes(
         plt.gca().invert_yaxis()
 
 
-def _apply_axis_colors(orientation, colors):
-    ax = plt.gca()
-    if orientation == "v":
-        ticks = ax.get_xticklabels()
-    if orientation == "h":
-        ticks = ax.get_yticklabels()
-
-    for tick in ticks:
-        color = colors.get(tick.get_text())
-        if color:
-            tick.set_color(color)
-
-
-def _apply_colors(grp_axis, values):
-    colors = {}
-    colors_set = COLORS.get(grp_axis, {})
-
-    for value in values:
-        colors[value] = colors_set.get(value, None)
-
-    return colors
-
-
 def _apply_graph_kind(kind, x_pos, values, label_values, colors=None):
     if kind == "area":
         color_list = [colors.get(label) for label in label_values]
@@ -531,3 +506,26 @@ def _apply_graph_kind(kind, x_pos, values, label_values, colors=None):
                 color=colors[label_values[idx]],
             )
             bottoms = bottoms + np.array(y_values)
+
+
+def _apply_colors(grp_axis, values):
+    colors = {}
+    colors_set = COLORS.get(grp_axis, {})
+
+    for value in values:
+        colors[value] = colors_set.get(value, None)
+
+    return colors
+
+
+def _apply_axis_colors(orientation, colors):
+    ax = plt.gca()
+    if orientation == "v":
+        ticks = ax.get_xticklabels()
+    if orientation == "h":
+        ticks = ax.get_yticklabels()
+
+    for tick in ticks:
+        color = colors.get(tick.get_text())
+        if color:
+            tick.set_color(color)

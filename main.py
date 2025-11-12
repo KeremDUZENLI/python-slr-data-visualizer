@@ -259,66 +259,66 @@ DATASET = read_dataset(csv_path=PATH)
 # )
 
 
-# # 4_1 # BAR CHART # X:Software/Y:Count
-# dataset_stacked = stack_datasets(
-#     datasets=[
-#         (
-#             DATASET,
-#             {
-#                 "software": "software_data",
-#                 "technique": "technique",
-#             },
-#         ),
-#         (
-#             DATASET,
-#             {
-#                 "software": "software_modeling",
-#                 "technique": "technique",
-#             },
-#         ),
-#         (
-#             DATASET,
-#             {
-#                 "software": "software_render",
-#                 "technique": "technique",
-#             },
-#         ),
-#     ],
-#     stack_by={"software_category": "software"},
-#     axes=["software_category", "software", "technique"],
-# )
+# 4_1 # BAR CHART # X:Software/Y:Count
+dataset_stacked = stack_datasets(
+    datasets=[
+        (
+            DATASET,
+            {
+                "software": "software_data",
+                "technique": "technique",
+            },
+        ),
+        (
+            DATASET,
+            {
+                "software": "software_modeling",
+                "technique": "technique",
+            },
+        ),
+        (
+            DATASET,
+            {
+                "software": "software_render",
+                "technique": "technique",
+            },
+        ),
+    ],
+    stack_by={"software_category": "software"},
+    axes=["software_category", "software", "technique"],
+)
 
-# chart_bar(
-#     dataset=dataset_stacked,
-#     fields=["software_category", "software"],
-#     x_axis="software",
-#     y_axis="count",
-#     x_label="Software",
-#     y_label="Frequency",
-#     title="Software Usage by Category",
-#     orientation="v",
-#     grp_axis="software_category",
-#     filter_values=[
-#         "software!=",
-#     ],
-#     filter_count="count>=5",
-# )
+chart_bar(
+    dataset=dataset_stacked,
+    fields=["software_category", "software"],
+    x_axis="software",
+    y_axis="count",
+    x_label="Software",
+    y_label="Frequency",
+    title="Software Usage by Category",
+    orientation="v",
+    grp_axis="software_category",
+    filter_values=[
+        "software!=",
+    ],
+    filter_count="count>=5",
+)
 
-# chart_bar(
-#     dataset=dataset_stacked,
-#     fields=["software_category", "software"],
-#     x_axis="software",
-#     y_axis="count",
-#     x_label="Software",
-#     y_label="Frequency",
-#     title="Software Usage by Category",
-#     orientation="h",
-#     grp_axis="software_category",
-#     filter_values=[
-#         "software!=",
-#     ],
-#     filter_count="count>=5",
-# )
+chart_bar(
+    dataset=dataset_stacked,
+    fields=["software_category", "software"],
+    x_axis="software",
+    y_axis="count",
+    x_label="Software",
+    y_label="Frequency",
+    title="Software Usage by Category",
+    orientation="h",
+    grp_axis="software_category",
+    filter_values=[
+        "software!=",
+    ],
+    filter_count="count>=5",
+)
 
 
 # # 4_2 # HEATMAP CHART # X:Software/Y:Technique
@@ -377,85 +377,85 @@ DATASET = read_dataset(csv_path=PATH)
 # )
 
 
-# 4_5 # STACKED BAR CHART # X:Year/Y:Count
-dataset_stacked = stack_datasets(
-    datasets=[
-        (
-            DATASET,
-            {
-                "year": "year",
-                "software": "software_data",
-                "technique": "technique",
-            },
-        ),
-        (
-            DATASET,
-            {
-                "year": "year",
-                "software": "software_modeling",
-                "technique": "technique",
-            },
-        ),
-        (
-            DATASET,
-            {
-                "year": "year",
-                "software": "software_render",
-                "technique": "technique",
-            },
-        ),
-    ],
-    stack_by={"software_category": "software"},
-    axes=["software_category", "year", "software", "technique"],
-)
+# # 4_5 # STACKED BAR CHART # X:Year/Y:Count
+# dataset_stacked = stack_datasets(
+#     datasets=[
+#         (
+#             DATASET,
+#             {
+#                 "year": "year",
+#                 "software": "software_data",
+#                 "technique": "technique",
+#             },
+#         ),
+#         (
+#             DATASET,
+#             {
+#                 "year": "year",
+#                 "software": "software_modeling",
+#                 "technique": "technique",
+#             },
+#         ),
+#         (
+#             DATASET,
+#             {
+#                 "year": "year",
+#                 "software": "software_render",
+#                 "technique": "technique",
+#             },
+#         ),
+#     ],
+#     stack_by={"software_category": "software"},
+#     axes=["software_category", "year", "software", "technique"],
+# )
 
-count_dataseted = count_dataset(
-    dataset=dataset_stacked,
-    fields=["software_category", "software"],
-)
-filtered = filter_dataset_by_count(
-    dataset=count_dataseted,
-    field="count",
-    value=10,
-    comparison=">=",
-)
-print_counts(filtered)
+# count_dataseted = count_dataset(
+#     dataset=dataset_stacked,
+#     fields=["software_category", "software"],
+# )
+# filtered = filter_dataset_by_count(
+#     dataset=count_dataseted,
+#     field="count",
+#     value=10,
+#     comparison=">=",
+# )
+# print_counts(filtered)
 
-chart_stacked(
-    dataset=dataset_stacked,
-    fields=["software_category", "year", "software"],
-    x_axis="year",
-    y_axis="count",
-    x_label="Year",
-    y_label="Number of Uses",
-    title="Software Usage Trend Over Time (2015-2024)",
-    kind="area",
-    grp_axis="software",
-    filter_values=[
-        "software==Agisoft Metashape,Autodesk ReCap,Autodesk 3ds Max,Blender,Unity,Unreal Engine",
-    ],
-    filter_count=None,
-)
+# chart_stacked(
+#     dataset=dataset_stacked,
+#     fields=["software_category", "software", "year"],
+#     x_axis="year",
+#     y_axis="count",
+#     x_label="Year",
+#     y_label="Number of Uses",
+#     title="Software Usage Trend Over Time (2015-2024)",
+#     kind="area",
+#     grp_axis="software",
+#     filter_values=[
+#         "software==Agisoft Metashape,Autodesk ReCap,Autodesk 3ds Max,Blender,Unity,Unreal Engine",
+#     ],
+#     filter_count=None,
+# )
 
-from output.plot import COLORS, _get_unique_values
-from matplotlib.patches import Patch
-import matplotlib.pyplot as plt
+# from output.plot import COLORS, _get_unique_values
+# from matplotlib.patches import Patch
+# import matplotlib.pyplot as plt
 
-values = _get_unique_values(field=dataset_stacked["software_category"])
-cat_handles = [
-    Patch(
-        facecolor=COLORS["software_category"].get(value, ""),
-        edgecolor="none",
-        label=value,
-    )
-    for value in values
-]
-legend2 = plt.legend(
-    handles=cat_handles,
-    title="Software Category",
-    loc="upper right",
-    bbox_to_anchor=(1, 1),
-)
-plt.gca().add_artist(legend2)
+# values = _get_unique_values(field=dataset_stacked["software_category"])
+# cat_handles = [
+#     Patch(
+#         facecolor=COLORS["software_category"].get(value, ""),
+#         edgecolor="none",
+#         label=value,
+#     )
+#     for value in values
+# ]
+# legend2 = plt.legend(
+#     handles=cat_handles,
+#     title="Software Category",
+#     loc="upper right",
+#     bbox_to_anchor=(1, 1),
+# )
+# plt.gca().add_artist(legend2)
 
-plt.show()
+# plt.show()
