@@ -437,25 +437,25 @@ chart_bar(
 #     filter_count=None,
 # )
 
-# from output.plot import COLORS, _get_unique_values
-# from matplotlib.patches import Patch
-# import matplotlib.pyplot as plt
+from output.plot import COLORS, _get_unique_values
+from matplotlib.patches import Patch
+import matplotlib.pyplot as plt
 
-# values = _get_unique_values(field=dataset_stacked["software_category"])
-# cat_handles = [
-#     Patch(
-#         facecolor=COLORS["software_category"].get(value, ""),
-#         edgecolor="none",
-#         label=value,
-#     )
-#     for value in values
-# ]
-# legend2 = plt.legend(
-#     handles=cat_handles,
-#     title="Software Category",
-#     loc="upper right",
-#     bbox_to_anchor=(1, 1),
-# )
-# plt.gca().add_artist(legend2)
+values = _get_unique_values(field=dataset_stacked["software_category"])
+cat_handles = [
+    Patch(
+        facecolor=COLORS["software_category"].get(value, ""),
+        edgecolor="none",
+        label=value,
+    )
+    for value in values
+]
+legend2 = plt.legend(
+    handles=cat_handles,
+    title="Software Category",
+    loc="upper right",
+    bbox_to_anchor=(1, 1),
+)
+plt.gca().add_artist(legend2)
 
-# plt.show()
+plt.show()

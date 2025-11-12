@@ -78,6 +78,40 @@ def plot_bar(
     plt.show()
 
 
+def plot_bar(
+    dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis=None
+):
+    x_values = dataset[x_axis]
+    y_values = dataset[y_axis]
+    bar = _apply_bar_orient(orientation)
+
+    values = []
+
+    if grp_axis:
+        values = _get_unique_values(field=dataset[grp_axis])
+        colors = _apply_colors(grp_axis=grp_axis, values=values)
+
+        for value in values:
+            mask = [v == value for v in dataset[grp_axis]]
+            xv = [x for x, m in zip(x_values, mask) if m]
+            yv = [y for y, m in zip(y_values, mask) if m]
+            bar(xv, yv, label=value, color=colors[value])
+    else:
+        bar(x_values, y_values)
+
+    _apply_bar_axes(
+        orientation=orientation,
+        x_label=x_label,
+        y_label=y_label,
+        rotation=45,
+    )
+
+    plt.title(title)
+    plt.tight_layout()
+
+    return values
+
+
 def plot_bar_group(
     dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis
 ):

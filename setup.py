@@ -7,6 +7,7 @@ from output.plot import (
     plot_pie_group,
     plot_sunburst,
     plot_sankey,
+    _clean_label,
 )
 from output.print import (
     print_counts,
@@ -41,7 +42,7 @@ def chart_bar(
         dataset=dict_prepared,
         decimal=0,
     )
-    plot_bar(
+    values = plot_bar(
         dataset=dict_prepared,
         x_axis=x_axis,
         y_axis=y_axis,
@@ -51,6 +52,47 @@ def chart_bar(
         orientation=orientation,
         grp_axis=grp_axis,
     )
+
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Patch
+    from output.plot import COLORS, _get_unique_values
+
+    handles_series = [
+        Patch(
+            facecolor=COLORS[grp_axis].get(value, ""),
+            edgecolor="none",
+            label=_clean_label(value),
+        )
+        for value in values
+    ]
+    legend = plt.legend(
+        handles=handles_series,
+        title=_clean_label(grp_axis),
+        loc="lower right",
+        bbox_to_anchor=(1, 0),
+    )
+    plt.gca().add_artist(legend)
+
+    field = "software_category"
+    values = _get_unique_values(field=dict_prepared[field])
+
+    handles_cats = [
+        Patch(
+            facecolor=COLORS[field].get(value, ""),
+            edgecolor="none",
+            label=_clean_label(value),
+        )
+        for value in values
+    ]
+    legend_ext = plt.legend(
+        handles=handles_cats,
+        title=_clean_label(field),
+        loc="upper right",
+        bbox_to_anchor=(1, 1),
+    )
+    plt.gca().add_artist(legend_ext)
+
+    plt.show()
 
 
 def chart_bar_group(
