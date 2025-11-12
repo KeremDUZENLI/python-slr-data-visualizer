@@ -1,3 +1,8 @@
+import matplotlib.pyplot as plt
+
+from output.legend import (
+    plot_legend,
+)
 from output.plot import (
     plot_bar,
     plot_bar_group,
@@ -7,7 +12,7 @@ from output.plot import (
     plot_pie_group,
     plot_sunburst,
     plot_sankey,
-    _clean_label,
+    _get_unique_values,
 )
 from output.print import (
     print_counts,
@@ -17,6 +22,34 @@ from src.tools import (
     filter_dataset_by_count,
     count_dataset,
 )
+
+
+COLORS = {
+    "study_focus": {
+        "Reconstruction": "#1f77b4",
+        "Restoration": "#2ca02c",
+        "Visualization": "#d62728",
+    },
+    "historical_site_type": {
+        "Archaeological Site": "#6aa84f",
+        "Artistic Feature": "#f6b26b",
+        "Building": "#4a86e8",
+        "Natural Space": "#8e7cc3",
+    },
+    "software_category": {
+        "software_data": "#0000ff",
+        "software_modeling": "#008000",
+        "software_render": "#ff0000",
+    },
+    "software": {
+        "Agisoft Metashape": "#c4deed",
+        "Autodesk ReCap": "#72aad2",
+        "Autodesk 3ds Max": "#c6e7c1",
+        "Blender": "#72bc87",
+        "Unity": "#fcbca7",
+        "Unreal Engine": "#eb6d67",
+    },
+}
 
 
 def chart_bar(
@@ -29,6 +62,7 @@ def chart_bar(
     title,
     orientation,
     grp_axis=None,
+    grp_axis_ext=None,
     filter_values=None,
     filter_count=None,
 ):
@@ -48,50 +82,34 @@ def chart_bar(
         y_axis=y_axis,
         x_label=x_label,
         y_label=y_label,
-        title=title,
         orientation=orientation,
+        colors=COLORS,
         grp_axis=grp_axis,
     )
 
-    import matplotlib.pyplot as plt
-    from matplotlib.patches import Patch
-    from output.plot import COLORS, _get_unique_values
-
-    handles_series = [
-        Patch(
-            facecolor=COLORS[grp_axis].get(value, ""),
-            edgecolor="none",
-            label=_clean_label(value),
+    if grp_axis:
+        legend = plot_legend(
+            colors=COLORS,
+            grp_axis=grp_axis,
+            values=values,
+            loc="lower right",
+            pos=(1, 0),
         )
-        for value in values
-    ]
-    legend = plt.legend(
-        handles=handles_series,
-        title=_clean_label(grp_axis),
-        loc="lower right",
-        bbox_to_anchor=(1, 0),
-    )
-    plt.gca().add_artist(legend)
+        plt.gca().add_artist(legend)
 
-    field = "software_category"
-    values = _get_unique_values(field=dict_prepared[field])
-
-    handles_cats = [
-        Patch(
-            facecolor=COLORS[field].get(value, ""),
-            edgecolor="none",
-            label=_clean_label(value),
+    if grp_axis_ext:
+        values = _get_unique_values(field=dict_prepared[grp_axis_ext])
+        legend_ext = plot_legend(
+            colors=COLORS,
+            grp_axis=grp_axis_ext,
+            values=values,
+            loc="upper right",
+            pos=(1, 1),
         )
-        for value in values
-    ]
-    legend_ext = plt.legend(
-        handles=handles_cats,
-        title=_clean_label(field),
-        loc="upper right",
-        bbox_to_anchor=(1, 1),
-    )
-    plt.gca().add_artist(legend_ext)
+        plt.gca().add_artist(legend_ext)
 
+    plt.title(title)
+    plt.tight_layout()
     plt.show()
 
 

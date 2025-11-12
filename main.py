@@ -28,20 +28,21 @@ PATH = "data/dataset.csv"
 DATASET = read_dataset(csv_path=PATH)
 
 
-# # 1_0 # BAR CHART # X:Year/Y:Count
-# chart_bar(
-#     dataset=DATASET,
-#     fields=["year"],
-#     x_axis="year",
-#     y_axis="count",
-#     x_label="Year",
-#     y_label="Number of Publications",
-#     title="Timeline of Publications (2015-2024)",
-#     orientation="v",
-#     grp_axis=None,
-#     filter_values=None,
-#     filter_count=None,
-# )
+# 1_0 # BAR CHART # X:Year/Y:Count
+chart_bar(
+    dataset=DATASET,
+    fields=["year"],
+    x_axis="year",
+    y_axis="count",
+    x_label="Year",
+    y_label="Number of Publications",
+    title="Timeline of Publications (2015-2024)",
+    orientation="v",
+    grp_axis=None,
+    grp_axis_ext=None,
+    filter_values=None,
+    filter_count=None,
+)
 
 
 # # 1_1 # BAR CHART GROUP # X:Year_HST/Y:Count
@@ -298,6 +299,7 @@ chart_bar(
     title="Software Usage by Category",
     orientation="v",
     grp_axis="software_category",
+    grp_axis_ext="software",
     filter_values=[
         "software!=",
     ],
@@ -314,6 +316,7 @@ chart_bar(
     title="Software Usage by Category",
     orientation="h",
     grp_axis="software_category",
+    grp_axis_ext="software",
     filter_values=[
         "software!=",
     ],
@@ -437,25 +440,25 @@ chart_bar(
 #     filter_count=None,
 # )
 
-from output.plot import COLORS, _get_unique_values
-from matplotlib.patches import Patch
-import matplotlib.pyplot as plt
+# from output.plot import COLORS, _get_unique_values
+# from matplotlib.patches import Patch
+# import matplotlib.pyplot as plt
 
-values = _get_unique_values(field=dataset_stacked["software_category"])
-cat_handles = [
-    Patch(
-        facecolor=COLORS["software_category"].get(value, ""),
-        edgecolor="none",
-        label=value,
-    )
-    for value in values
-]
-legend2 = plt.legend(
-    handles=cat_handles,
-    title="Software Category",
-    loc="upper right",
-    bbox_to_anchor=(1, 1),
-)
-plt.gca().add_artist(legend2)
+# values = _get_unique_values(field=dataset_stacked["software_category"])
+# cat_handles = [
+#     Patch(
+#         facecolor=COLORS["software_category"].get(value, ""),
+#         edgecolor="none",
+#         label=value,
+#     )
+#     for value in values
+# ]
+# legend2 = plt.legend(
+#     handles=cat_handles,
+#     title="Software Category",
+#     loc="upper right",
+#     bbox_to_anchor=(1, 1),
+# )
+# plt.gca().add_artist(legend2)
 
-plt.show()
+# plt.show()

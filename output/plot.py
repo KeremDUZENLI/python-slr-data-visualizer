@@ -1,85 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
-from matplotlib.patches import Patch
-
-
-COLORS = {
-    "study_focus": {
-        "Reconstruction": "#1f77b4",
-        "Restoration": "#2ca02c",
-        "Visualization": "#d62728",
-    },
-    "historical_site_type": {
-        "Archaeological Site": "#6aa84f",
-        "Artistic Feature": "#f6b26b",
-        "Building": "#4a86e8",
-        "Natural Space": "#8e7cc3",
-    },
-    "software_category": {
-        "software_data": "#0000ff",
-        "software_modeling": "#008000",
-        "software_render": "#ff0000",
-    },
-    "software": {
-        "Agisoft Metashape": "#c4deed",
-        "Autodesk ReCap": "#72aad2",
-        "Autodesk 3ds Max": "#c6e7c1",
-        "Blender": "#72bc87",
-        "Unity": "#fcbca7",
-        "Unreal Engine": "#eb6d67",
-    },
-}
 
 
 def plot_bar(
-    dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis=None
-):
-    bar = _apply_bar_orient(orientation)
-    x_values = dataset[x_axis]
-    y_values = dataset[y_axis]
-
-    label_colors = {}
-    if grp_axis:
-        values = _get_unique_values(field=dataset[grp_axis])
-        colors = _apply_colors(grp_axis=grp_axis, values=values)
-        for value in values:
-            mask = [v == value for v in dataset[grp_axis]]
-            x_values_list = [x for x, m in zip(x_values, mask) if m]
-            y_values_list = [y for y, m in zip(y_values, mask) if m]
-            bar(
-                x_values_list,
-                y_values_list,
-                label=value,
-                color=colors[value],
-            )
-            for x_value in x_values_list:
-                if x_value not in label_colors:
-                    label_colors[x_value] = colors[value]
-    else:
-        bar(
-            x_values,
-            y_values,
-        )
-
-    _apply_bar_axes(
-        orientation=orientation,
-        x_label=x_label,
-        y_label=y_label,
-        rotation=45,
-    )
-
-    if grp_axis:
-        _apply_axis_colors(orientation=orientation, colors=label_colors)
-        plt.legend(title=_clean_label(name=grp_axis))
-
-    plt.title(title)
-    plt.tight_layout()
-    plt.show()
-
-
-def plot_bar(
-    dataset, x_axis, y_axis, x_label, y_label, title, orientation, grp_axis=None
+    dataset, x_axis, y_axis, x_label, y_label, orientation, colors, grp_axis=None
 ):
     x_values = dataset[x_axis]
     y_values = dataset[y_axis]
@@ -89,13 +14,13 @@ def plot_bar(
 
     if grp_axis:
         values = _get_unique_values(field=dataset[grp_axis])
-        colors = _apply_colors(grp_axis=grp_axis, values=values)
+        colors_dict = _apply_colors(grp_axis=grp_axis, values=values, colors=colors)
 
         for value in values:
             mask = [v == value for v in dataset[grp_axis]]
             xv = [x for x, m in zip(x_values, mask) if m]
             yv = [y for y, m in zip(y_values, mask) if m]
-            bar(xv, yv, label=value, color=colors[value])
+            bar(xv, yv, label=value, color=colors_dict[value])
     else:
         bar(x_values, y_values)
 
@@ -105,9 +30,6 @@ def plot_bar(
         y_label=y_label,
         rotation=45,
     )
-
-    plt.title(title)
-    plt.tight_layout()
 
     return values
 
@@ -463,10 +385,6 @@ def _get_unique_values(field):
     return labels
 
 
-def _clean_label(name):
-    return str(name).replace("_", " ").strip().title()
-
-
 def _format_label(labels, decimal=0):
     labels = list(labels)
     i = {"v": -1}
@@ -542,14 +460,14 @@ def _apply_graph_kind(kind, x_pos, values, label_values, colors=None):
             bottoms = bottoms + np.array(y_values)
 
 
-def _apply_colors(grp_axis, values):
-    colors = {}
-    colors_set = COLORS.get(grp_axis, {})
+def _apply_colors(grp_axis, values, colors):
+    colors_dict = {}
+    colors_set = colors.get(grp_axis, {})
 
     for value in values:
-        colors[value] = colors_set.get(value, None)
+        colors_dict[value] = colors_set.get(value, None)
 
-    return colors
+    return colors_dict
 
 
 def _apply_axis_colors(orientation, colors):
