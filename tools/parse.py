@@ -1,0 +1,32 @@
+def parse_string(text):
+    operators = ["==", "!=", ">=", ">", "<=", "<", "="]
+    found_op = None
+
+    for operation in operators:
+        if operation in text:
+            found_op = operation
+            break
+
+    left, right = text.split(found_op, 1)
+    field = left.strip()
+    right = right.strip()
+    values_raw = [v.strip() for v in right.split(",")]
+
+    values = []
+    for v in values_raw:
+        if v in ("''", '""'):
+            values.append("")
+        else:
+            values.append(v)
+
+    if len(values) == 1 and values[0] == "":
+        values = [""]
+
+    if found_op == "==":
+        operation = True
+    elif found_op == "!=":
+        operation = False
+    else:
+        operation = found_op
+
+    return field, values, operation
