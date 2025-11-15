@@ -8,7 +8,7 @@ from src.tools import (
     filter_dataset_by_field,
     filter_dataset_by_value,
     filter_dataset_by_count,
-    stack_datasets,
+    group_dataset_by_fields,
     count_dataset,
 )
 from setup import (
@@ -79,20 +79,20 @@ chart_bar(
 # )
 
 
-# # 1_3 # PIE CHART # X:Study Focus/Y:Count
-# chart_bar(
-#     dataset=DATASET,
-#     fields=["study_focus"],
-#     x_axis="study_focus",
-#     y_axis="count",
-#     x_label="Study Focus",
-#     y_label="Number of Publications",
-#     title="Study Focus Distribution",
-#     orientation="v",
-#     grp_axis=None,
-#     filter_values=None,
-#     filter_count=None,
-# )
+# 1_3 # PIE CHART # X:Study Focus/Y:Count
+chart_bar(
+    dataset=DATASET,
+    fields=["study_focus"],
+    x_axis="study_focus",
+    y_axis="count",
+    x_label="Study Focus",
+    y_label="Number of Publications",
+    title="Study Focus Distribution",
+    orientation="v",
+    grp_axis=None,
+    filter_values=None,
+    filter_count=None,
+)
 
 # chart_pie(
 #     dataset=DATASET,
@@ -261,7 +261,7 @@ chart_bar(
 
 
 # 4_1 # BAR CHART # X:Software/Y:Count
-dataset_stacked = stack_datasets(
+dataset_stacked = group_dataset_by_fields(
     datasets=[
         (
             DATASET,

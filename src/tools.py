@@ -68,9 +68,9 @@ def filter_dataset_by_field(dataset, fields):
 
 
 def filter_dataset_by_value(dataset, field, values, include=True):
-    dataset_filtered = {k: [] for k in dataset}
     num_rows = len(next(iter(dataset.values()), []))
     allowed = set(values)
+    dataset_filtered = {k: [] for k in dataset}
 
     for i in range(num_rows):
         cell = dataset[field][i]
@@ -99,7 +99,7 @@ def filter_dataset_by_count(dataset, field, value, comparison):
     return dataset_filtered
 
 
-def stack_datasets(datasets, stack_by, axes):
+def group_dataset_by_fields(datasets, stack_by, axes):
     datasets_stacked = {ax: [] for ax in axes}
 
     for ds, mapping in datasets:
