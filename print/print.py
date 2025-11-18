@@ -1,10 +1,5 @@
-from output._0_helpers import (
-    format_label_value,
-)
-
-
-def print_simple(dataset):
-    for field, values in dataset.items():
+def print_dict(dict):
+    for field, values in dict.items():
         print(field)
         print(values)
         print()
@@ -61,7 +56,7 @@ def _compute_label_widths(field_names, rows, min_total_width=20, separator=" | "
 
         for row in rows:
             value = row["labels"][column]
-            text = format_label_value(value)
+            text = _format_label_value(value)
             length = len(text)
             if length > max_len:
                 max_len = length
@@ -85,7 +80,7 @@ def _format_row(labels, widths, count, total_records, decimal, separator=" | "):
     row = ""
 
     for i in range(len(labels)):
-        text = format_label_value(labels[i])
+        text = _format_label_value(labels[i])
         pad = widths[i] - len(text)
         row += text + (" " * pad)
 
@@ -99,3 +94,7 @@ def _format_row(labels, widths, count, total_records, decimal, separator=" | "):
 
     row += f" : {count:<3} ({percent:.{decimal}f}%)"
     return row
+
+
+def _format_label_value(value):
+    return "; ".join(str(v) for v in value)

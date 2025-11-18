@@ -1,48 +1,28 @@
-from config import (
-    chart_bar_1D,
+from input._1_read import (
+    read_dataset,
 )
-
-chart_bar_1D(
-    fields=["year"],
-    x_axis="year",
-    y_axis="count",
-    labels_spec={
-        "x_label": "Year",
-        "y_label": "Number of Studies",
-        "title": "Studies Per Year",
-        "rotation": 45,
-    },
-    orientation="v",
-    color_field="year",
-    color_axis="x",
-    labels_legend={
-        "title": "Year",
-        "loc": "upper right",
-    },
-    filter_values=None,
-    filter_count=None,
-    save_path="figures/0_0.png",
+from input._2_prepare import (
+    group_dataset_by_fields,
+)
+from setup import (
+    _0_0,
+    _1_3,
+    _4_1,
 )
 
 
-chart_bar_1D(
-    fields=["study_focus"],
-    x_axis="study_focus",
-    y_axis="count",
-    labels_spec={
-        "x_label": "Study Focus",
-        "y_label": "Number of Studies",
-        "title": "Studies Per Year",
-        "rotation": 45,
-    },
-    orientation="v",
-    color_field="study_focus",
-    color_axis="x",
-    labels_legend={
-        "title": "Study Focus",
-        "loc": "upper right",
-    },
-    filter_values=None,
-    filter_count=None,
-    save_path="figures/1_3.png",
+DATASET = read_dataset(csv_path="data/dataset.csv")
+DATASET_SOFTWARE = group_dataset_by_fields(
+    datasets=[
+        (DATASET, {"software": "software_data", "technique": "technique"}),
+        (DATASET, {"software": "software_modeling", "technique": "technique"}),
+        (DATASET, {"software": "software_render", "technique": "technique"}),
+    ],
+    stack_by={"software_category": "software"},
+    axes=["software_category", "software", "technique"],
 )
+
+
+_0_0(DATASET)
+_1_3(DATASET)
+_4_1(DATASET_SOFTWARE)

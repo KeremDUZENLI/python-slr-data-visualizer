@@ -1,8 +1,3 @@
-from output._0_helpers import (
-    format_label_value,
-)
-
-
 COLORS = {
     "year": {
         "2020": "#35b85e",
@@ -35,25 +30,7 @@ COLORS = {
 }
 
 
-def prepare_data_1D(dataset, x_axis, y_axis):
-    x_raw = dataset[x_axis]
-    y_raw = dataset[y_axis]
-
-    x_values = []
-    y_values = []
-
-    for x_label, value in zip(x_raw, y_raw):
-        if x_label in x_values:
-            index = x_values.index(x_label)
-            y_values[index] += value
-        else:
-            x_values.append(x_label)
-            y_values.append(value)
-
-    return x_values, y_values
-
-
-def color_heatmap(base_color, min_alpha, max_alpha):
+def get_color_heatmap(base_color, min_alpha, max_alpha):
     return {
         "base_color": base_color,
         "min_alpha": min_alpha,
@@ -61,13 +38,12 @@ def color_heatmap(base_color, min_alpha, max_alpha):
     }
 
 
-def get_colors_map(field, values):
+def get_colors_map(color_values, color_field):
     colors_map = {}
 
-    for value in values:
-        value_str = format_label_value(value)
-        color = _get_color(field, value)
-        colors_map[value_str] = color
+    for value in color_values:
+        color = _get_color(color_field, value)
+        colors_map[value] = color
 
     return colors_map
 
@@ -76,9 +52,8 @@ def _get_color(field, value):
     if field not in COLORS:
         return None
 
-    value_str = format_label_value(value)
     colors_dict = COLORS[field]
-    if value_str in colors_dict:
-        return colors_dict[value_str]
+    if value in colors_dict:
+        return colors_dict[value]
 
     return None
