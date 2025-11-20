@@ -16,10 +16,10 @@ def color_bars(ax, x_values_list, colors_map):
         index += 1
 
 
-def color_labels(ax, colors_map, axis="x"):
-    if axis == "x":
+def color_labels(ax, colors_map, orientation="v"):
+    if orientation == "v":
         labels = ax.get_xticklabels()
-    if axis == "y":
+    if orientation == "h":
         labels = ax.get_yticklabels()
 
     for label in labels:

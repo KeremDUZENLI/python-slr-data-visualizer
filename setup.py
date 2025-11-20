@@ -1,3 +1,7 @@
+from config.config import (
+    COLORS,
+    font_label_numbers,
+)
 from helper.helper import (
     parse_string,
 )
@@ -12,17 +16,20 @@ from operation._2_count import (
 from plot._1_get_labels import (
     get_labels,
 )
-from plot._2_draw_plot import (
+from plot._2_get_charts import (
     draw_bar_1D,
 )
 from plot._3_get_colors import (
     get_colors_map,
 )
-from plot._4_colorize import (
+from plot_style._1_colorize import (
     color_bars,
     color_labels,
 )
-from plot._5_create_legend import (
+from plot_style._2_labelize import (
+    label_numbers,
+)
+from plot_style._3_legend import (
     create_legend,
 )
 from print.print import (
@@ -75,12 +82,15 @@ def _0_0(dataset):
     )
 
     colors_map = get_colors_map(
-        color_values=x_values,
+        values=x_values,
+        criteria=x_values,
+        colors=COLORS,
         color_field="year",
     )
 
     fig, ax = plt.subplots()
 
+    orientation = "v"
     x_values_list = draw_bar_1D(
         ax=ax,
         x_values=x_values,
@@ -91,7 +101,7 @@ def _0_0(dataset):
             "title": "Studies Per Year",
             "rotation": 45,
         },
-        orientation="v",
+        orientation=orientation,
     )
 
     handles = create_legend(
@@ -128,7 +138,7 @@ def _0_0(dataset):
     color_labels(
         ax=ax,
         colors_map=colors_map,
-        axis="x",
+        orientation=orientation,
     )
 
     plt.tight_layout()
@@ -179,12 +189,15 @@ def _1_3(dataset):
     )
 
     colors_map = get_colors_map(
-        color_values=x_values,
+        values=x_values,
+        criteria=x_values,
+        colors=COLORS,
         color_field="study_focus",
     )
 
     fig, ax = plt.subplots()
 
+    orientation = "v"
     x_values_list = draw_bar_1D(
         ax=ax,
         x_values=x_values,
@@ -195,7 +208,7 @@ def _1_3(dataset):
             "title": "Studies Per Year",
             "rotation": 45,
         },
-        orientation="v",
+        orientation=orientation,
     )
 
     handles = create_legend(
@@ -232,7 +245,7 @@ def _1_3(dataset):
     color_labels(
         ax=ax,
         colors_map=colors_map,
-        axis="x",
+        orientation=orientation,
     )
 
     plt.tight_layout()
@@ -275,36 +288,45 @@ def _4_1(dataset):
     print_dict(dataset_counted)
     print_counts(dataset_counted, decimal=1)
 
-    x_values, y_values = get_labels(
+    x_values, y_values, z_values = get_labels(
         dataset=dataset_counted,
         x_axis="software",
         y_axis="count",
-        z_axis=None,
+        z_axis="software_category",
     )
 
     colors_map = get_colors_map(
-        color_values=x_values,
+        values=x_values,
+        criteria=z_values,
+        colors=COLORS,
+        color_field="software_category",
+    )
+    colors_map_legend = get_colors_map(
+        values=z_values,
+        criteria=z_values,
+        colors=COLORS,
         color_field="software_category",
     )
 
     fig, ax = plt.subplots()
 
+    orientation = "h"
     x_values_list = draw_bar_1D(
         ax=ax,
         x_values=x_values,
         y_values=y_values,
         labels_spec={
-            "x_label": "Software",
-            "y_label": "Frequency",
+            "x_label": "",
+            "y_label": "",
             "title": "Software Usage by Category",
             "rotation": 45,
         },
-        orientation="v",
+        orientation=orientation,
     )
 
     handles = create_legend(
-        values=x_values,
-        colors_map=colors_map,
+        values=z_values,
+        colors_map=colors_map_legend,
     )
     legend = ax.legend(
         handles=handles,
@@ -319,6 +341,8 @@ def _4_1(dataset):
             "Custom A": "#FF5733",
             "Custom B": "#33FF57",
             "Custom C": "#3357FF",
+            "Custom D": "#46A819",
+            "Custom E": "#FF33A1",
         },
     )
     legend_ext = ax.legend(
@@ -336,7 +360,14 @@ def _4_1(dataset):
     color_labels(
         ax=ax,
         colors_map=colors_map,
-        axis="x",
+        orientation=orientation,
+    )
+    label_numbers(
+        ax=ax,
+        y_values=y_values,
+        orientation=orientation,
+        offset=3,
+        font=font_label_numbers,
     )
 
     plt.tight_layout()

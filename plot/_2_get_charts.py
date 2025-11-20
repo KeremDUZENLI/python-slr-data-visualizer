@@ -14,7 +14,7 @@ def draw_bar_1D(ax, x_values, y_values, labels_spec, orientation="v"):
             ax.bar(pos, height)
 
         ax.set_xticks(positions)
-        ax.set_xticklabels(x_values_list, rotation=labels_spec["rotation"])
+        ax.set_xticklabels(x_values_list, rotation=labels_spec["rotation"], ha="right")
         ax.set_xlabel(labels_spec["x_label"])
         ax.set_ylabel(labels_spec["y_label"])
 
