@@ -1,23 +1,23 @@
-import matplotlib.patches as Patch
+def create_legend(ax, handles, title, loc, font=None):
+    legend = ax.legend(
+        handles=handles,
+        title=title,
+        loc=loc,
+        fontsize=font.get("size") if font else None,
+        title_fontsize=font.get("size") + 1 if font else None,
+    )
 
+    if font:
+        for text in legend.get_texts():
+            if "family" in font:
+                text.set_fontfamily(font["family"])
+            if "weight" in font:
+                text.set_fontweight(font["weight"])
 
-def create_legend(values, colors_map):
-    handles = []
-    seen = set()
+        title_text = legend.get_title()
+        if "family" in font:
+            title_text.set_fontfamily(font["family"])
+        if "weight" in font:
+            title_text.set_fontweight(font["weight"])
 
-    for value in values:
-        if value in seen:
-            continue
-        seen.add(value)
-
-        color = colors_map.get(value)
-        patch = Patch.Patch(
-            facecolor=color, edgecolor="none", label=_clean_label(value)
-        )
-        handles.append(patch)
-
-    return handles
-
-
-def _clean_label(name):
-    return str(name).replace("_", " ").strip().title()
+    ax.add_artist(legend)

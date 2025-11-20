@@ -26,8 +26,15 @@ COLORS = {
 }
 
 
-font_label_numbers = {
-    "family": "sans-serif",
+FONT_LEGEND = {
     "size": 10,
+    "family": "sans-serif",
+    "weight": "normal",
+}
+
+
+FONT_LABEL_NUMBERS = {
+    "size": 10,
+    "family": "sans-serif",
     "weight": "normal",
 }
