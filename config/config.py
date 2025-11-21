@@ -26,15 +26,65 @@ COLORS = {
 }
 
 
-FONT_LEGEND = {
-    "size": 10,
-    "family": "sans-serif",
-    "weight": "normal",
+FONTS_PLOT = {
+    "title": {
+        "size": 14,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "xlabel": {
+        "size": 12,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "ylabel": {
+        "size": 12,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "xticks": {
+        "size": 9,
+        "family": "sans-serif",
+        "weight": "normal",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "yticks": {
+        "size": 9,
+        "family": "sans-serif",
+        "weight": "normal",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "bar_numbers": {
+        "size": 8,
+        "family": "sans-serif",
+        "weight": "normal",
+        "style": "normal",
+        "stretch": "condensed",
+    },
 }
 
 
-FONT_LABEL_NUMBERS = {
-    "size": 10,
-    "family": "sans-serif",
-    "weight": "normal",
+FONTS_LEGEND = {
+    "legend_title": {
+        "size": 10,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "legend_text": {
+        "size": 9,
+        "family": "sans-serif",
+        "weight": "normal",
+        "style": "normal",
+        "stretch": "condensed",
+    },
 }

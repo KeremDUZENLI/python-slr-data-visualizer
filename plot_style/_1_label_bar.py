@@ -1,4 +1,4 @@
-def label_numbers(ax, y_values, orientation="v", offset=3, font=None):
+def label_bar_numbers(ax, y_values, orientation="v", offset=3):
     for rect, value in zip(ax.patches, y_values):
         if value == 0:
             continue
@@ -14,7 +14,4 @@ def label_numbers(ax, y_values, orientation="v", offset=3, font=None):
             ha = "left"
             va = "center"
 
-        if font:
-            ax.text(x, y, str(value), ha=ha, va=va, **font)
-        else:
-            ax.text(x, y, str(value), ha=ha, va=va)
+        ax.text(x, y, str(value), ha=ha, va=va, gid="bar_numbers")

@@ -1,11 +1,13 @@
 from config.config import (
     COLORS,
-    FONT_LEGEND,
-    FONT_LABEL_NUMBERS,
+    FONTS_PLOT,
+    FONTS_LEGEND,
 )
+
 from helper.helper import (
     parse_string,
 )
+
 from operation._1_filter import (
     filter_dataset_by_fields,
     filter_dataset_by_values,
@@ -14,6 +16,7 @@ from operation._1_filter import (
 from operation._2_count import (
     count_dataset,
 )
+
 from plot._1_get_labels import (
     get_labels,
 )
@@ -23,23 +26,30 @@ from plot._2_get_colors import (
 from plot._3_get_legend import (
     get_legend_handles,
 )
-from plot_style._1_draw import (
+
+from plot_style._0_draw_bar import (
     draw_bar_1D,
 )
-from plot_style._2_colorize import (
+from plot_style._1_label_bar import (
+    label_bar_numbers,
+)
+from plot_style._2_color import (
     color_bars,
     color_labels,
 )
-from plot_style._3_legend import (
+from plot_style._3_create_legend import (
     create_legend,
 )
-from plot_style._4_labelize import (
-    label_numbers,
+from plot_style._4_apply_font import (
+    apply_font_plot,
+    apply_font_legend,
 )
+
 from print.print import (
     print_dict,
     print_counts,
 )
+
 import matplotlib.pyplot as plt
 
 
@@ -48,7 +58,6 @@ def _0_0(dataset):
         dataset=dataset,
         fields=["year"],
     )
-
     dataset_counted = count_dataset(
         dataset=dataset_filtered,
         fields=["year"],
@@ -84,12 +93,23 @@ def _0_0(dataset):
         y_axis="count",
         z_axis=None,
     )
-
     colors_map = get_colors_map(
         values=x_values,
         criteria=x_values,
         colors=COLORS,
         color_field="year",
+    )
+    handles1 = get_legend_handles(
+        values=x_values,
+        colors_map=colors_map,
+    )
+    handles2 = get_legend_handles(
+        values=["Custom A", "Custom B", "Custom C"],
+        colors_map={
+            "Custom A": "#FF5733",
+            "Custom B": "#33FF57",
+            "Custom C": "#3357FF",
+        },
     )
 
     fig, ax = plt.subplots()
@@ -108,32 +128,11 @@ def _0_0(dataset):
         orientation=orientation,
     )
 
-    handles = get_legend_handles(
-        values=x_values,
-        colors_map=colors_map,
-    )
-    create_legend(
+    label_bar_numbers(
         ax=ax,
-        handles=handles,
-        title="Year",
-        loc="upper right",
-        font=FONT_LEGEND,
-    )
-
-    handles_ext = get_legend_handles(
-        values=["Custom A", "Custom B", "Custom C"],
-        colors_map={
-            "Custom A": "#FF5733",
-            "Custom B": "#33FF57",
-            "Custom C": "#3357FF",
-        },
-    )
-    create_legend(
-        ax=ax,
-        handles=handles_ext,
-        title="Custom Legend",
-        loc="lower right",
-        font=FONT_LEGEND,
+        y_values=y_values,
+        orientation=orientation,
+        offset=1,
     )
 
     color_bars(
@@ -147,6 +146,32 @@ def _0_0(dataset):
         orientation=orientation,
     )
 
+    legend1 = create_legend(
+        ax=ax,
+        handles=handles1,
+        title="Year",
+        loc="upper right",
+    )
+    legend2 = create_legend(
+        ax=ax,
+        handles=handles2,
+        title="Custom Legend",
+        loc="lower right",
+    )
+
+    apply_font_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+    apply_font_legend(
+        legend=legend1,
+        fonts=FONTS_LEGEND,
+    )
+    apply_font_legend(
+        legend=legend2,
+        fonts=FONTS_LEGEND,
+    )
+
     plt.tight_layout()
     plt.show()
     fig.savefig("figure/_0_0.png", dpi=300)
@@ -157,7 +182,6 @@ def _1_3(dataset):
         dataset=dataset,
         fields=["study_focus"],
     )
-
     dataset_counted = count_dataset(
         dataset=dataset_filtered,
         fields=["study_focus"],
@@ -193,12 +217,23 @@ def _1_3(dataset):
         y_axis="count",
         z_axis=None,
     )
-
     colors_map = get_colors_map(
         values=x_values,
         criteria=x_values,
         colors=COLORS,
         color_field="study_focus",
+    )
+    handles1 = get_legend_handles(
+        values=x_values,
+        colors_map=colors_map,
+    )
+    handles2 = get_legend_handles(
+        values=["Custom A", "Custom B", "Custom C"],
+        colors_map={
+            "Custom A": "#FF5733",
+            "Custom B": "#33FF57",
+            "Custom C": "#3357FF",
+        },
     )
 
     fig, ax = plt.subplots()
@@ -217,32 +252,11 @@ def _1_3(dataset):
         orientation=orientation,
     )
 
-    handles = get_legend_handles(
-        values=x_values,
-        colors_map=colors_map,
-    )
-    create_legend(
+    label_bar_numbers(
         ax=ax,
-        handles=handles,
-        title="Study Focus",
-        loc="upper right",
-        font=FONT_LEGEND,
-    )
-
-    handles_ext = get_legend_handles(
-        values=["Custom A", "Custom B", "Custom C"],
-        colors_map={
-            "Custom A": "#FF5733",
-            "Custom B": "#33FF57",
-            "Custom C": "#3357FF",
-        },
-    )
-    create_legend(
-        ax=ax,
-        handles=handles_ext,
-        title="Custom Legend",
-        loc="lower right",
-        font=FONT_LEGEND,
+        y_values=y_values,
+        orientation=orientation,
+        offset=1,
     )
 
     color_bars(
@@ -256,6 +270,32 @@ def _1_3(dataset):
         orientation=orientation,
     )
 
+    legend1 = create_legend(
+        ax=ax,
+        handles=handles1,
+        title="Study Focus",
+        loc="upper right",
+    )
+    legend2 = create_legend(
+        ax=ax,
+        handles=handles2,
+        title="Custom Legend",
+        loc="lower right",
+    )
+
+    apply_font_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+    apply_font_legend(
+        legend=legend1,
+        fonts=FONTS_LEGEND,
+    )
+    apply_font_legend(
+        legend=legend2,
+        fonts=FONTS_LEGEND,
+    )
+
     plt.tight_layout()
     plt.show()
     fig.savefig("figure/_1_3.png", dpi=300)
@@ -266,7 +306,6 @@ def _4_1(dataset):
         dataset=dataset,
         fields=["software_category", "software", "technique"],
     )
-
     dataset_counted = count_dataset(
         dataset=dataset_filtered,
         fields=["software_category", "software"],
@@ -302,7 +341,6 @@ def _4_1(dataset):
         y_axis="count",
         z_axis="software_category",
     )
-
     colors_map = get_colors_map(
         values=x_values,
         criteria=z_values,
@@ -314,6 +352,20 @@ def _4_1(dataset):
         criteria=z_values,
         colors=COLORS,
         color_field="software_category",
+    )
+    handles1 = get_legend_handles(
+        values=z_values,
+        colors_map=colors_map_legend,
+    )
+    handles2 = get_legend_handles(
+        values=["Custom A", "Custom B", "Custom C"],
+        colors_map={
+            "Custom A": "#FF5733",
+            "Custom B": "#33FF57",
+            "Custom C": "#3357FF",
+            "Custom D": "#46A819",
+            "Custom E": "#FF33A1",
+        },
     )
 
     fig, ax = plt.subplots()
@@ -332,34 +384,11 @@ def _4_1(dataset):
         orientation=orientation,
     )
 
-    handles = get_legend_handles(
-        values=z_values,
-        colors_map=colors_map_legend,
-    )
-    create_legend(
+    label_bar_numbers(
         ax=ax,
-        handles=handles,
-        title="Software Category",
-        loc="upper right",
-        font=FONT_LEGEND,
-    )
-
-    handles_ext = get_legend_handles(
-        values=["Custom A", "Custom B", "Custom C"],
-        colors_map={
-            "Custom A": "#FF5733",
-            "Custom B": "#33FF57",
-            "Custom C": "#3357FF",
-            "Custom D": "#46A819",
-            "Custom E": "#FF33A1",
-        },
-    )
-    create_legend(
-        ax=ax,
-        handles=handles_ext,
-        title="Custom Legend",
-        loc="lower right",
-        font=FONT_LEGEND,
+        y_values=y_values,
+        orientation=orientation,
+        offset=3,
     )
 
     color_bars(
@@ -372,12 +401,31 @@ def _4_1(dataset):
         colors_map=colors_map,
         orientation=orientation,
     )
-    label_numbers(
+
+    legend1 = create_legend(
         ax=ax,
-        y_values=y_values,
-        orientation=orientation,
-        offset=3,
-        font=FONT_LABEL_NUMBERS,
+        handles=handles1,
+        title="Software Category",
+        loc="upper right",
+    )
+    legend2 = create_legend(
+        ax=ax,
+        handles=handles2,
+        title="Custom Legend",
+        loc="lower right",
+    )
+
+    apply_font_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+    apply_font_legend(
+        legend=legend1,
+        fonts=FONTS_LEGEND,
+    )
+    apply_font_legend(
+        legend=legend2,
+        fonts=FONTS_LEGEND,
     )
 
     plt.tight_layout()
