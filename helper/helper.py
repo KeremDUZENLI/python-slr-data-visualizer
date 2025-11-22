@@ -11,6 +11,22 @@ def get_num_rows(dataset):
         return len(dataset[field])
 
 
+def get_unique_values(values):
+    seen = set()
+    unique_values = []
+
+    for value in values:
+        if value not in seen:
+            seen.add(value)
+            unique_values.append(value)
+
+    return unique_values
+
+
+def clean_label(name):
+    return str(name).replace("_", " ").strip().title()
+
+
 def parse_string(text):
     operators = ["==", "!=", ">=", ">", "<=", "<", "="]
     found_op = None

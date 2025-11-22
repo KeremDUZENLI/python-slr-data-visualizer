@@ -28,3 +28,12 @@ def color_labels(ax, colors_map, orientation="v"):
 
         if color is not None:
             label.set_color(color)
+
+
+def color_labels_extra(ax, colors_map):
+    for text in ax:
+        key = text.get_text()
+        color = colors_map.get(key)
+
+        if color is not None:
+            text.set_color(color)

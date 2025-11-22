@@ -1,3 +1,8 @@
+from helper.helper import (
+    get_unique_values,
+)
+
+
 def get_labels(dataset, x_axis, y_axis=None, z_axis=None):
     x_raw = dataset[x_axis]
     y_raw = dataset[y_axis] if y_axis else None
@@ -25,6 +30,27 @@ def get_labels(dataset, x_axis, y_axis=None, z_axis=None):
     if y_axis:
         return x_values, y_values
     return x_values
+
+
+def get_labels_extra(values):
+    unique_values = get_unique_values(values)
+
+    positions = {}
+    for item in unique_values:
+        positions[item] = []
+
+    for i in range(len(values)):
+        positions[values[i]].append(i)
+
+    values_centers = {}
+    for item in positions:
+        total = 0
+        count = len(positions[item])
+        for index in positions[item]:
+            total += index
+        values_centers[item] = total / count
+
+    return values_centers
 
 
 def _extract_value(cell):

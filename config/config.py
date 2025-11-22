@@ -23,6 +23,11 @@ COLORS = {
         "Unity": "#fcbca7",
         "Unreal Engine": "#eb6d67",
     },
+    "labels_extra": {
+        "Software Data": "#0000ff",
+        "Software Modeling": "#008000",
+        "Software Render": "#ff0000",
+    },
 }
 
 
@@ -62,10 +67,17 @@ FONTS_PLOT = {
         "style": "normal",
         "stretch": "condensed",
     },
-    "bar_numbers": {
+    "labels_bar_numbers": {
         "size": 8,
         "family": "sans-serif",
         "weight": "normal",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "labels_extra": {
+        "size": 8,
+        "family": "sans-serif",
+        "weight": "bold",
         "style": "normal",
         "stretch": "condensed",
     },
@@ -74,14 +86,14 @@ FONTS_PLOT = {
 
 FONTS_LEGEND = {
     "legend_title": {
-        "size": 10,
+        "size": 9,
         "family": "sans-serif",
         "weight": "bold",
         "style": "normal",
         "stretch": "condensed",
     },
     "legend_text": {
-        "size": 9,
+        "size": 8,
         "family": "sans-serif",
         "weight": "normal",
         "style": "normal",

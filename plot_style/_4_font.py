@@ -4,7 +4,8 @@ def apply_font_plot(ax, fonts):
     apply_font_ylabel(ax, fonts.get("ylabel"))
     apply_font_xticks(ax, fonts.get("xticks"))
     apply_font_yticks(ax, fonts.get("yticks"))
-    apply_font_bar_numbers(ax, fonts.get("bar_numbers"))
+    apply_font_labels(ax, fonts.get("labels_bar_numbers"), gid="labels_bar_numbers")
+    apply_font_labels(ax, fonts.get("labels_extra"), gid="labels_extra")
 
 
 def apply_font_legend(legend, fonts):
@@ -34,7 +35,7 @@ def apply_font_yticks(ax, font):
         _apply_font_to_text(txt, font)
 
 
-def apply_font_bar_numbers(ax, font, gid="bar_numbers"):
+def apply_font_labels(ax, font, gid):
     for txt in getattr(ax, "texts", []):
         get_gid = getattr(txt, "get_gid", None)
         if callable(get_gid) and get_gid() == gid:
