@@ -17,46 +17,55 @@ from operation._2_count import (
     count_dataset,
 )
 
-from plot._1_get_labels import (
+from output._1_print import (
+    print_dict,
+    print_counts,
+)
+from output._2_plots import (
+    draw_plot,
+    show_plot,
+    save_plot,
+)
+
+from plot_get._1_get_labels import (
     get_labels,
-    get_labels_extra,
+    get_labels_center,
 )
-from plot._2_get_colors import (
+from plot_get._2_get_colors import (
     get_colors_map,
+    map_colors_map,
 )
-from plot._3_get_legend import (
+from plot_get._3_get_legend import (
     get_legend_handles,
 )
 
-from plot_style._0_draw import (
+from plot_style._0_labels_axis import (
     draw_bar_1D,
 )
 from plot_style._1_labels import (
     labels_bar_numbers,
     labels_extra,
 )
-from plot_style._2_color import (
+from plot_style._3_color import (
     color_bars,
     color_labels,
     color_labels_extra,
 )
-from plot_style._3_legend import (
+from plot_style._2_legend import (
     create_legend,
 )
 from plot_style._4_font import (
     apply_font_plot,
     apply_font_legend,
 )
-
-from print.print import (
-    print_dict,
-    print_counts,
+from plot_style._5_text import (
+    update_text_labels,
+    update_text_legend,
 )
-
-import matplotlib.pyplot as plt
 
 
 def _0_0(dataset):
+    ### operation
     dataset_filtered = filter_dataset_by_fields(
         dataset=dataset,
         fields=["year"],
@@ -87,21 +96,25 @@ def _0_0(dataset):
             operation=operation,
         )
 
+    ### output
     print_dict(dataset_counted)
     print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
 
+    ### plot_get
     x_values, y_values = get_labels(
         dataset=dataset_counted,
         x_axis="year",
         y_axis="count",
         z_axis=None,
     )
+
     colors_map = get_colors_map(
         values=x_values,
-        criteria=x_values,
         colors=COLORS,
         color_field="year",
     )
+
     handles1 = get_legend_handles(
         values=x_values,
         colors_map=colors_map,
@@ -117,8 +130,7 @@ def _0_0(dataset):
         },
     )
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-
+    ### plot_style
     orientation = "v"
     x_values_list = draw_bar_1D(
         ax=ax,
@@ -140,17 +152,6 @@ def _0_0(dataset):
         offset=1,
     )
 
-    color_bars(
-        ax=ax,
-        x_values_list=x_values_list,
-        colors_map=colors_map,
-    )
-    color_labels(
-        ax=ax,
-        colors_map=colors_map,
-        orientation=orientation,
-    )
-
     legend1 = create_legend(
         ax=ax,
         handles=handles1,
@@ -162,6 +163,18 @@ def _0_0(dataset):
         handles=handles2,
         title="Custom Legend",
         loc="lower left",
+    )
+
+    color_bars(
+        ax=ax,
+        x_values_list=x_values_list,
+        colors_map=colors_map,
+        border=False,
+    )
+    color_labels(
+        ax=ax,
+        colors_map=colors_map,
+        orientation=orientation,
     )
 
     apply_font_plot(
@@ -177,17 +190,21 @@ def _0_0(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    plt.tight_layout()
-    plt.show()
-    fig.savefig(
-        "figure/_0_0.png",
-        dpi=300,
-        bbox_inches="tight",
-        bbox_extra_artists=[legend1, legend2],
+    update_text_legend(legend1)
+    update_text_legend(legend2)
+
+    ### output
+    show_plot()
+    save_plot(
+        fig=fig,
+        name="_0_0",
+        legends=[legend1, legend2],
+        extra_artists=None,
     )
 
 
 def _1_3(dataset):
+    ### operation
     dataset_filtered = filter_dataset_by_fields(
         dataset=dataset,
         fields=["study_focus"],
@@ -218,21 +235,25 @@ def _1_3(dataset):
             operation=operation,
         )
 
+    ### output
     print_dict(dataset_counted)
     print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
 
+    ### plot_get
     x_values, y_values = get_labels(
         dataset=dataset_counted,
         x_axis="study_focus",
         y_axis="count",
         z_axis=None,
     )
+
     colors_map = get_colors_map(
         values=x_values,
-        criteria=x_values,
         colors=COLORS,
         color_field="study_focus",
     )
+
     handles1 = get_legend_handles(
         values=x_values,
         colors_map=colors_map,
@@ -248,8 +269,7 @@ def _1_3(dataset):
         },
     )
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-
+    ### plot_style
     orientation = "v"
     x_values_list = draw_bar_1D(
         ax=ax,
@@ -271,17 +291,6 @@ def _1_3(dataset):
         offset=1,
     )
 
-    color_bars(
-        ax=ax,
-        x_values_list=x_values_list,
-        colors_map=colors_map,
-    )
-    color_labels(
-        ax=ax,
-        colors_map=colors_map,
-        orientation=orientation,
-    )
-
     legend1 = create_legend(
         ax=ax,
         handles=handles1,
@@ -293,6 +302,18 @@ def _1_3(dataset):
         handles=handles2,
         title="Custom Legend",
         loc="lower left",
+    )
+
+    color_bars(
+        ax=ax,
+        x_values_list=x_values_list,
+        colors_map=colors_map,
+        border=False,
+    )
+    color_labels(
+        ax=ax,
+        colors_map=colors_map,
+        orientation=orientation,
     )
 
     apply_font_plot(
@@ -308,17 +329,21 @@ def _1_3(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    plt.tight_layout()
-    plt.show()
-    fig.savefig(
-        "figure/_1_3.png",
-        dpi=300,
-        bbox_inches="tight",
-        bbox_extra_artists=[legend1, legend2],
+    update_text_legend(legend1)
+    update_text_legend(legend2)
+
+    ### output
+    show_plot()
+    save_plot(
+        fig=fig,
+        name="_1_3",
+        legends=[legend1, legend2],
+        extra_artists=None,
     )
 
 
 def _4_1(dataset):
+    ### operation
     dataset_filtered = filter_dataset_by_fields(
         dataset=dataset,
         fields=["software_category", "software", "technique"],
@@ -349,33 +374,36 @@ def _4_1(dataset):
             operation=operation,
         )
 
+    ### output
     print_dict(dataset_counted)
     print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
 
+    ### plot_get
     x_values, y_values, z_values = get_labels(
         dataset=dataset_counted,
         x_axis="software",
         y_axis="count",
         z_axis="software_category",
     )
-    values_centers = get_labels_extra(
+    labels_center = get_labels_center(
         values=z_values,
     )
+
     colors_map = get_colors_map(
-        values=x_values,
-        criteria=z_values,
-        colors=COLORS,
-        color_field="software_category",
-    )
-    colors_map_legend = get_colors_map(
         values=z_values,
-        criteria=z_values,
         colors=COLORS,
         color_field="software_category",
     )
+    colors_mapped = map_colors_map(
+        values_new=x_values,
+        values_old=z_values,
+        colors_map=colors_map,
+    )
+
     handles1 = get_legend_handles(
         values=z_values,
-        colors_map=colors_map_legend,
+        colors_map=colors_map,
     )
     handles2 = get_legend_handles(
         values=["Custom A", "Custom B", "Custom C"],
@@ -388,8 +416,7 @@ def _4_1(dataset):
         },
     )
 
-    fig, ax = plt.subplots(figsize=(8, 6))
-
+    ### plot_style
     orientation = "h"
     x_values_list = draw_bar_1D(
         ax=ax,
@@ -412,31 +439,9 @@ def _4_1(dataset):
     )
     texts = labels_extra(
         ax=ax,
-        values_centers=values_centers,
+        labels_center=labels_center,
         orientation=orientation,
         offset=15,
-    )
-
-    color_bars(
-        ax=ax,
-        x_values_list=x_values_list,
-        colors_map=colors_map,
-    )
-    color_labels(
-        ax=ax,
-        colors_map=colors_map,
-        orientation=orientation,
-    )
-
-    colors_map_labels_extra = get_colors_map(
-        values=[t.get_text() for t in texts],
-        criteria=[t.get_text() for t in texts],
-        colors=COLORS,
-        color_field="labels_extra",
-    )
-    color_labels_extra(
-        ax=texts,
-        colors_map=colors_map_labels_extra,
     )
 
     legend1 = create_legend(
@@ -452,6 +457,22 @@ def _4_1(dataset):
         loc="lower left",
     )
 
+    color_bars(
+        ax=ax,
+        x_values_list=x_values_list,
+        colors_map=colors_mapped,
+        border=True,
+    )
+    color_labels(
+        ax=ax,
+        colors_map=colors_mapped,
+        orientation=orientation,
+    )
+    color_labels_extra(
+        ax=texts,
+        colors_map=colors_map,
+    )
+
     apply_font_plot(
         ax=ax,
         fonts=FONTS_PLOT,
@@ -465,11 +486,15 @@ def _4_1(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    plt.tight_layout()
-    plt.show()
-    fig.savefig(
-        "figure/_4_1.png",
-        dpi=300,
-        bbox_inches="tight",
-        bbox_extra_artists=texts + [legend1, legend2],
+    update_text_labels(texts)
+    update_text_legend(legend1)
+    update_text_legend(legend2)
+
+    ### output
+    show_plot()
+    save_plot(
+        fig=fig,
+        name="_4_1",
+        legends=[legend1, legend2],
+        extra_artists=texts,
     )

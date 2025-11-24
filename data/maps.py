@@ -1,4 +1,4 @@
-map_country = {
+COUNTRY_TO_CONTINENT = {
     "France": "Europe",
     "Italy": "Europe",
     "Spain": "Europe",
@@ -46,7 +46,7 @@ map_country = {
 }
 
 
-map_technique_sub = {
+TECHNIQUE_TO_TECHNIQUESUB = {
     "3D Scanning": [
         "Laser Scanning",
         "RGB-D Imaging",

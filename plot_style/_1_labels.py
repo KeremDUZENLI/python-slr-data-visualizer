@@ -1,8 +1,3 @@
-from helper.helper import (
-    clean_label,
-)
-
-
 def labels_bar_numbers(ax, y_values, orientation="v", offset=3):
     for rect, value in zip(ax.patches, y_values):
         if value == 0:
@@ -29,10 +24,10 @@ def labels_bar_numbers(ax, y_values, orientation="v", offset=3):
         )
 
 
-def labels_extra(ax, values_centers, orientation="v", offset=15):
+def labels_extra(ax, labels_center, orientation="v", offset=15):
     texts = []
 
-    for value, center in values_centers.items():
+    for value, center in labels_center.items():
         if orientation == "v":
             x = center
             y = -offset
@@ -45,7 +40,7 @@ def labels_extra(ax, values_centers, orientation="v", offset=15):
         text = ax.text(
             x=x,
             y=y,
-            s=clean_label(value),
+            s=value,
             ha="center",
             va="center",
             rotation=rotation,

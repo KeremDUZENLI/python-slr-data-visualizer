@@ -1,4 +1,4 @@
-def color_bars(ax, x_values_list, colors_map):
+def color_bars(ax, x_values_list, colors_map, border=False):
     index = 0
 
     bars = ax.patches
@@ -7,12 +7,17 @@ def color_bars(ax, x_values_list, colors_map):
             break
 
         label = x_values_list[index]
-
         color = colors_map.get(label)
+
         if color is None:
             color = "#cccccc"
 
         bar.set_facecolor(color)
+
+        if border:
+            bar.set_edgecolor("black")
+            bar.set_linewidth(1)
+
         index += 1
 
 

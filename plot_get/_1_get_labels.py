@@ -32,7 +32,7 @@ def get_labels(dataset, x_axis, y_axis=None, z_axis=None):
     return x_values
 
 
-def get_labels_extra(values):
+def get_labels_center(values):
     unique_values = get_unique_values(values)
 
     positions = {}
@@ -42,15 +42,15 @@ def get_labels_extra(values):
     for i in range(len(values)):
         positions[values[i]].append(i)
 
-    values_centers = {}
+    labels_center = {}
     for item in positions:
         total = 0
         count = len(positions[item])
         for index in positions[item]:
             total += index
-        values_centers[item] = total / count
+        labels_center[item] = total / count
 
-    return values_centers
+    return labels_center
 
 
 def _extract_value(cell):

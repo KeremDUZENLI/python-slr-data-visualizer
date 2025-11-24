@@ -23,10 +23,6 @@ def get_unique_values(values):
     return unique_values
 
 
-def clean_label(name):
-    return str(name).replace("_", " ").strip().title()
-
-
 def parse_string(text):
     operators = ["==", "!=", ">=", ">", "<=", "<", "="]
     found_op = None
