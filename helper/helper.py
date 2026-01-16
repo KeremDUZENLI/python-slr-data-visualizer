@@ -23,6 +23,44 @@ def get_unique_values(values):
     return unique_values
 
 
+def calculate_labels_center_bar(values):
+    unique_values = get_unique_values(values)
+
+    positions = {}
+    for item in unique_values:
+        positions[item] = []
+
+    for i in range(len(values)):
+        positions[values[i]].append(i)
+
+    labels_center = {}
+    for item in positions:
+        total = 0
+        count = len(positions[item])
+        for index in positions[item]:
+            total += index
+        labels_center[item] = total / count
+
+    return labels_center
+
+
+def calculate_labels_center_pie(inner_radius, outer_radius):
+    labels_center = (inner_radius + outer_radius) / (2 * outer_radius)
+    return labels_center
+
+
+def format_labels(values, decimal=0):
+    state = {"index": -1}
+
+    def fmt(pct):
+        state["index"] += 1
+        if state["index"] < len(values):
+            label = values[state["index"]]
+            return f"{label}\n{pct:.{decimal}f}%"
+
+    return fmt
+
+
 def parse_string(text):
     operators = ["==", "!=", ">=", ">", "<=", "<", "="]
     found_op = None

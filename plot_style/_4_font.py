@@ -2,8 +2,11 @@ def apply_font_plot(ax, fonts):
     apply_font_title(ax, fonts.get("title"))
     apply_font_xlabel(ax, fonts.get("xlabel"))
     apply_font_ylabel(ax, fonts.get("ylabel"))
+    apply_font_pielabel(ax, fonts.get("pielabel"))
+
     apply_font_xticks(ax, fonts.get("xticks"))
     apply_font_yticks(ax, fonts.get("yticks"))
+
     apply_font_labels(ax, fonts.get("labels_bar_numbers"), gid="labels_bar_numbers")
     apply_font_labels(ax, fonts.get("labels_extra"), gid="labels_extra")
 
@@ -23,6 +26,11 @@ def apply_font_xlabel(ax, font):
 
 def apply_font_ylabel(ax, font):
     _apply_font_to_text(ax.yaxis.label, font)
+
+
+def apply_font_pielabel(ax, font):
+    for txt in ax.texts:
+        _apply_font_to_text(txt, font)
 
 
 def apply_font_xticks(ax, font):

@@ -19,6 +19,12 @@ COLORS = {
         "Building": "#0000ff",
         "Natural Space": "#800000",
     },
+    "device": {
+        "HMD": "#ff0000",
+        "Immersive Display": "#008000",
+        "Mobile": "#0000ff",
+        "PC": "#800000",
+    },
     "software_category": {
         "software_data": "#ff0000",
         "software_modeling": "#008000",
@@ -57,6 +63,13 @@ FONTS_PLOT = {
     },
     "ylabel": {
         "size": 12,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "pielabel": {
+        "size": 10,
         "family": "sans-serif",
         "weight": "bold",
         "style": "normal",
