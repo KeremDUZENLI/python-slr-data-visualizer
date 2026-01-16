@@ -13,9 +13,10 @@ from input._2_prepare import (
 )
 
 from setup import (
-    _0_0,
+    _1_0,
     _1_3,
     _4_1,
+    _5_0,
 )
 
 
@@ -29,8 +30,14 @@ DATASET_SOFTWARE = group_dataset_by_fields(
     stack_by={"software_category": "software"},
     axes=["software_category", "software", "technique"],
 )
+DATASET_COUNTRY_MAPPED = map_dataset_column(
+    dataset=DATASET,
+    field="country",
+    mapping=COUNTRY_TO_CONTINENT,
+)
 
 
-_0_0(DATASET)
-_1_3(DATASET)
+_1_0(DATASET)
+# _1_3(DATASET)
 _4_1(DATASET_SOFTWARE)
+# _5_0(DATASET_COUNTRY_MAPPED)

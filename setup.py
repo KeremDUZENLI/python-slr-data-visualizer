@@ -44,6 +44,7 @@ from plot_style._0_labels_axis import (
 )
 from plot_style._1_labels import (
     labels_bar_numbers,
+    labels_grid,
     labels_extra,
 )
 from plot_style._3_color import (
@@ -64,7 +65,7 @@ from plot_style._5_text import (
 )
 
 
-def _0_0(dataset):
+def _1_0(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
         dataset=dataset,
@@ -151,6 +152,10 @@ def _0_0(dataset):
         orientation=orientation,
         offset=1,
     )
+    labels_grid(
+        ax=ax,
+        orientation=orientation,
+    )
 
     legend1 = create_legend(
         ax=ax,
@@ -197,7 +202,7 @@ def _0_0(dataset):
     show_plot()
     save_plot(
         fig=fig,
-        name="_0_0",
+        name="_1_0",
         legends=[legend1, legend2],
         extra_artists=None,
     )
@@ -437,6 +442,10 @@ def _4_1(dataset):
         orientation=orientation,
         offset=3,
     )
+    labels_grid(
+        ax=ax,
+        orientation=orientation,
+    )
     texts = labels_extra(
         ax=ax,
         labels_center=labels_center,
@@ -497,4 +506,143 @@ def _4_1(dataset):
         name="_4_1",
         legends=[legend1, legend2],
         extra_artists=texts,
+    )
+
+
+def _5_0(dataset):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=["country"],
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=["country"],
+    )
+
+    filter_values = None
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    filter_count = None
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_dict(dataset_counted)
+    print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values = get_labels(
+        dataset=dataset_counted,
+        x_axis="country",
+        y_axis="count",
+        z_axis=None,
+    )
+
+    colors_map = get_colors_map(
+        values=x_values,
+        colors=COLORS,
+        color_field="country",
+    )
+
+    handles1 = get_legend_handles(
+        values=x_values,
+        colors_map=colors_map,
+    )
+    handles2 = get_legend_handles(
+        values=["Custom A", "Custom B", "Custom C"],
+        colors_map={
+            "Custom A": "#FF5733",
+            "Custom B": "#33FF57",
+            "Custom C": "#3357FF",
+            "Custom D": "#46A819",
+            "Custom E": "#FF33A1",
+        },
+    )
+
+    ### plot_style
+    orientation = "v"
+    x_values_list = draw_bar_1D(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        labels_spec={
+            "x_label": "Continents",
+            "y_label": "Number of Studies",
+            "title": "Studies Per Year",
+            "rotation": 45,
+        },
+        orientation=orientation,
+    )
+
+    labels_bar_numbers(
+        ax=ax,
+        y_values=y_values,
+        orientation=orientation,
+        offset=1,
+    )
+
+    legend1 = create_legend(
+        ax=ax,
+        handles=handles1,
+        title="Continents",
+        loc="upper left",
+    )
+    legend2 = create_legend(
+        ax=ax,
+        handles=handles2,
+        title="Custom Legend",
+        loc="lower left",
+    )
+
+    color_bars(
+        ax=ax,
+        x_values_list=x_values_list,
+        colors_map=colors_map,
+        border=False,
+    )
+    color_labels(
+        ax=ax,
+        colors_map=colors_map,
+        orientation=orientation,
+    )
+
+    apply_font_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+    apply_font_legend(
+        legend=legend1,
+        fonts=FONTS_LEGEND,
+    )
+    apply_font_legend(
+        legend=legend2,
+        fonts=FONTS_LEGEND,
+    )
+
+    update_text_legend(legend1)
+    update_text_legend(legend2)
+
+    ### output
+    show_plot()
+    save_plot(
+        fig=fig,
+        name="_5_0",
+        legends=[legend1, legend2],
+        extra_artists=None,
     )

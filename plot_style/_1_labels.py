@@ -24,6 +24,14 @@ def labels_bar_numbers(ax, y_values, orientation="v", offset=3):
         )
 
 
+def labels_grid(ax, orientation="v"):
+    ax.set_axisbelow(True)
+    if orientation == "v":
+        ax.yaxis.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
+    if orientation == "h":
+        ax.xaxis.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
+
+
 def labels_extra(ax, labels_center, orientation="v", offset=15):
     texts = []
 
