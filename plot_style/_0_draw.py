@@ -4,6 +4,8 @@ from helper.helper import (
     format_labels,
 )
 
+import plotly.graph_objects as go
+
 
 def draw_bar_1D(ax, x_values, y_values, labels_spec, orientation="v"):
     x_values_list = []
@@ -114,15 +116,88 @@ def draw_pie(ax, x_values, y_values, labels_spec):
     lbls = format_labels(values=x_values_list, decimal=1)
     pcnt = calculate_labels_center_pie(inner_radius=0.0, outer_radius=1.0)
 
-    ax.pie(
+    _, _, autotexts = ax.pie(
         x=y_values,
         autopct=lbls,
         startangle=90,
         radius=1.0,
         pctdistance=pcnt,
     )
+    for text in autotexts:
+        text.set_gid("pielabel")
 
     ax.set_title(labels_spec.get("title", ""))
     ax.axis("equal")
 
     return x_values_list
+
+
+def draw_pie_nested(ax, inner_data, outer_data, labels_spec):
+    inner_labels, inner_labels_count = inner_data
+    outer_labels, outer_labels_count = outer_data
+
+    inner_labels_list = []
+    for i in inner_labels:
+        inner_labels_list.append(str(i))
+    lbls_inner = format_labels(values=inner_labels_list, decimal=1)
+    pcnt_inner = calculate_labels_center_pie(inner_radius=0.0, outer_radius=0.5)
+
+    outer_labels_list = []
+    for o in outer_labels:
+        outer_labels_list.append(str(o))
+    lbls_outer = format_labels(values=outer_labels_list, decimal=1)
+    pcnt_outer = calculate_labels_center_pie(inner_radius=0.5, outer_radius=1.0)
+
+    _, _, autotexts_inner = ax.pie(
+        x=inner_labels_count,
+        autopct=lbls_inner,
+        startangle=90,
+        radius=0.5,
+        pctdistance=pcnt_inner,
+        wedgeprops=dict(width=0.5, edgecolor="w"),
+    )
+    for text in autotexts_inner:
+        text.set_gid("pielabel_inner")
+
+    _, _, autotexts_outer = ax.pie(
+        x=outer_labels_count,
+        autopct=lbls_outer,
+        startangle=90,
+        radius=1.0,
+        pctdistance=pcnt_outer,
+        wedgeprops=dict(width=0.5, edgecolor="w"),
+    )
+    for text in autotexts_outer:
+        text.set_gid("pielabel_outer")
+
+    ax.set_title(labels_spec.get("title", ""))
+    ax.axis("equal")
+
+    return inner_labels_list + outer_labels_list
+
+
+def draw_sunburst(labels, parents, values, colors, labels_spec):
+    fmt = "%{label}<br>%{percentRoot:.1%}"
+
+    fig = go.Figure(
+        go.Sunburst(
+            labels=labels,
+            parents=parents,
+            values=values,
+            branchvalues="total",
+            # We pass the colors list directly here
+            marker=dict(colors=colors, line=dict(color="white", width=1)),
+            # Formatting
+            maxdepth=2,
+            texttemplate=fmt,
+            textinfo="text",
+            insidetextorientation="auto",
+        )
+    )
+
+    fig.update_layout(
+        title=labels_spec.get("title", ""),
+        margin=dict(t=60, l=0, r=0, b=0),
+    )
+
+    return fig

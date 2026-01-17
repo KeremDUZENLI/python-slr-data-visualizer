@@ -15,19 +15,24 @@ from input._2_prepare import (
 from setup import (
     ### bar_1D ###
     _1_0,
-    _1_3,
     _4_1,
     _5_0,
     ### bar_2D ###
     _1_1,
     _2_1,
-    ### pie ###
     _3_4,
+    ### pie ###
+    _1_3,
+    ### pie_nested ###
+    _1_4,
+    _3_2,
+    ### sunburst ###
+    _1_4_S,
 )
 
 
 DATASET = read_dataset(csv_path="data/dataset.csv")
-DATASET_SOFTWARE = group_dataset_by_fields(
+DATASET_SOFTWARE_STACKED = group_dataset_by_fields(
     datasets=[
         (DATASET, {"software": "software_data", "technique": "technique"}),
         (DATASET, {"software": "software_modeling", "technique": "technique"}),
@@ -41,6 +46,12 @@ DATASET_COUNTRY_MAPPED = map_dataset_column(
     field="country",
     mapping=COUNTRY_TO_CONTINENT,
 )
+DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
+    dataset=DATASET,
+    field_parent="technique",
+    field_child="technique_sub",
+    mapping=TECHNIQUE_TO_TECHNIQUESUB,
+)
 
 
 ################################################
@@ -49,7 +60,7 @@ DATASET_COUNTRY_MAPPED = map_dataset_column(
 
 
 # _1_0(DATASET)
-# _4_1(DATASET_SOFTWARE)
+# _4_1(DATASET_SOFTWARE_STACKED)
 # _5_0(DATASET_COUNTRY_MAPPED)
 
 
@@ -68,4 +79,21 @@ DATASET_COUNTRY_MAPPED = map_dataset_column(
 #############################################
 
 
-_1_3(DATASET)
+# _1_3(DATASET)
+
+
+#############################################
+################# pie_nested ################
+#############################################
+
+
+# _1_4(DATASET)
+# _3_2(DATASET_TECHNIQUE_HIERARCHY)
+
+
+#############################################
+################## sunburst #################
+#############################################
+
+
+_1_4_S(DATASET)
