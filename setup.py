@@ -5,8 +5,8 @@ from config.config import (
 )
 
 from helper.helper import (
-    calculate_pie_nested_labels,
-    calculate_labels_center_bar,
+    calculate_labels_nested,
+    calculate_labels_pos_bar,
     parse_string,
 )
 
@@ -27,6 +27,8 @@ from output._2_plots import (
     draw_plot,
     show_plot,
     save_plot,
+    draw_plot_plotly,
+    show_plot_plotly,
 )
 
 from plot_get._1_get_labels import (
@@ -55,9 +57,11 @@ from plot_style._1_labels import (
 from plot_style._2_color import (
     color_bars,
     color_slices,
+    color_sunburst,
     color_labels,
-    color_labels_pie,
     color_labels_extra,
+    color_labels_pie,
+    color_labels_sunburst,
 )
 from plot_style._3_legend import (
     create_legend,
@@ -264,7 +268,7 @@ def _4_1(dataset):
         y_axis="count",
         z_axis="software_category",
     )
-    labels_center = calculate_labels_center_bar(
+    labels_center = calculate_labels_pos_bar(
         values=z_values,
     )
 
@@ -1100,17 +1104,21 @@ def _1_4(dataset):
         z_axis="historical_site_type_sub",
     )
 
-    inner_data, outer_data, _ = calculate_pie_nested_labels(
-        x_values, y_values, z_values
-    )
+    (
+        inner_labels,
+        inner_labels_count,
+        outer_labels,
+        outer_labels_count,
+        _,
+    ) = calculate_labels_nested(x_values, y_values, z_values)
 
     inner_colors_map = get_colors_map(
-        values=inner_data[0],
+        values=inner_labels,
         colors=COLORS,
         color_field="historical_site_type",
     )
     outer_colors_map = get_colors_map(
-        values=outer_data[0],
+        values=outer_labels,
         colors=COLORS,
         color_field="historical_site_type_sub",
     )
@@ -1119,8 +1127,10 @@ def _1_4(dataset):
     ### plot_style
     labels_list = draw_pie_nested(
         ax=ax,
-        inner_data=inner_data,
-        outer_data=outer_data,
+        inner_labels=inner_labels,
+        inner_labels_count=inner_labels_count,
+        outer_labels=outer_labels,
+        outer_labels_count=outer_labels_count,
         labels_spec={
             "title": "Historical Site Type & Sub-Type Distribution",
         },
@@ -1135,6 +1145,12 @@ def _1_4(dataset):
     color_labels_pie(
         ax=ax,
         color="white",
+        target="inner",
+    )
+    color_labels_pie(
+        ax=ax,
+        color="black",
+        target="outer",
     )
 
     apply_font_plot(
@@ -1197,17 +1213,21 @@ def _3_2(dataset):
         z_axis="technique_sub",
     )
 
-    inner_data, outer_data, _ = calculate_pie_nested_labels(
-        x_values, y_values, z_values
-    )
+    (
+        inner_labels,
+        inner_labels_count,
+        outer_labels,
+        outer_labels_count,
+        _,
+    ) = calculate_labels_nested(x_values, y_values, z_values)
 
     inner_colors_map = get_colors_map(
-        values=inner_data[0],
+        values=inner_labels,
         colors=COLORS,
         color_field="technique",
     )
     outer_colors_map = get_colors_map(
-        values=outer_data[0],
+        values=outer_labels,
         colors=COLORS,
         color_field="technique_sub",
     )
@@ -1216,8 +1236,10 @@ def _3_2(dataset):
     ### plot_style
     labels_list = draw_pie_nested(
         ax=ax,
-        inner_data=inner_data,
-        outer_data=outer_data,
+        inner_labels=inner_labels,
+        inner_labels_count=inner_labels_count,
+        outer_labels=outer_labels,
+        outer_labels_count=outer_labels_count,
         labels_spec={
             "title": "Technique & Sub-Technique Distribution",
         },
@@ -1232,6 +1254,12 @@ def _3_2(dataset):
     color_labels_pie(
         ax=ax,
         color="white",
+        target="inner",
+    )
+    color_labels_pie(
+        ax=ax,
+        color="black",
+        target="outer",
     )
 
     apply_font_plot(
@@ -1289,7 +1317,7 @@ def _1_4_S(dataset):
     ### output
     print_dict(dataset_counted)
     print_counts(dataset_counted, decimal=1)
-    # fig, ax = draw_plot(8, 6)
+    ax = draw_plot_plotly()
 
     ### plot_get
     x_values, y_values, z_values = get_labels(
@@ -1299,16 +1327,17 @@ def _1_4_S(dataset):
         z_axis="historical_site_type_sub",
     )
 
-    inner_data, outer_data, inner_outer_links = calculate_pie_nested_labels(
-        x_values, y_values, z_values
-    )
+    (
+        inner_labels,
+        inner_labels_count,
+        outer_labels,
+        outer_labels_count,
+        inner_outer_links,
+    ) = calculate_labels_nested(x_values, y_values, z_values)
 
-    inner_labels, inner_labels_count = inner_data
-    outer_labels, outer_labels_count = outer_data
-
-    labels = inner_labels + outer_labels
-    parents = [""] * len(inner_labels) + inner_outer_links
-    counts = inner_labels_count + outer_labels_count
+    all_labels = inner_labels + outer_labels
+    all_parents = [""] * len(inner_labels) + inner_outer_links
+    all_counts = inner_labels_count + outer_labels_count
 
     inner_colors_map = get_colors_map(
         values=inner_labels,
@@ -1323,17 +1352,37 @@ def _1_4_S(dataset):
     full_colors_map = {**inner_colors_map, **outer_colors_map}
 
     ### plot_style
-    colors = [full_colors_map.get(label, "#cccccc") for label in labels]
-
     fig = draw_sunburst(
-        labels=labels,
-        parents=parents,
-        values=counts,
-        colors=colors,
+        ax=ax,
+        all_labels=all_labels,
+        all_parents=all_parents,
+        all_counts=all_counts,
         labels_spec={
             "title": "Historical Site Type & Sub-Type Distribution",
         },
     )
 
+    color_sunburst(
+        ax=fig,
+        coloring_values_list=all_labels,
+        colors_map=full_colors_map,
+        border=False,
+    )
+    color_labels_sunburst(
+        ax=fig,
+        color="white",
+        target="inner",
+    )
+    color_labels_sunburst(
+        ax=fig,
+        color="black",
+        target="outer",
+    )
+
+    apply_font_plot(
+        ax=fig,
+        fonts=FONTS_PLOT,
+    )
+
     ### output
-    fig.show()
+    show_plot_plotly(fig)

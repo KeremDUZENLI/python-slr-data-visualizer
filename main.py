@@ -79,7 +79,7 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 #############################################
 
 
-# _1_3(DATASET)
+_1_3(DATASET)
 
 
 #############################################
@@ -87,8 +87,8 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 #############################################
 
 
-# _1_4(DATASET)
-# _3_2(DATASET_TECHNIQUE_HIERARCHY)
+_1_4(DATASET)
+_3_2(DATASET_TECHNIQUE_HIERARCHY)
 
 
 #############################################

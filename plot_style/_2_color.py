@@ -36,6 +36,23 @@ def color_slices(ax, coloring_values_list, colors_map, border=False):
             slice.set_linewidth(1)
 
 
+def color_sunburst(ax, coloring_values_list, colors_map, border=False):
+    colors = []
+
+    for label in coloring_values_list:
+        color = colors_map.get(label)
+
+        if color is None:
+            color = "#cccccc"
+
+        colors.append(color)
+
+    ax.update_traces(marker=dict(colors=colors))
+
+    if border:
+        ax.update_traces(marker=dict(line=dict(color="black", width=1)))
+
+
 def color_labels(ax, colors_map, orientation="v"):
     if orientation == "v":
         labels = ax.get_xticklabels()
@@ -50,11 +67,6 @@ def color_labels(ax, colors_map, orientation="v"):
             label.set_color(color)
 
 
-def color_labels_pie(ax, color):
-    for label in ax.texts:
-        label.set_color(color)
-
-
 def color_labels_extra(ax, colors_map):
     for text in ax:
         key = text.get_text()
@@ -62,3 +74,37 @@ def color_labels_extra(ax, colors_map):
 
         if color is not None:
             text.set_color(color)
+
+
+def color_labels_pie(ax, color, target=None):
+    for text in ax.texts:
+        gid = text.get_gid()
+        if target == "inner" and gid == "pie_label_inner":
+            text.set_color(color)
+        if target == "outer" and gid == "pie_label_outer":
+            text.set_color(color)
+        if target == None:
+            text.set_color(color)
+
+
+def color_labels_sunburst(ax, color, target):
+    for trace in ax.data:
+        if trace.type == "sunburst":
+            count = len(trace.labels)
+            existing_color = trace.insidetextfont.color or "#ffffff"
+
+            if isinstance(existing_color, (list, tuple)):
+                current_colors = list(existing_color)
+            else:
+                current_colors = [existing_color] * count
+
+            parents = trace.parents
+            for i, parent in enumerate(parents):
+                is_inner = parent == ""
+
+                if target == "inner" and is_inner:
+                    current_colors[i] = color
+                if target == "outer" and not is_inner:
+                    current_colors[i] = color
+
+            trace.update(insidetextfont=dict(color=current_colors))

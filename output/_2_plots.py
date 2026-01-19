@@ -1,4 +1,8 @@
 import matplotlib.pyplot as plt
+import plotly.graph_objects as go
+
+
+# ----------------- Matplotlib -----------------
 
 
 def draw_plot(width, height):
@@ -25,3 +29,15 @@ def save_plot(fig, name, legends=None, extra_artists=None):
         bbox_inches="tight",
         bbox_extra_artists=all_artists,
     )
+
+
+# ----------------- Plotly -----------------
+
+
+def draw_plot_plotly():
+    fig = go.Figure()
+    return fig
+
+
+def show_plot_plotly(fig):
+    fig.show()

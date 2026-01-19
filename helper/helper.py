@@ -23,7 +23,7 @@ def get_unique_values(values):
     return unique_values
 
 
-def calculate_pie_nested_labels(x_values, y_values, z_values):
+def calculate_labels_nested(x_values, y_values, z_values):
     tree = {}
 
     # Group children by parent to sum totals
@@ -33,9 +33,11 @@ def calculate_pie_nested_labels(x_values, y_values, z_values):
         tree[parent].append((child, value))
 
     # Build aligned lists
-    inner_labels, inner_labels_count = [], []
-    outer_labels, outer_labels_count = [], []
-    inner_outer_links = []  # To track parent of each outer label
+    inner_labels = []
+    inner_labels_count = []
+    outer_labels = []
+    outer_labels_count = []
+    inner_outer_links = []
 
     # Sort to ensure visual consistency
     for parent in sorted(tree.keys()):
@@ -52,13 +54,15 @@ def calculate_pie_nested_labels(x_values, y_values, z_values):
         inner_labels_count.append(parent_total)
 
     return (
-        (inner_labels, inner_labels_count),
-        (outer_labels, outer_labels_count),
+        inner_labels,
+        inner_labels_count,
+        outer_labels,
+        outer_labels_count,
         inner_outer_links,
     )
 
 
-def calculate_labels_center_bar(values):
+def calculate_labels_pos_bar(values):
     unique_values = get_unique_values(values)
 
     positions = {}
@@ -79,7 +83,7 @@ def calculate_labels_center_bar(values):
     return labels_center
 
 
-def calculate_labels_center_pie(inner_radius, outer_radius):
+def calculate_labels_pos_pie(inner_radius, outer_radius):
     labels_center = (inner_radius + outer_radius) / (2 * outer_radius)
     return labels_center
 

@@ -125,27 +125,6 @@ FONTS_PLOT = {
         "style": "normal",
         "stretch": "condensed",
     },
-    "pielabel": {
-        "size": 8,
-        "family": "sans-serif",
-        "weight": "bold",
-        "style": "normal",
-        "stretch": "condensed",
-    },
-    "pielabel_inner": {
-        "size": 6,
-        "family": "sans-serif",
-        "weight": "bold",
-        "style": "normal",
-        "stretch": "condensed",
-    },
-    "pielabel_outer": {
-        "size": 6,
-        "family": "sans-serif",
-        "weight": "bold",
-        "style": "normal",
-        "stretch": "condensed",
-    },
     "labels_bar_numbers": {
         "size": 8,
         "family": "sans-serif",
@@ -159,6 +138,45 @@ FONTS_PLOT = {
         "weight": "bold",
         "style": "normal",
         "stretch": "condensed",
+    },
+    "pie_label": {
+        "size": 8,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "pie_label_inner": {
+        "size": 6,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "pie_label_outer": {
+        "size": 6,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "sunburst_label": {
+        "size": 8,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+    },
+    "sunburst_label_inner": {
+        "size": 8,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+    },
+    "sunburst_label_outer": {
+        "size": 8,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
     },
 }
 
