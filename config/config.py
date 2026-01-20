@@ -29,6 +29,12 @@ COLORS = {
         "UrbanSpace": "#0000ff50",
         "Cave": "#80000050",
     },
+    "platform": {
+        "VR": "#ff0000",
+        "AR": "#008000",
+        "MR": "#0000ff",
+        "XR": "#800000",
+    },
     "device": {
         "HMD": "#ff0000",
         "Immersive Display": "#008000",

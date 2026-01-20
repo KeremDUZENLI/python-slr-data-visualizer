@@ -1,23 +1,30 @@
-def labels_bar_numbers(ax, y_values, orientation="v", offset=3):
-    for rect, value in zip(ax.patches, y_values):
-        if value == 0:
-            continue
+def labels_bar_numbers(ax, orientation="v", offset=1):
+    for rect in ax.patches:
 
         if orientation == "v":
-            x = rect.get_x() + rect.get_width() / 2
-            y = rect.get_height() + offset * 0.1
+            value = rect.get_height()
+            if value <= 0:
+                continue
+
+            x = (rect.get_x()) + (rect.get_width() / 2)
+            y = (rect.get_y() + value) + (offset * 0.1)
             ha = "center"
             va = "bottom"
+
         if orientation == "h":
-            x = rect.get_width() + offset * 0.1
-            y = rect.get_y() + rect.get_height() / 2
+            value = rect.get_width()
+            if value <= 0:
+                continue
+
+            x = (rect.get_x() + value) + (offset * 0.1)
+            y = (rect.get_y()) + (rect.get_height() / 2)
             ha = "left"
             va = "center"
 
         ax.text(
             x,
             y,
-            str(value),
+            str(int(value)),
             ha=ha,
             va=va,
             gid="labels_bar_numbers",

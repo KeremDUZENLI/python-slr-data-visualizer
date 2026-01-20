@@ -1,6 +1,7 @@
 from helper.helper import (
     get_unique_values,
     calculate_labels_pos_pie,
+    offset_frame,
     format_labels,
 )
 
@@ -104,6 +105,123 @@ def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
     ax.set_title(labels_spec.get("title", ""))
 
     return z_values_list
+
+
+def draw_stacked_bar(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
+    x_values_list = []
+    for x_value in x_values:
+        x_values_list.append(str(x_value))
+
+    z_values_list = []
+    for z_value in z_values:
+        z_values_list.append(str(z_value))
+
+    x_uniques_list = get_unique_values(x_values_list)
+    z_uniques_list = get_unique_values(z_values_list)
+
+    # x_map = {
+    # '2015': 0, '2016': 1, '2017': 2, '2018': 3, '2019': 4,
+    # '2020': 5, '2021': 6, '2022': 7, '2023': 8, '2024': 9}
+    x_map = {}
+    index_counter = 0
+    for x_value in x_uniques_list:
+        x_map[x_value] = index_counter
+        index_counter += 1
+
+    # data_map = {
+    # 'AR': [3.0, 4.0, 4.0, 2.0, 3.0, 2.0, 2.0, 4.0, 4.0, 0.0],
+    # 'MR': [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 1.0, 1.0],
+    # 'VR': [2.0, 1.0, 9.0, 4.0, 7.0, 10.0, 7.0, 14.0, 13.0, 9.0],
+    # 'XR': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0]}
+    data_map = {}
+    for z_value in z_uniques_list:
+        zeros_list = []
+        for _ in range(len(x_uniques_list)):
+            zeros_list.append(0.0)
+        data_map[z_value] = zeros_list
+
+    for i in range(len(x_values_list)):
+        x = x_values_list[i]
+        y = y_values[i]
+        z = z_values_list[i]
+
+        col_idx = x_map.get(x)
+        if col_idx is not None:
+            data_map[z][col_idx] = data_map[z][col_idx] + float(y)
+
+    positions = []
+    index = 0
+    for _ in x_uniques_list:
+        positions.append(index)
+        index += 1
+
+    bases = [0.0] * len(x_uniques_list)
+
+    if orientation == "v":
+        for z_value in z_uniques_list:
+            row_data = data_map[z_value]
+            ax.bar(positions, row_data, bottom=bases, label=z_value)
+            bases = [b + r for b, r in zip(bases, row_data)]
+
+        ax.set_xticks(positions)
+        ax.set_xticklabels(
+            x_uniques_list,
+            rotation=labels_spec.get("rotation", 0),
+            ha="right",
+        )
+        ax.set_xlabel(labels_spec.get("x_label", ""))
+        ax.set_ylabel(labels_spec.get("y_label", ""))
+
+    if orientation == "h":
+        for z_value in z_uniques_list:
+            row_data = data_map[z_value]
+            ax.barh(positions, row_data, left=bases, label=z_value)
+            bases = [b + r for b, r in zip(bases, row_data)]
+
+        ax.set_yticks(positions)
+        ax.set_yticklabels(x_uniques_list)
+        ax.set_xlabel(labels_spec.get("y_label", ""))
+        ax.set_ylabel(labels_spec.get("x_label", ""))
+        ax.invert_yaxis()
+
+    offset_frame(ax=ax, bases=bases, orientation=orientation, offset=1)
+    ax.set_title(labels_spec.get("title", ""))
+
+    return z_uniques_list
+
+
+def draw_stacked_area(ax, x_values, y_values, z_values, labels_spec):
+    # 1. Prepare Data (Same logic as bar)
+    x_unique = sorted(get_unique_values(x_values))
+    z_unique = get_unique_values(z_values)
+    x_map = {str(val): i for i, val in enumerate(x_unique)}
+    data_map = {z: [0.0] * len(x_unique) for z in z_unique}
+
+    for x, y, z in zip(x_values, y_values, z_values):
+        col_idx = x_map.get(str(x))
+        if col_idx is not None:
+            data_map[z][col_idx] += float(y)
+
+    # 2. Draw Stacked Area
+    positions = list(range(len(x_unique)))
+    # Stackplot expects a list of lists [ [row1], [row2] ]
+    stack_data = [data_map[z] for z in z_unique]
+
+    ax.stackplot(
+        positions, stack_data, labels=z_unique, alpha=0.9  # Default transparency
+    )
+
+    # 3. Format Axis
+    x_labels_str = [str(x) for x in x_unique]
+    ax.set_xticks(positions)
+    ax.set_xticklabels(
+        x_labels_str, rotation=labels_spec.get("rotation", 0), ha="right"
+    )
+    ax.set_xlabel(labels_spec.get("x_label", ""))
+    ax.set_ylabel(labels_spec.get("y_label", ""))
+    ax.set_title(labels_spec.get("title", ""))
+
+    return z_unique
 
 
 def draw_pie(ax, x_values, y_values, labels_spec):
