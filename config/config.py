@@ -131,7 +131,7 @@ FONTS_PLOT = {
         "style": "normal",
         "stretch": "condensed",
     },
-    "labels_bar_numbers": {
+    "labels_height_numbers": {
         "size": 8,
         "family": "sans-serif",
         "weight": "normal",

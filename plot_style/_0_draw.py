@@ -40,6 +40,7 @@ def draw_bar_1D(ax, x_values, y_values, labels_spec, orientation="v"):
         ax.set_ylabel(labels_spec.get("x_label", ""))
         ax.invert_yaxis()
 
+    offset_frame(ax=ax, height=y_values, orientation=orientation, offset=1)
     ax.set_title(labels_spec.get("title", ""))
 
     return x_values_list
@@ -102,12 +103,15 @@ def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
         ax.set_ylabel(labels_spec.get("x_label", ""))
         ax.invert_yaxis()
 
+    offset_frame(ax=ax, height=y_values, orientation=orientation, offset=1)
     ax.set_title(labels_spec.get("title", ""))
 
     return z_values_list
 
 
-def draw_stacked_bar(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
+def draw_stacked(
+    ax, x_values, y_values, z_values, labels_spec, orientation="v", z_order=None
+):
     x_values_list = []
     for x_value in x_values:
         x_values_list.append(str(x_value))
@@ -117,7 +121,7 @@ def draw_stacked_bar(ax, x_values, y_values, z_values, labels_spec, orientation=
         z_values_list.append(str(z_value))
 
     x_uniques_list = get_unique_values(x_values_list)
-    z_uniques_list = get_unique_values(z_values_list)
+    z_uniques_list = z_order if z_order else get_unique_values(z_values_list)
 
     # x_map = {
     # '2015': 0, '2016': 1, '2017': 2, '2018': 3, '2019': 4,
@@ -129,9 +133,9 @@ def draw_stacked_bar(ax, x_values, y_values, z_values, labels_spec, orientation=
         index_counter += 1
 
     # data_map = {
+    # 'VR': [2.0, 1.0, 9.0, 4.0, 7.0, 10.0, 7.0, 14.0, 13.0, 9.0],
     # 'AR': [3.0, 4.0, 4.0, 2.0, 3.0, 2.0, 2.0, 4.0, 4.0, 0.0],
     # 'MR': [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 1.0, 1.0],
-    # 'VR': [2.0, 1.0, 9.0, 4.0, 7.0, 10.0, 7.0, 14.0, 13.0, 9.0],
     # 'XR': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0]}
     data_map = {}
     for z_value in z_uniques_list:
@@ -155,13 +159,15 @@ def draw_stacked_bar(ax, x_values, y_values, z_values, labels_spec, orientation=
         positions.append(index)
         index += 1
 
-    bases = [0.0] * len(x_uniques_list)
+    y_values_total = [0.0] * len(x_uniques_list)
+    coloring_values_list = []
 
     if orientation == "v":
-        for z_value in z_uniques_list:
+        for z_value in reversed(z_uniques_list):
             row_data = data_map[z_value]
-            ax.bar(positions, row_data, bottom=bases, label=z_value)
-            bases = [b + r for b, r in zip(bases, row_data)]
+            ax.bar(positions, row_data, bottom=y_values_total, label=z_value)
+            y_values_total = [b + r for b, r in zip(y_values_total, row_data)]
+            coloring_values_list.extend([z_value] * len(positions))
 
         ax.set_xticks(positions)
         ax.set_xticklabels(
@@ -173,10 +179,11 @@ def draw_stacked_bar(ax, x_values, y_values, z_values, labels_spec, orientation=
         ax.set_ylabel(labels_spec.get("y_label", ""))
 
     if orientation == "h":
-        for z_value in z_uniques_list:
+        for z_value in reversed(z_uniques_list):
             row_data = data_map[z_value]
-            ax.barh(positions, row_data, left=bases, label=z_value)
-            bases = [b + r for b, r in zip(bases, row_data)]
+            ax.barh(positions, row_data, left=y_values_total, label=z_value)
+            y_values_total = [b + r for b, r in zip(y_values_total, row_data)]
+            coloring_values_list.extend([z_value] * len(positions))
 
         ax.set_yticks(positions)
         ax.set_yticklabels(x_uniques_list)
@@ -184,44 +191,29 @@ def draw_stacked_bar(ax, x_values, y_values, z_values, labels_spec, orientation=
         ax.set_ylabel(labels_spec.get("x_label", ""))
         ax.invert_yaxis()
 
-    offset_frame(ax=ax, bases=bases, orientation=orientation, offset=1)
+    if orientation == "area":
+        stack_data = []
+        for z_value in reversed(z_uniques_list):
+            row_data = data_map[z_value]
+            stack_data.append(row_data)
+            y_values_total = [b + r for b, r in zip(y_values_total, row_data)]
+            coloring_values_list.append(z_value)
+
+        ax.stackplot(positions, stack_data, labels=coloring_values_list)
+        ax.set_xticks(positions)
+        ax.set_xticklabels(
+            x_uniques_list,
+            rotation=labels_spec.get("rotation", 0),
+            ha="right",
+        )
+        ax.set_xlabel(labels_spec.get("x_label", ""))
+        ax.set_ylabel(labels_spec.get("y_label", ""))
+        orientation = "v"
+
+    offset_frame(ax=ax, height=y_values_total, orientation=orientation, offset=1)
     ax.set_title(labels_spec.get("title", ""))
 
-    return z_uniques_list
-
-
-def draw_stacked_area(ax, x_values, y_values, z_values, labels_spec):
-    # 1. Prepare Data (Same logic as bar)
-    x_unique = sorted(get_unique_values(x_values))
-    z_unique = get_unique_values(z_values)
-    x_map = {str(val): i for i, val in enumerate(x_unique)}
-    data_map = {z: [0.0] * len(x_unique) for z in z_unique}
-
-    for x, y, z in zip(x_values, y_values, z_values):
-        col_idx = x_map.get(str(x))
-        if col_idx is not None:
-            data_map[z][col_idx] += float(y)
-
-    # 2. Draw Stacked Area
-    positions = list(range(len(x_unique)))
-    # Stackplot expects a list of lists [ [row1], [row2] ]
-    stack_data = [data_map[z] for z in z_unique]
-
-    ax.stackplot(
-        positions, stack_data, labels=z_unique, alpha=0.9  # Default transparency
-    )
-
-    # 3. Format Axis
-    x_labels_str = [str(x) for x in x_unique]
-    ax.set_xticks(positions)
-    ax.set_xticklabels(
-        x_labels_str, rotation=labels_spec.get("rotation", 0), ha="right"
-    )
-    ax.set_xlabel(labels_spec.get("x_label", ""))
-    ax.set_ylabel(labels_spec.get("y_label", ""))
-    ax.set_title(labels_spec.get("title", ""))
-
-    return z_unique
+    return coloring_values_list
 
 
 def draw_pie(ax, x_values, y_values, labels_spec):

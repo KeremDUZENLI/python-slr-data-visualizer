@@ -88,8 +88,8 @@ def calculate_labels_pos_pie(inner_radius, outer_radius):
     return labels_center
 
 
-def offset_frame(ax, bases, orientation, offset=1):
-    max_height = max(bases)
+def offset_frame(ax, height, orientation, offset=1):
+    max_height = max(height)
     change = max_height * (1 + (offset * 0.1))
 
     if orientation == "v":

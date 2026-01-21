@@ -22,7 +22,8 @@ from setup import (
     _2_1,
     _3_4,
     ### stacked ###
-    _2_3,
+    _2_3_bar,
+    _2_3_area,
     ### pie ###
     _1_3,
     ### pie_nested ###
@@ -106,4 +107,5 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 #############################################
 
 
-_2_3(DATASET)
+# _2_3_area(DATASET)
+# _2_3_bar(DATASET)

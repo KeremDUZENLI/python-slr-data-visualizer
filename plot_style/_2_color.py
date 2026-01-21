@@ -1,3 +1,6 @@
+DEFAULT_COLOR = "#cccccc"
+
+
 def color_bars(ax, coloring_values_list, colors_map, border=False):
     index = 0
 
@@ -10,7 +13,7 @@ def color_bars(ax, coloring_values_list, colors_map, border=False):
         color = colors_map.get(label)
 
         if color is None:
-            color = "#cccccc"
+            color = DEFAULT_COLOR
 
         bar.set_facecolor(color)
 
@@ -21,13 +24,36 @@ def color_bars(ax, coloring_values_list, colors_map, border=False):
         index += 1
 
 
+def color_areas(ax, coloring_values_list, colors_map, border=False):
+    index = 0
+
+    areas = ax.collections
+    for area in areas:
+        if index >= len(coloring_values_list):
+            break
+
+        label = coloring_values_list[index]
+        color = colors_map.get(label)
+
+        if color is None:
+            color = DEFAULT_COLOR
+
+        area.set_facecolor(color)
+
+        if border:
+            area.set_edgecolor("black")
+            area.set_linewidth(1)
+
+        index += 1
+
+
 def color_slices(ax, coloring_values_list, colors_map, border=False):
     slices = ax.patches
     for slice, label in zip(slices, coloring_values_list):
         color = colors_map.get(label)
 
         if color is None:
-            color = "#cccccc"
+            color = DEFAULT_COLOR
 
         slice.set_facecolor(color)
 
@@ -43,7 +69,7 @@ def color_sunburst(ax, coloring_values_list, colors_map, border=False):
         color = colors_map.get(label)
 
         if color is None:
-            color = "#cccccc"
+            color = DEFAULT_COLOR
 
         colors.append(color)
 
@@ -91,7 +117,7 @@ def color_labels_sunburst(ax, color, target):
     for trace in ax.data:
         if trace.type == "sunburst":
             count = len(trace.labels)
-            existing_color = trace.insidetextfont.color or "#ffffff"
+            existing_color = trace.insidetextfont.color or DEFAULT_COLOR
 
             if isinstance(existing_color, (list, tuple)):
                 current_colors = list(existing_color)

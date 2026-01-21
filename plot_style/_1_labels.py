@@ -2,21 +2,21 @@ def labels_bar_numbers(ax, orientation="v", offset=1):
     for rect in ax.patches:
 
         if orientation == "v":
-            value = rect.get_height()
-            if value <= 0:
+            height = rect.get_height()
+            if height <= 0:
                 continue
 
             x = (rect.get_x()) + (rect.get_width() / 2)
-            y = (rect.get_y() + value) + (offset * 0.1)
+            y = (rect.get_y() + height) + (offset * 0.1)
             ha = "center"
             va = "bottom"
 
         if orientation == "h":
-            value = rect.get_width()
-            if value <= 0:
+            height = rect.get_width()
+            if height <= 0:
                 continue
 
-            x = (rect.get_x() + value) + (offset * 0.1)
+            x = (rect.get_x() + height) + (offset * 0.1)
             y = (rect.get_y()) + (rect.get_height() / 2)
             ha = "left"
             va = "center"
@@ -24,11 +24,45 @@ def labels_bar_numbers(ax, orientation="v", offset=1):
         ax.text(
             x,
             y,
-            str(int(value)),
+            str(int(height)),
             ha=ha,
             va=va,
-            gid="labels_bar_numbers",
+            gid="labels_height_numbers",
         )
+
+
+def labels_area_numbers(ax, offset=0):
+    for poly in ax.collections:
+        paths = poly.get_paths()
+
+        if not paths:
+            continue
+
+        points = {}
+        for x, y in paths[0].vertices:
+            points.setdefault(round(x), []).append(y)
+
+        for x_val, y_list in points.items():
+            if len(y_list) < 2:
+                continue
+
+            y_top, y_bot = max(y_list), min(y_list)
+            height = y_top - y_bot
+
+            if height < 0.1:
+                continue
+
+            x = x_val
+            y = y_top + (offset * 0.1)
+
+            ax.text(
+                x,
+                y,
+                str(int(height)),
+                ha="center",
+                va="bottom",
+                gid="labels_height_numbers",
+            )
 
 
 def labels_grid(ax, orientation="v"):

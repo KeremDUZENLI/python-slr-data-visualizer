@@ -38,8 +38,8 @@ def apply_font_plot(ax, fonts):
     for txt in getattr(ax, "texts", []):
         get_gid = getattr(txt, "get_gid", None)
 
-        if callable(get_gid) and get_gid() == "labels_bar_numbers":
-            _apply_font_to_text(txt, fonts.get("labels_bar_numbers"))
+        if callable(get_gid) and get_gid() == "labels_height_numbers":
+            _apply_font_to_text(txt, fonts.get("labels_height_numbers"))
         if callable(get_gid) and get_gid() == "labels_extra":
             _apply_font_to_text(txt, fonts.get("labels_extra"))
 
