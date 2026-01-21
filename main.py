@@ -32,6 +32,8 @@ from setup import (
     _3_2,
     ### sunburst ###
     _1_4_S,
+    ### heatmap ###
+    _3_3,
 )
 
 
@@ -40,37 +42,37 @@ DATASET_SOFTWARE_STACKED = group_dataset_by_fields(
     datasets=[
         (
             DATASET,
-            {"software": "software_data", "technique": "technique"},
+            {"software": "software_data"},
         ),
         (
             DATASET,
-            {"software": "software_modeling", "technique": "technique"},
+            {"software": "software_modeling"},
         ),
         (
             DATASET,
-            {"software": "software_render", "technique": "technique"},
+            {"software": "software_render"},
         ),
     ],
     stack_by={"software_category": "software"},
-    axes=["software_category", "software", "technique"],
+    axes=["software_category", "software"],
 )
-DATASET_SOFTWARE_STACKED_YEAR = group_dataset_by_fields(
+DATASET_SOFTWARE_YEAR_STACKED = group_dataset_by_fields(
     datasets=[
         (
             DATASET,
-            {"software": "software_data", "year": "year", "technique": "technique"},
+            {"software": "software_data", "year": "year"},
         ),
         (
             DATASET,
-            {"software": "software_modeling", "year": "year", "technique": "technique"},
+            {"software": "software_modeling", "year": "year"},
         ),
         (
             DATASET,
-            {"software": "software_render", "year": "year", "technique": "technique"},
+            {"software": "software_render", "year": "year"},
         ),
     ],
     stack_by={"software_category": "software"},
-    axes=["software_category", "software", "year", "technique"],
+    axes=["software_category", "software", "year"],
 )
 DATASET_COUNTRY_MAPPED = map_dataset_column(
     dataset=DATASET,
@@ -137,4 +139,12 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 
 # _2_3_area(DATASET)
 # _2_3_bar(DATASET)
-_4_5_area(DATASET_SOFTWARE_STACKED_YEAR)
+# _4_5_area(DATASET_SOFTWARE_YEAR_STACKED)
+
+
+#############################################
+################## heatmap ##################
+#############################################
+
+
+_3_3(DATASET)

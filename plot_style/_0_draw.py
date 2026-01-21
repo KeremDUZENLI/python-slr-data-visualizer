@@ -308,3 +308,7 @@ def draw_sunburst(ax, all_labels, all_parents, all_counts, labels_spec):
     )
 
     return ax
+
+
+def draw_heatmap(ax, x_values, y_values, z_values, labels_spec):
+    pass

@@ -228,7 +228,7 @@ def _4_1(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
         dataset=dataset,
-        fields=["software_category", "software", "technique"],
+        fields=["software_category", "software"],
     )
     dataset_counted = count_dataset(
         dataset=dataset_filtered,
@@ -1245,7 +1245,7 @@ def _4_5_area(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
         dataset=dataset,
-        fields=["software_category", "software", "year", "technique"],
+        fields=["software_category", "software", "year"],
     )
     dataset_counted_pre = count_dataset(
         dataset=dataset_filtered,
@@ -1816,3 +1816,149 @@ def _1_4_S(dataset):
 
     ### output
     show_plot_plotly(fig)
+
+
+#############################################
+################### heatmap #################
+#############################################
+
+
+def _3_3(dataset):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=["historical_site_type", "technique"],
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=["historical_site_type", "technique"],
+    )
+
+    filter_values = None
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    filter_count = None
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_dict(dataset_counted)
+    print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted,
+        x_axis="historical_site_type",
+        y_axis="count",
+        z_axis="technique",
+    )
+
+    colors_map = get_colors_map(
+        values=z_values,
+        colors=COLORS,
+        color_field="technique",
+    )
+
+    handles1 = get_legend_handles(
+        values=z_values,
+        colors_map=colors_map,
+    )
+    handles2 = get_legend_handles(
+        values=["Custom A", "Custom B", "Custom C"],
+        colors_map={
+            "Custom A": "#ff0000",
+            "Custom B": "#008000",
+            "Custom C": "#0000ff",
+        },
+    )
+
+    ### plot_style
+    orientation = "v"
+    z_values_list = draw_bar_2D(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        z_values=z_values,
+        labels_spec={
+            "x_label": "Year",
+            "y_label": "Number of Studies",
+            "title": "Historical Site Types X Techniques",
+            "rotation": 45,
+        },
+        orientation=orientation,
+    )
+
+    labels_bar_numbers(
+        ax=ax,
+        orientation=orientation,
+        offset=1,
+    )
+    labels_grid(
+        ax=ax,
+        orientation=orientation,
+    )
+
+    color_bars(
+        ax=ax,
+        coloring_values_list=z_values_list,
+        colors_map=colors_map,
+        border=False,
+    )
+    color_labels(
+        ax=ax,
+        colors_map=colors_map,
+        orientation=orientation,
+    )
+
+    legend1 = create_legend(
+        ax=ax,
+        handles=handles1,
+        title="Historical Site Type",
+        loc="upper left",
+    )
+    legend2 = create_legend(
+        ax=ax,
+        handles=handles2,
+        title="Custom Legend",
+        loc="lower left",
+    )
+
+    apply_font_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+    apply_font_legend(
+        legend=legend1,
+        fonts=FONTS_LEGEND,
+    )
+    apply_font_legend(
+        legend=legend2,
+        fonts=FONTS_LEGEND,
+    )
+
+    update_text_legend(legend1)
+    update_text_legend(legend2)
+
+    ### output
+    show_plot()
+    save_plot(
+        fig=fig,
+        name="_3_3",
+        legends=[legend1, legend2],
+        extra_artists=None,
+    )
