@@ -22,8 +22,9 @@ from setup import (
     _2_1,
     _3_4,
     ### stacked ###
-    _2_3_bar,
     _2_3_area,
+    _2_3_bar,
+    _4_5_area,
     ### pie ###
     _1_3,
     ### pie_nested ###
@@ -37,12 +38,39 @@ from setup import (
 DATASET = read_dataset(csv_path="data/dataset.csv")
 DATASET_SOFTWARE_STACKED = group_dataset_by_fields(
     datasets=[
-        (DATASET, {"software": "software_data", "technique": "technique"}),
-        (DATASET, {"software": "software_modeling", "technique": "technique"}),
-        (DATASET, {"software": "software_render", "technique": "technique"}),
+        (
+            DATASET,
+            {"software": "software_data", "technique": "technique"},
+        ),
+        (
+            DATASET,
+            {"software": "software_modeling", "technique": "technique"},
+        ),
+        (
+            DATASET,
+            {"software": "software_render", "technique": "technique"},
+        ),
     ],
     stack_by={"software_category": "software"},
     axes=["software_category", "software", "technique"],
+)
+DATASET_SOFTWARE_STACKED_YEAR = group_dataset_by_fields(
+    datasets=[
+        (
+            DATASET,
+            {"software": "software_data", "year": "year", "technique": "technique"},
+        ),
+        (
+            DATASET,
+            {"software": "software_modeling", "year": "year", "technique": "technique"},
+        ),
+        (
+            DATASET,
+            {"software": "software_render", "year": "year", "technique": "technique"},
+        ),
+    ],
+    stack_by={"software_category": "software"},
+    axes=["software_category", "software", "year", "technique"],
 )
 DATASET_COUNTRY_MAPPED = map_dataset_column(
     dataset=DATASET,
@@ -109,3 +137,4 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 
 # _2_3_area(DATASET)
 # _2_3_bar(DATASET)
+_4_5_area(DATASET_SOFTWARE_STACKED_YEAR)

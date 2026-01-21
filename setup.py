@@ -142,11 +142,9 @@ def _1_0(dataset):
     handles2 = get_legend_handles(
         values=["Custom A", "Custom B", "Custom C"],
         colors_map={
-            "Custom A": "#FF5733",
-            "Custom B": "#33FF57",
-            "Custom C": "#3357FF",
-            "Custom D": "#46A819",
-            "Custom E": "#FF33A1",
+            "Custom A": "#ff0000",
+            "Custom B": "#008000",
+            "Custom C": "#0000ff",
         },
     )
 
@@ -292,11 +290,9 @@ def _4_1(dataset):
     handles2 = get_legend_handles(
         values=["Custom A", "Custom B", "Custom C"],
         colors_map={
-            "Custom A": "#FF5733",
-            "Custom B": "#33FF57",
-            "Custom C": "#3357FF",
-            "Custom D": "#46A819",
-            "Custom E": "#FF33A1",
+            "Custom A": "#ff0000",
+            "Custom B": "#008000",
+            "Custom C": "#0000ff",
         },
     )
 
@@ -445,11 +441,9 @@ def _5_0(dataset):
     handles2 = get_legend_handles(
         values=["Custom A", "Custom B", "Custom C"],
         colors_map={
-            "Custom A": "#FF5733",
-            "Custom B": "#33FF57",
-            "Custom C": "#3357FF",
-            "Custom D": "#46A819",
-            "Custom E": "#FF33A1",
+            "Custom A": "#ff0000",
+            "Custom B": "#008000",
+            "Custom C": "#0000ff",
         },
     )
 
@@ -592,11 +586,9 @@ def _1_1(dataset):
     handles2 = get_legend_handles(
         values=["Custom A", "Custom B", "Custom C"],
         colors_map={
-            "Custom A": "#FF5733",
-            "Custom B": "#33FF57",
-            "Custom C": "#3357FF",
-            "Custom D": "#46A819",
-            "Custom E": "#FF33A1",
+            "Custom A": "#ff0000",
+            "Custom B": "#008000",
+            "Custom C": "#0000ff",
         },
     )
 
@@ -735,11 +727,9 @@ def _2_1(dataset):
     handles2 = get_legend_handles(
         values=["Custom A", "Custom B", "Custom C"],
         colors_map={
-            "Custom A": "#FF5733",
-            "Custom B": "#33FF57",
-            "Custom C": "#3357FF",
-            "Custom D": "#46A819",
-            "Custom E": "#FF33A1",
+            "Custom A": "#ff0000",
+            "Custom B": "#008000",
+            "Custom C": "#0000ff",
         },
     )
 
@@ -878,11 +868,9 @@ def _3_4(dataset):
     handles2 = get_legend_handles(
         values=["Custom A", "Custom B", "Custom C"],
         colors_map={
-            "Custom A": "#FF5733",
-            "Custom B": "#33FF57",
-            "Custom C": "#3357FF",
-            "Custom D": "#46A819",
-            "Custom E": "#FF33A1",
+            "Custom A": "#ff0000",
+            "Custom B": "#008000",
+            "Custom C": "#0000ff",
         },
     )
 
@@ -1027,11 +1015,9 @@ def _2_3_area(dataset):
     handles2 = get_legend_handles(
         values=["Custom A", "Custom B", "Custom C"],
         colors_map={
-            "Custom A": "#FF5733",
-            "Custom B": "#33FF57",
-            "Custom C": "#3357FF",
-            "Custom D": "#46A819",
-            "Custom E": "#FF33A1",
+            "Custom A": "#ff0000",
+            "Custom B": "#008000",
+            "Custom C": "#0000ff",
         },
     )
 
@@ -1171,11 +1157,9 @@ def _2_3_bar(dataset):
     handles2 = get_legend_handles(
         values=["Custom A", "Custom B", "Custom C"],
         colors_map={
-            "Custom A": "#FF5733",
-            "Custom B": "#33FF57",
-            "Custom C": "#3357FF",
-            "Custom D": "#46A819",
-            "Custom E": "#FF33A1",
+            "Custom A": "#ff0000",
+            "Custom B": "#008000",
+            "Custom C": "#0000ff",
         },
     )
 
@@ -1252,6 +1236,157 @@ def _2_3_bar(dataset):
     save_plot(
         fig=fig,
         name="_2_3_bar",
+        legends=[legend1, legend2],
+        extra_artists=None,
+    )
+
+
+def _4_5_area(dataset):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=["software_category", "software", "year", "technique"],
+    )
+    dataset_counted_pre = count_dataset(
+        dataset=dataset_filtered,
+        fields=["software_category", "software"],
+    )
+    dataset_counted_pos = count_dataset(
+        dataset=dataset_filtered,
+        fields=["software_category", "software", "year"],
+    )
+
+    filter_values = ["software != "]
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted_pre = filter_dataset_by_values(
+                dataset=dataset_counted_pre,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    filter_count = "count >= 10"
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted_pre = filter_dataset_by_count(
+            dataset=dataset_counted_pre,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    selected_softwares = [row[0] for row in dataset_counted_pre["software"]]
+    filter_values = ["software == " + ", ".join(selected_softwares)]
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted_pos = filter_dataset_by_values(
+                dataset=dataset_counted_pos,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    ### output
+    print_dict(dataset_counted_pre)
+    print_counts(dataset_counted_pre, decimal=1)
+    print_dict(dataset_counted_pos)
+    print_counts(dataset_counted_pos, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted_pos,
+        x_axis="year",
+        y_axis="count",
+        z_axis="software",
+    )
+
+    colors_map = get_colors_map(
+        values=z_values,
+        colors=COLORS,
+        color_field="software",
+    )
+
+    handles1 = get_legend_handles(
+        values=z_values,
+        colors_map=colors_map,
+    )
+    handles2 = get_legend_handles(
+        values=COLORS["labels_extra"].keys(),
+        colors_map=COLORS["labels_extra"],
+    )
+
+    ### plot_style
+    orientation = "v"
+    coloring_values_list = draw_stacked(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        z_values=z_values,
+        labels_spec={
+            "x_label": "Year",
+            "y_label": "Number of Studies",
+            "title": "Software Usage Trend Over Time",
+            "rotation": 45,
+        },
+        orientation="area",
+        z_order=None,
+    )
+
+    labels_grid(
+        ax=ax,
+        orientation=orientation,
+    )
+
+    color_areas(
+        ax=ax,
+        coloring_values_list=coloring_values_list,
+        colors_map=colors_map,
+        border=False,
+    )
+    color_labels(
+        ax=ax,
+        colors_map=colors_map,
+        orientation=orientation,
+    )
+
+    legend1 = create_legend(
+        ax=ax,
+        handles=handles1,
+        title="Software",
+        loc="upper left",
+    )
+    legend2 = create_legend(
+        ax=ax,
+        handles=handles2,
+        title="Software Category",
+        loc="lower left",
+    )
+
+    apply_font_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+    apply_font_legend(
+        legend=legend1,
+        fonts=FONTS_LEGEND,
+    )
+    apply_font_legend(
+        legend=legend2,
+        fonts=FONTS_LEGEND,
+    )
+
+    update_text_legend(legend1, version="title")
+    update_text_legend(legend2)
+
+    ### output
+    show_plot()
+    save_plot(
+        fig=fig,
+        name="_4_5_area",
         legends=[legend1, legend2],
         extra_artists=None,
     )
