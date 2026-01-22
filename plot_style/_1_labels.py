@@ -1,4 +1,4 @@
-def labels_bar_numbers(ax, orientation="v", offset=1):
+def number_bar(ax, orientation="v", offset=1):
     for rect in ax.patches:
 
         if orientation == "v":
@@ -31,7 +31,7 @@ def labels_bar_numbers(ax, orientation="v", offset=1):
         )
 
 
-def labels_area_numbers(ax, offset=0):
+def number_area(ax, offset=0):
     for poly in ax.collections:
         paths = poly.get_paths()
 
@@ -65,15 +65,22 @@ def labels_area_numbers(ax, offset=0):
             )
 
 
-def labels_grid(ax, orientation="v"):
-    ax.set_axisbelow(True)
-    if orientation == "v":
-        ax.yaxis.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
-    if orientation == "h":
-        ax.xaxis.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
+def number_heatmap(ax, matrix):
+    rows, cols = matrix.shape
+    for row in range(rows):
+        for col in range(cols):
+            value = matrix[row, col]
+            ax.text(
+                col,
+                row,
+                str(int(value)),
+                ha="center",
+                va="center",
+                gid="labels_heatmap_numbers",
+            )
 
 
-def labels_extra(ax, labels_center, orientation="v", offset=15):
+def add_labels_extra(ax, labels_center, orientation="v", offset=15):
     texts = []
 
     for value, center in labels_center.items():
@@ -98,3 +105,11 @@ def labels_extra(ax, labels_center, orientation="v", offset=15):
         texts.append(text)
 
     return texts
+
+
+def add_grid(ax, orientation="v"):
+    ax.set_axisbelow(True)
+    if orientation == "v":
+        ax.yaxis.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
+    if orientation == "h":
+        ax.xaxis.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)

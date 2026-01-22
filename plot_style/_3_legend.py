@@ -12,3 +12,8 @@ def create_legend(ax, handles, title="", loc="best"):
 
     ax.add_artist(legend)
     return legend
+
+
+def create_legend_colorbar(ax, title=""):
+    im = ax.images[0]
+    ax.figure.colorbar(im, ax=ax, label=title)

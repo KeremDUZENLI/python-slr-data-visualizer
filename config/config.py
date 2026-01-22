@@ -133,20 +133,6 @@ FONTS_PLOT = {
         "style": "normal",
         "stretch": "condensed",
     },
-    "labels_height_numbers": {
-        "size": 8,
-        "family": "sans-serif",
-        "weight": "normal",
-        "style": "normal",
-        "stretch": "condensed",
-    },
-    "labels_extra": {
-        "size": 8,
-        "family": "sans-serif",
-        "weight": "bold",
-        "style": "normal",
-        "stretch": "condensed",
-    },
     "pie_label": {
         "size": 8,
         "family": "sans-serif",
@@ -185,6 +171,27 @@ FONTS_PLOT = {
         "family": "sans-serif",
         "weight": "bold",
         "style": "normal",
+    },
+    "labels_height_numbers": {
+        "size": 8,
+        "family": "sans-serif",
+        "weight": "normal",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "labels_heatmap_numbers": {
+        "size": 10,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+        "stretch": "condensed",
+    },
+    "labels_extra": {
+        "size": 8,
+        "family": "sans-serif",
+        "weight": "bold",
+        "style": "normal",
+        "stretch": "condensed",
     },
 }
 

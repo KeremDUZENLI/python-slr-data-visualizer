@@ -49,25 +49,30 @@ from plot_style._0_draw import (
     draw_pie,
     draw_pie_nested,
     draw_sunburst,
+    draw_heatmap,
 )
 from plot_style._1_labels import (
-    labels_bar_numbers,
-    labels_area_numbers,
-    labels_grid,
-    labels_extra,
+    number_bar,
+    number_area,
+    number_heatmap,
+    add_labels_extra,
+    add_grid,
 )
 from plot_style._2_color import (
-    color_bars,
-    color_areas,
-    color_slices,
+    color_bar,
+    color_area,
+    color_pie,
     color_sunburst,
-    color_labels,
+    color_heatmap,
+    color_bar_labels,
+    color_pie_labels,
+    color_sunburst_labels,
+    color_heatmap_labels,
     color_labels_extra,
-    color_labels_pie,
-    color_labels_sunburst,
 )
 from plot_style._3_legend import (
     create_legend,
+    create_legend_colorbar,
 )
 from plot_style._4_font import (
     apply_font_plot,
@@ -163,23 +168,23 @@ def _1_0(dataset):
         orientation=orientation,
     )
 
-    labels_bar_numbers(
+    number_bar(
         ax=ax,
         orientation=orientation,
         offset=1,
     )
-    labels_grid(
+    add_grid(
         ax=ax,
         orientation=orientation,
     )
 
-    color_bars(
+    color_bar(
         ax=ax,
         coloring_values_list=x_values_list,
         colors_map=colors_map,
         border=False,
     )
-    color_labels(
+    color_bar_labels(
         ax=ax,
         colors_map=colors_map,
         orientation=orientation,
@@ -311,29 +316,29 @@ def _4_1(dataset):
         orientation=orientation,
     )
 
-    labels_bar_numbers(
+    number_bar(
         ax=ax,
         orientation=orientation,
         offset=1,
     )
-    labels_grid(
+    add_grid(
         ax=ax,
         orientation=orientation,
     )
-    texts = labels_extra(
+    texts = add_labels_extra(
         ax=ax,
         labels_center=labels_center,
         orientation=orientation,
         offset=15,
     )
 
-    color_bars(
+    color_bar(
         ax=ax,
         coloring_values_list=x_values_list,
         colors_map=colors_mapped,
         border=True,
     )
-    color_labels(
+    color_bar_labels(
         ax=ax,
         colors_map=colors_mapped,
         orientation=orientation,
@@ -462,23 +467,23 @@ def _5_0(dataset):
         orientation=orientation,
     )
 
-    labels_bar_numbers(
+    number_bar(
         ax=ax,
         orientation=orientation,
         offset=1,
     )
-    labels_grid(
+    add_grid(
         ax=ax,
         orientation=orientation,
     )
 
-    color_bars(
+    color_bar(
         ax=ax,
         coloring_values_list=x_values_list,
         colors_map=colors_map,
         border=False,
     )
-    color_labels(
+    color_bar_labels(
         ax=ax,
         colors_map=colors_map,
         orientation=orientation,
@@ -608,23 +613,23 @@ def _1_1(dataset):
         orientation=orientation,
     )
 
-    labels_bar_numbers(
+    number_bar(
         ax=ax,
         orientation=orientation,
         offset=1,
     )
-    labels_grid(
+    add_grid(
         ax=ax,
         orientation=orientation,
     )
 
-    color_bars(
+    color_bar(
         ax=ax,
         coloring_values_list=z_values_list,
         colors_map=colors_map,
         border=False,
     )
-    color_labels(
+    color_bar_labels(
         ax=ax,
         colors_map=colors_map,
         orientation=orientation,
@@ -749,23 +754,23 @@ def _2_1(dataset):
         orientation=orientation,
     )
 
-    labels_bar_numbers(
+    number_bar(
         ax=ax,
         orientation=orientation,
         offset=1,
     )
-    labels_grid(
+    add_grid(
         ax=ax,
         orientation=orientation,
     )
 
-    color_bars(
+    color_bar(
         ax=ax,
         coloring_values_list=z_values_list,
         colors_map=colors_map,
         border=False,
     )
-    color_labels(
+    color_bar_labels(
         ax=ax,
         colors_map=colors_map,
         orientation=orientation,
@@ -890,23 +895,23 @@ def _3_4(dataset):
         orientation=orientation,
     )
 
-    labels_bar_numbers(
+    number_bar(
         ax=ax,
         orientation=orientation,
         offset=1,
     )
-    labels_grid(
+    add_grid(
         ax=ax,
         orientation=orientation,
     )
 
-    color_bars(
+    color_bar(
         ax=ax,
         coloring_values_list=z_values_list,
         colors_map=colors_map,
         border=False,
     )
-    color_labels(
+    color_bar_labels(
         ax=ax,
         colors_map=colors_map,
         orientation=orientation,
@@ -1038,22 +1043,22 @@ def _2_3_area(dataset):
         z_order=z_values_order,
     )
 
-    labels_area_numbers(
+    number_area(
         ax=ax,
         offset=1,
     )
-    labels_grid(
+    add_grid(
         ax=ax,
         orientation=orientation,
     )
 
-    color_areas(
+    color_area(
         ax=ax,
         coloring_values_list=coloring_values_list,
         colors_map=colors_map,
         border=False,
     )
-    color_labels(
+    color_bar_labels(
         ax=ax,
         colors_map=colors_map,
         orientation=orientation,
@@ -1180,23 +1185,23 @@ def _2_3_bar(dataset):
         z_order=z_values_order,
     )
 
-    labels_bar_numbers(
+    number_bar(
         ax=ax,
         orientation=orientation,
         offset=1,
     )
-    labels_grid(
+    add_grid(
         ax=ax,
         orientation=orientation,
     )
 
-    color_bars(
+    color_bar(
         ax=ax,
         coloring_values_list=coloring_values_list,
         colors_map=colors_map,
         border=False,
     )
-    color_labels(
+    color_bar_labels(
         ax=ax,
         colors_map=colors_map,
         orientation=orientation,
@@ -1336,18 +1341,18 @@ def _4_5_area(dataset):
         z_order=None,
     )
 
-    labels_grid(
+    add_grid(
         ax=ax,
         orientation=orientation,
     )
 
-    color_areas(
+    color_area(
         ax=ax,
         coloring_values_list=coloring_values_list,
         colors_map=colors_map,
         border=False,
     )
-    color_labels(
+    color_bar_labels(
         ax=ax,
         colors_map=colors_map,
         orientation=orientation,
@@ -1458,13 +1463,13 @@ def _1_3(dataset):
         },
     )
 
-    color_slices(
+    color_pie(
         ax=ax,
         coloring_values_list=x_values_list,
         colors_map=colors_map,
         border=True,
     )
-    color_labels_pie(
+    color_pie_labels(
         ax=ax,
         color="white",
     )
@@ -1566,18 +1571,18 @@ def _1_4(dataset):
         },
     )
 
-    color_slices(
+    color_pie(
         ax=ax,
         coloring_values_list=labels_list,
         colors_map=full_colors_map,
         border=False,
     )
-    color_labels_pie(
+    color_pie_labels(
         ax=ax,
         color="white",
         target="inner",
     )
-    color_labels_pie(
+    color_pie_labels(
         ax=ax,
         color="black",
         target="outer",
@@ -1675,18 +1680,18 @@ def _3_2(dataset):
         },
     )
 
-    color_slices(
+    color_pie(
         ax=ax,
         coloring_values_list=labels_list,
         colors_map=full_colors_map,
         border=False,
     )
-    color_labels_pie(
+    color_pie_labels(
         ax=ax,
         color="white",
         target="inner",
     )
-    color_labels_pie(
+    color_pie_labels(
         ax=ax,
         color="black",
         target="outer",
@@ -1798,12 +1803,12 @@ def _1_4_S(dataset):
         colors_map=full_colors_map,
         border=False,
     )
-    color_labels_sunburst(
+    color_sunburst_labels(
         ax=fig,
         color="white",
         target="inner",
     )
-    color_labels_sunburst(
+    color_sunburst_labels(
         ax=fig,
         color="black",
         target="outer",
@@ -1868,28 +1873,8 @@ def _3_3(dataset):
         z_axis="technique",
     )
 
-    colors_map = get_colors_map(
-        values=z_values,
-        colors=COLORS,
-        color_field="technique",
-    )
-
-    handles1 = get_legend_handles(
-        values=z_values,
-        colors_map=colors_map,
-    )
-    handles2 = get_legend_handles(
-        values=["Custom A", "Custom B", "Custom C"],
-        colors_map={
-            "Custom A": "#ff0000",
-            "Custom B": "#008000",
-            "Custom C": "#0000ff",
-        },
-    )
-
     ### plot_style
-    orientation = "v"
-    z_values_list = draw_bar_2D(
+    matrix = draw_heatmap(
         ax=ax,
         x_values=x_values,
         y_values=y_values,
@@ -1900,65 +1885,38 @@ def _3_3(dataset):
             "title": "Historical Site Types X Techniques",
             "rotation": 45,
         },
-        orientation=orientation,
     )
 
-    labels_bar_numbers(
+    number_heatmap(
         ax=ax,
-        orientation=orientation,
-        offset=1,
-    )
-    labels_grid(
-        ax=ax,
-        orientation=orientation,
+        matrix=matrix,
     )
 
-    color_bars(
+    color_heatmap(
         ax=ax,
-        coloring_values_list=z_values_list,
-        colors_map=colors_map,
-        border=False,
+        matrix=matrix,
+        cmap="viridis",
     )
-    color_labels(
+    color_heatmap_labels(
         ax=ax,
-        colors_map=colors_map,
-        orientation=orientation,
+        color="white",
     )
 
-    legend1 = create_legend(
+    create_legend_colorbar(
         ax=ax,
-        handles=handles1,
-        title="Historical Site Type",
-        loc="upper left",
-    )
-    legend2 = create_legend(
-        ax=ax,
-        handles=handles2,
-        title="Custom Legend",
-        loc="lower left",
+        title="Count",
     )
 
     apply_font_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
-    apply_font_legend(
-        legend=legend1,
-        fonts=FONTS_LEGEND,
-    )
-    apply_font_legend(
-        legend=legend2,
-        fonts=FONTS_LEGEND,
-    )
-
-    update_text_legend(legend1)
-    update_text_legend(legend2)
 
     ### output
     show_plot()
     save_plot(
         fig=fig,
         name="_3_3",
-        legends=[legend1, legend2],
+        legends=None,
         extra_artists=None,
     )

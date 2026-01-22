@@ -25,8 +25,12 @@ def apply_font_plot(ax, fonts):
     for txt in ax.get_yticklabels():
         _apply_font_to_text(txt, fonts.get("yticks"))
 
-    for txt in ax.texts:
-        gid = txt.get_gid()
+    for txt in getattr(ax, "texts", []):
+        get_gid = getattr(txt, "get_gid", None)
+        gid = get_gid() if callable(get_gid) else None
+
+        if not gid:
+            continue
 
         if gid == "pie_label":
             _apply_font_to_text(txt, fonts.get("pie_label"))
@@ -35,12 +39,11 @@ def apply_font_plot(ax, fonts):
         if gid == "pie_label_outer":
             _apply_font_to_text(txt, fonts.get("pie_label_outer"))
 
-    for txt in getattr(ax, "texts", []):
-        get_gid = getattr(txt, "get_gid", None)
-
-        if callable(get_gid) and get_gid() == "labels_height_numbers":
+        if gid == "labels_height_numbers":
             _apply_font_to_text(txt, fonts.get("labels_height_numbers"))
-        if callable(get_gid) and get_gid() == "labels_extra":
+        if gid == "labels_heatmap_numbers":
+            _apply_font_to_text(txt, fonts.get("labels_heatmap_numbers"))
+        if gid == "labels_extra":
             _apply_font_to_text(txt, fonts.get("labels_extra"))
 
 
