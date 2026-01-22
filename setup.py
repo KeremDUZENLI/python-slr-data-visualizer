@@ -51,7 +51,7 @@ from plot_style._0_draw import (
     draw_sunburst,
     draw_heatmap,
 )
-from plot_style._1_labels import (
+from plot_style._1_number import (
     number_bar,
     number_area,
     number_heatmap,
@@ -71,16 +71,16 @@ from plot_style._2_color import (
     color_labels_extra,
 )
 from plot_style._3_legend import (
-    create_legend,
-    create_legend_colorbar,
+    legend_create,
+    legend_create_colorbar,
 )
 from plot_style._4_font import (
-    apply_font_plot,
-    apply_font_legend,
+    font_apply_plot,
+    font_apply_legend,
 )
 from plot_style._5_text import (
-    update_text_labels,
-    update_text_legend,
+    text_update_labels,
+    text_update_legend,
 )
 
 
@@ -190,34 +190,34 @@ def _1_0(dataset):
         orientation=orientation,
     )
 
-    legend1 = create_legend(
+    legend1 = legend_create(
         ax=ax,
         handles=handles1,
         title="Year",
         loc="upper left",
     )
-    legend2 = create_legend(
+    legend2 = legend_create(
         ax=ax,
         handles=handles2,
         title="Custom Legend",
         loc="lower left",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend1,
         fonts=FONTS_LEGEND,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend2,
         fonts=FONTS_LEGEND,
     )
 
-    update_text_legend(legend1)
-    update_text_legend(legend2)
+    text_update_legend(legend1)
+    text_update_legend(legend2)
 
     ### output
     show_plot()
@@ -348,35 +348,35 @@ def _4_1(dataset):
         colors_map=colors_map,
     )
 
-    legend1 = create_legend(
+    legend1 = legend_create(
         ax=ax,
         handles=handles1,
         title="Software Category",
         loc="upper left",
     )
-    legend2 = create_legend(
+    legend2 = legend_create(
         ax=ax,
         handles=handles2,
         title="Custom Legend",
         loc="lower left",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend1,
         fonts=FONTS_LEGEND,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend2,
         fonts=FONTS_LEGEND,
     )
 
-    update_text_labels(texts)
-    update_text_legend(legend1)
-    update_text_legend(legend2)
+    text_update_labels(texts)
+    text_update_legend(legend1)
+    text_update_legend(legend2)
 
     ### output
     show_plot()
@@ -489,34 +489,34 @@ def _5_0(dataset):
         orientation=orientation,
     )
 
-    legend1 = create_legend(
+    legend1 = legend_create(
         ax=ax,
         handles=handles1,
         title="Continents",
         loc="upper left",
     )
-    legend2 = create_legend(
+    legend2 = legend_create(
         ax=ax,
         handles=handles2,
         title="Custom Legend",
         loc="lower left",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend1,
         fonts=FONTS_LEGEND,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend2,
         fonts=FONTS_LEGEND,
     )
 
-    update_text_legend(legend1)
-    update_text_legend(legend2)
+    text_update_legend(legend1)
+    text_update_legend(legend2)
 
     ### output
     show_plot()
@@ -635,34 +635,34 @@ def _1_1(dataset):
         orientation=orientation,
     )
 
-    legend1 = create_legend(
+    legend1 = legend_create(
         ax=ax,
         handles=handles1,
         title="Historical Site Type",
         loc="upper left",
     )
-    legend2 = create_legend(
+    legend2 = legend_create(
         ax=ax,
         handles=handles2,
         title="Custom Legend",
         loc="lower left",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend1,
         fonts=FONTS_LEGEND,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend2,
         fonts=FONTS_LEGEND,
     )
 
-    update_text_legend(legend1)
-    update_text_legend(legend2)
+    text_update_legend(legend1)
+    text_update_legend(legend2)
 
     ### output
     show_plot()
@@ -776,34 +776,34 @@ def _2_1(dataset):
         orientation=orientation,
     )
 
-    legend1 = create_legend(
+    legend1 = legend_create(
         ax=ax,
         handles=handles1,
         title="Device",
         loc="upper left",
     )
-    legend2 = create_legend(
+    legend2 = legend_create(
         ax=ax,
         handles=handles2,
         title="Custom Legend",
         loc="lower left",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend1,
         fonts=FONTS_LEGEND,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend2,
         fonts=FONTS_LEGEND,
     )
 
-    update_text_legend(legend1)
-    update_text_legend(legend2)
+    text_update_legend(legend1)
+    text_update_legend(legend2)
 
     ### output
     show_plot()
@@ -917,34 +917,34 @@ def _3_4(dataset):
         orientation=orientation,
     )
 
-    legend1 = create_legend(
+    legend1 = legend_create(
         ax=ax,
         handles=handles1,
         title="Study Focus",
         loc="upper left",
     )
-    legend2 = create_legend(
+    legend2 = legend_create(
         ax=ax,
         handles=handles2,
         title="Custom Legend",
         loc="lower left",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend1,
         fonts=FONTS_LEGEND,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend2,
         fonts=FONTS_LEGEND,
     )
 
-    update_text_legend(legend1)
-    update_text_legend(legend2)
+    text_update_legend(legend1)
+    text_update_legend(legend2)
 
     ### output
     show_plot()
@@ -1064,34 +1064,34 @@ def _2_3_area(dataset):
         orientation=orientation,
     )
 
-    legend1 = create_legend(
+    legend1 = legend_create(
         ax=ax,
         handles=handles1,
         title="Platform",
         loc="upper left",
     )
-    legend2 = create_legend(
+    legend2 = legend_create(
         ax=ax,
         handles=handles2,
         title="Custom Legend",
         loc="lower left",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend1,
         fonts=FONTS_LEGEND,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend2,
         fonts=FONTS_LEGEND,
     )
 
-    update_text_legend(legend1, version="upper")
-    update_text_legend(legend2)
+    text_update_legend(legend1, version="upper")
+    text_update_legend(legend2)
 
     ### output
     show_plot()
@@ -1207,34 +1207,34 @@ def _2_3_bar(dataset):
         orientation=orientation,
     )
 
-    legend1 = create_legend(
+    legend1 = legend_create(
         ax=ax,
         handles=handles1,
         title="Platform",
         loc="upper left",
     )
-    legend2 = create_legend(
+    legend2 = legend_create(
         ax=ax,
         handles=handles2,
         title="Custom Legend",
         loc="lower left",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend1,
         fonts=FONTS_LEGEND,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend2,
         fonts=FONTS_LEGEND,
     )
 
-    update_text_legend(legend1, version="upper")
-    update_text_legend(legend2)
+    text_update_legend(legend1, version="upper")
+    text_update_legend(legend2)
 
     ### output
     show_plot()
@@ -1358,34 +1358,34 @@ def _4_5_area(dataset):
         orientation=orientation,
     )
 
-    legend1 = create_legend(
+    legend1 = legend_create(
         ax=ax,
         handles=handles1,
         title="Software",
         loc="upper left",
     )
-    legend2 = create_legend(
+    legend2 = legend_create(
         ax=ax,
         handles=handles2,
         title="Software Category",
         loc="lower left",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend1,
         fonts=FONTS_LEGEND,
     )
-    apply_font_legend(
+    font_apply_legend(
         legend=legend2,
         fonts=FONTS_LEGEND,
     )
 
-    update_text_legend(legend1, version="title")
-    update_text_legend(legend2)
+    text_update_legend(legend1, version="title")
+    text_update_legend(legend2)
 
     ### output
     show_plot()
@@ -1474,7 +1474,7 @@ def _1_3(dataset):
         color="white",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
@@ -1588,7 +1588,7 @@ def _1_4(dataset):
         target="outer",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
@@ -1697,7 +1697,7 @@ def _3_2(dataset):
         target="outer",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
@@ -1814,7 +1814,7 @@ def _1_4_S(dataset):
         target="outer",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=fig,
         fonts=FONTS_PLOT,
     )
@@ -1880,9 +1880,9 @@ def _3_3(dataset):
         y_values=y_values,
         z_values=z_values,
         labels_spec={
-            "x_label": "Year",
-            "y_label": "Number of Studies",
-            "title": "Historical Site Types X Techniques",
+            "x_label": "Historical Site Type",
+            "y_label": "Technique",
+            "title": "Historical Site Type X Technique",
             "rotation": 45,
         },
     )
@@ -1902,12 +1902,12 @@ def _3_3(dataset):
         color="white",
     )
 
-    create_legend_colorbar(
+    legend_create_colorbar(
         ax=ax,
         title="Count",
     )
 
-    apply_font_plot(
+    font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
@@ -1918,5 +1918,158 @@ def _3_3(dataset):
         fig=fig,
         name="_3_3",
         legends=None,
+        extra_artists=None,
+    )
+
+
+def _4_2(dataset):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=["software_category", "software", "technique"],
+    )
+    dataset_counted_pre = count_dataset(
+        dataset=dataset_filtered,
+        fields=["software_category", "software"],
+    )
+    dataset_counted_pos = count_dataset(
+        dataset=dataset_filtered,
+        fields=["software_category", "software", "technique"],
+    )
+
+    filter_values = ["software != "]
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted_pre = filter_dataset_by_values(
+                dataset=dataset_counted_pre,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    filter_count = "count >= 5"
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted_pre = filter_dataset_by_count(
+            dataset=dataset_counted_pre,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    selected_softwares = [row[0] for row in dataset_counted_pre["software"]]
+    filter_values = ["software == " + ", ".join(selected_softwares)]
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted_pos = filter_dataset_by_values(
+                dataset=dataset_counted_pos,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    ### output
+    print_dict(dataset_counted_pos)
+    print_counts(dataset_counted_pos, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted_pos,
+        x_axis="software",
+        y_axis="count",
+        z_axis="technique",
+    )
+
+    # ---------------------------------------------
+    soft_list = [row[0] for row in dataset_counted_pos["software"]]
+    cat_list = [row[0] for row in dataset_counted_pos["software_category"]]
+
+    software_to_cat_map = dict(zip(soft_list, cat_list))
+    unique_categories = sorted(list(set(cat_list)))
+
+    colors_map = get_colors_map(
+        values=unique_categories,
+        colors=COLORS,
+        color_field="software_category",
+    )
+    colors_mapped = map_colors_map(
+        values_new=list(software_to_cat_map.keys()),
+        values_old=list(software_to_cat_map.values()),
+        colors_map=colors_map,
+    )
+
+    handles1 = get_legend_handles(
+        values=unique_categories,
+        colors_map=colors_map,
+    )
+    # ---------------------------------------------
+
+    ### plot_style
+    orientation = "v"
+    matrix = draw_heatmap(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        z_values=z_values,
+        labels_spec={
+            "x_label": "Software",
+            "y_label": "Technique",
+            "title": "Software X Technique",
+            "rotation": 45,
+        },
+    )
+
+    number_heatmap(
+        ax=ax,
+        matrix=matrix,
+    )
+
+    color_heatmap(
+        ax=ax,
+        matrix=matrix,
+        cmap="viridis",
+    )
+    color_heatmap_labels(
+        ax=ax,
+        color="white",
+    )
+    color_bar_labels(
+        ax=ax,
+        colors_map=colors_mapped,
+        orientation=orientation,
+    )
+
+    legend_create_colorbar(
+        ax=ax,
+        title="Count",
+    )
+    legend1 = legend_create(
+        ax=ax,
+        handles=handles1,
+        title="Software Category",
+        loc="lower left",
+        bbox=(1, -0.3, 0.3, 1),
+    )
+
+    font_apply_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+    font_apply_legend(
+        legend=legend1,
+        fonts=FONTS_LEGEND,
+    )
+
+    text_update_legend(legend1)
+
+    ### output
+    show_plot()
+    save_plot(
+        fig=fig,
+        name="_4_2",
+        legends=[legend1],
         extra_artists=None,
     )

@@ -34,6 +34,7 @@ from setup import (
     _1_4_S,
     ### heatmap ###
     _3_3,
+    _4_2,
 )
 
 
@@ -42,37 +43,19 @@ DATASET_SOFTWARE_STACKED = group_dataset_by_fields(
     datasets=[
         (
             DATASET,
-            {"software": "software_data"},
+            {"software": "software_data", "year": "year", "technique": "technique"},
         ),
         (
             DATASET,
-            {"software": "software_modeling"},
+            {"software": "software_modeling", "year": "year", "technique": "technique"},
         ),
         (
             DATASET,
-            {"software": "software_render"},
+            {"software": "software_render", "year": "year", "technique": "technique"},
         ),
     ],
     stack_by={"software_category": "software"},
-    axes=["software_category", "software"],
-)
-DATASET_SOFTWARE_YEAR_STACKED = group_dataset_by_fields(
-    datasets=[
-        (
-            DATASET,
-            {"software": "software_data", "year": "year"},
-        ),
-        (
-            DATASET,
-            {"software": "software_modeling", "year": "year"},
-        ),
-        (
-            DATASET,
-            {"software": "software_render", "year": "year"},
-        ),
-    ],
-    stack_by={"software_category": "software"},
-    axes=["software_category", "software", "year"],
+    axes=["software_category", "software", "year", "technique"],
 )
 DATASET_COUNTRY_MAPPED = map_dataset_column(
     dataset=DATASET,
@@ -139,7 +122,7 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 
 # _2_3_area(DATASET)
 # _2_3_bar(DATASET)
-# _4_5_area(DATASET_SOFTWARE_YEAR_STACKED)
+# _4_5_area(DATASET_SOFTWARE_STACKED)
 
 
 #############################################
@@ -147,4 +130,5 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 #############################################
 
 
-_3_3(DATASET)
+# _3_3(DATASET)
+_4_2(DATASET_SOFTWARE_STACKED)

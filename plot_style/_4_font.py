@@ -1,4 +1,4 @@
-def apply_font_plot(ax, fonts):
+def font_apply_plot(ax, fonts):
     if hasattr(ax, "update_layout"):
         title_font = fonts.get("title")
         plotly_title = {}
@@ -13,17 +13,17 @@ def apply_font_plot(ax, fonts):
         if ax.data:
             for trace in ax.data:
                 if trace.type == "sunburst":
-                    _apply_fonts_sunburst(trace, fonts)
+                    _font_apply_sunburst(trace, fonts)
         return
 
-    _apply_font_to_text(ax.title, fonts.get("title"))
-    _apply_font_to_text(ax.xaxis.label, fonts.get("xlabel"))
-    _apply_font_to_text(ax.yaxis.label, fonts.get("ylabel"))
+    _font_apply_to_text(ax.title, fonts.get("title"))
+    _font_apply_to_text(ax.xaxis.label, fonts.get("xlabel"))
+    _font_apply_to_text(ax.yaxis.label, fonts.get("ylabel"))
 
     for txt in ax.get_xticklabels():
-        _apply_font_to_text(txt, fonts.get("xticks"))
+        _font_apply_to_text(txt, fonts.get("xticks"))
     for txt in ax.get_yticklabels():
-        _apply_font_to_text(txt, fonts.get("yticks"))
+        _font_apply_to_text(txt, fonts.get("yticks"))
 
     for txt in getattr(ax, "texts", []):
         get_gid = getattr(txt, "get_gid", None)
@@ -33,28 +33,28 @@ def apply_font_plot(ax, fonts):
             continue
 
         if gid == "pie_label":
-            _apply_font_to_text(txt, fonts.get("pie_label"))
+            _font_apply_to_text(txt, fonts.get("pie_label"))
         if gid == "pie_label_inner":
-            _apply_font_to_text(txt, fonts.get("pie_label_inner"))
+            _font_apply_to_text(txt, fonts.get("pie_label_inner"))
         if gid == "pie_label_outer":
-            _apply_font_to_text(txt, fonts.get("pie_label_outer"))
+            _font_apply_to_text(txt, fonts.get("pie_label_outer"))
 
         if gid == "labels_height_numbers":
-            _apply_font_to_text(txt, fonts.get("labels_height_numbers"))
+            _font_apply_to_text(txt, fonts.get("labels_height_numbers"))
         if gid == "labels_heatmap_numbers":
-            _apply_font_to_text(txt, fonts.get("labels_heatmap_numbers"))
+            _font_apply_to_text(txt, fonts.get("labels_heatmap_numbers"))
         if gid == "labels_extra":
-            _apply_font_to_text(txt, fonts.get("labels_extra"))
+            _font_apply_to_text(txt, fonts.get("labels_extra"))
 
 
-def apply_font_legend(legend, fonts):
-    _apply_font_to_text(legend.get_title(), fonts.get("legend_title"))
+def font_apply_legend(legend, fonts):
+    _font_apply_to_text(legend.get_title(), fonts.get("legend_title"))
 
     for text in legend.get_texts():
-        _apply_font_to_text(text, fonts.get("legend_text"))
+        _font_apply_to_text(text, fonts.get("legend_text"))
 
 
-def _apply_font_to_text(text, font):
+def _font_apply_to_text(text, font):
     if not font:
         return
 
@@ -70,7 +70,7 @@ def _apply_font_to_text(text, font):
         text.set_fontstretch(font["stretch"])
 
 
-def _apply_font_to_dict(dict, font):
+def _font_apply_to_dict(dict, font):
     if not font:
         return
 
@@ -84,17 +84,17 @@ def _apply_font_to_dict(dict, font):
         dict["style"] = font["style"]
 
 
-def _apply_fonts_sunburst(trace, fonts):
+def _font_apply_sunburst(trace, fonts):
     font_inner = {}
     font_outer = {}
 
-    _apply_font_to_dict(font_inner, fonts.get("sunburst_label_inner"))
-    _apply_font_to_dict(font_outer, fonts.get("sunburst_label_outer"))
+    _font_apply_to_dict(font_inner, fonts.get("sunburst_label_inner"))
+    _font_apply_to_dict(font_outer, fonts.get("sunburst_label_outer"))
 
     if not font_inner:
-        _apply_font_to_dict(font_inner, fonts.get("sunburst_label"))
+        _font_apply_to_dict(font_inner, fonts.get("sunburst_label"))
     if not font_outer:
-        _apply_font_to_dict(font_outer, fonts.get("sunburst_label"))
+        _font_apply_to_dict(font_outer, fonts.get("sunburst_label"))
 
     sizes = []
     families = []
