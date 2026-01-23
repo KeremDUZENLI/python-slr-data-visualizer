@@ -62,23 +62,17 @@ def calculate_labels_nested(x_values, y_values, z_values):
     )
 
 
-def calculate_labels_pos_bar(values):
+def calculate_labels_pos_bar(values, distance=5):
     unique_values = get_unique_values(values)
+    chart_center = (len(values) - 1) / 2
+    total_space_between = (len(unique_values) - 1) * distance
 
-    positions = {}
-    for item in unique_values:
-        positions[item] = []
-
-    for i in range(len(values)):
-        positions[values[i]].append(i)
-
+    start_pos = chart_center - (total_space_between / 2)
     labels_center = {}
-    for item in positions:
-        total = 0
-        count = len(positions[item])
-        for index in positions[item]:
-            total += index
-        labels_center[item] = total / count
+
+    for i, label in enumerate(unique_values):
+        position = start_pos + (i * distance)
+        labels_center[label] = position
 
     return labels_center
 

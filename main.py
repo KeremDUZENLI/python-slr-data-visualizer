@@ -35,6 +35,8 @@ from setup import (
     ### heatmap ###
     _3_3,
     _4_2,
+    _4_3,
+    _4_4,
 )
 
 
@@ -130,5 +132,7 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 #############################################
 
 
-# _3_3(DATASET)
+_3_3(DATASET)
 _4_2(DATASET_SOFTWARE_STACKED)
+_4_3(DATASET)
+_4_4(DATASET)

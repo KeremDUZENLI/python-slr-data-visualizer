@@ -79,8 +79,8 @@ from plot_style._4_font import (
     font_apply_legend,
 )
 from plot_style._5_text import (
-    text_update_labels,
-    text_update_legend,
+    text_clean_labels,
+    text_clean_legend,
 )
 
 
@@ -216,8 +216,8 @@ def _1_0(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_update_legend(legend1)
-    text_update_legend(legend2)
+    text_clean_legend(legend1)
+    text_clean_legend(legend2)
 
     ### output
     show_plot()
@@ -275,6 +275,7 @@ def _4_1(dataset):
     )
     labels_center = calculate_labels_pos_bar(
         values=z_values,
+        distance=5,
     )
 
     colors_map = get_colors_map(
@@ -283,8 +284,8 @@ def _4_1(dataset):
         color_field="software_category",
     )
     colors_mapped = map_colors_map(
-        values_new=x_values,
-        values_old=z_values,
+        colors_from=x_values,
+        colors_to=z_values,
         colors_map=colors_map,
     )
 
@@ -374,9 +375,9 @@ def _4_1(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_update_labels(texts)
-    text_update_legend(legend1)
-    text_update_legend(legend2)
+    text_clean_labels(texts)
+    text_clean_legend(legend1)
+    text_clean_legend(legend2)
 
     ### output
     show_plot()
@@ -515,8 +516,8 @@ def _5_0(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_update_legend(legend1)
-    text_update_legend(legend2)
+    text_clean_legend(legend1)
+    text_clean_legend(legend2)
 
     ### output
     show_plot()
@@ -661,8 +662,8 @@ def _1_1(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_update_legend(legend1)
-    text_update_legend(legend2)
+    text_clean_legend(legend1)
+    text_clean_legend(legend2)
 
     ### output
     show_plot()
@@ -802,8 +803,8 @@ def _2_1(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_update_legend(legend1)
-    text_update_legend(legend2)
+    text_clean_legend(legend1)
+    text_clean_legend(legend2)
 
     ### output
     show_plot()
@@ -943,8 +944,8 @@ def _3_4(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_update_legend(legend1)
-    text_update_legend(legend2)
+    text_clean_legend(legend1)
+    text_clean_legend(legend2)
 
     ### output
     show_plot()
@@ -1090,8 +1091,8 @@ def _2_3_area(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_update_legend(legend1, version="upper")
-    text_update_legend(legend2)
+    text_clean_legend(legend1, version="upper")
+    text_clean_legend(legend2)
 
     ### output
     show_plot()
@@ -1233,8 +1234,8 @@ def _2_3_bar(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_update_legend(legend1, version="upper")
-    text_update_legend(legend2)
+    text_clean_legend(legend1, version="upper")
+    text_clean_legend(legend2)
 
     ### output
     show_plot()
@@ -1384,8 +1385,8 @@ def _4_5_area(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_update_legend(legend1, version="title")
-    text_update_legend(legend2)
+    text_clean_legend(legend1, version="title")
+    text_clean_legend(legend2)
 
     ### output
     show_plot()
@@ -1958,7 +1959,8 @@ def _4_2(dataset):
             operation=operation,
         )
 
-    selected_softwares = [row[0] for row in dataset_counted_pre["software"]]
+    selected_softwares = [r[0] for r in dataset_counted_pre["software"]]
+    selected_softwares_cat = [r[0] for r in dataset_counted_pre["software_category"]]
     filter_values = ["software == " + ", ".join(selected_softwares)]
     if filter_values:
         for filter_value in filter_values:
@@ -1982,30 +1984,21 @@ def _4_2(dataset):
         y_axis="count",
         z_axis="technique",
     )
-
-    # ---------------------------------------------
-    soft_list = [row[0] for row in dataset_counted_pos["software"]]
-    cat_list = [row[0] for row in dataset_counted_pos["software_category"]]
-
-    software_to_cat_map = dict(zip(soft_list, cat_list))
-    unique_categories = sorted(list(set(cat_list)))
+    labels_center = calculate_labels_pos_bar(
+        values=selected_softwares_cat,
+        distance=5,
+    )
 
     colors_map = get_colors_map(
-        values=unique_categories,
+        values=selected_softwares_cat,
         colors=COLORS,
         color_field="software_category",
     )
     colors_mapped = map_colors_map(
-        values_new=list(software_to_cat_map.keys()),
-        values_old=list(software_to_cat_map.values()),
+        colors_from=selected_softwares,
+        colors_to=selected_softwares_cat,
         colors_map=colors_map,
     )
-
-    handles1 = get_legend_handles(
-        values=unique_categories,
-        colors_map=colors_map,
-    )
-    # ---------------------------------------------
 
     ### plot_style
     orientation = "v"
@@ -2015,9 +2008,154 @@ def _4_2(dataset):
         y_values=y_values,
         z_values=z_values,
         labels_spec={
-            "x_label": "Software",
+            "x_label": "",
             "y_label": "Technique",
             "title": "Software X Technique",
+            "rotation": 45,
+        },
+    )
+
+    number_heatmap(
+        ax=ax,
+        matrix=matrix,
+    )
+    texts = add_labels_extra(
+        ax=ax,
+        labels_center=labels_center,
+        orientation=orientation,
+        offset=-6,
+    )
+
+    color_heatmap(
+        ax=ax,
+        matrix=matrix,
+        cmap="viridis",
+    )
+    color_heatmap_labels(
+        ax=ax,
+        color="white",
+    )
+    color_bar_labels(
+        ax=ax,
+        colors_map=colors_mapped,
+        orientation=orientation,
+    )
+    color_labels_extra(
+        ax=texts,
+        colors_map=colors_map,
+    )
+
+    legend_create_colorbar(
+        ax=ax,
+        title="Count",
+    )
+
+    font_apply_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+
+    text_clean_labels(texts)
+
+    ### output
+    show_plot()
+    save_plot(
+        fig=fig,
+        name="_4_2",
+        legends=None,
+        extra_artists=texts,
+    )
+
+
+def _4_3(dataset):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=["software_modeling", "software_data"],
+    )
+    dataset_counted_pre1 = count_dataset(
+        dataset=dataset_filtered,
+        fields=["software_modeling"],
+    )
+    dataset_counted_pre2 = count_dataset(
+        dataset=dataset_filtered,
+        fields=["software_data"],
+    )
+    dataset_counted_pos = count_dataset(
+        dataset=dataset_filtered,
+        fields=["software_modeling", "software_data"],
+    )
+
+    filter_values = ["software_modeling != ", "software_data != "]
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted_pos = filter_dataset_by_values(
+                dataset=dataset_counted_pos,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    filter_count = "count >= 5"
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted_pre1 = filter_dataset_by_count(
+            dataset=dataset_counted_pre1,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    filter_count = "count >= 5"
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted_pre2 = filter_dataset_by_count(
+            dataset=dataset_counted_pre2,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    selected_softwares_m = [r[0] for r in dataset_counted_pre1["software_modeling"]]
+    selected_softwares_r = [r[0] for r in dataset_counted_pre2["software_data"]]
+    filter_values = [
+        "software_modeling == " + ", ".join(selected_softwares_m),
+        "software_data == " + ", ".join(selected_softwares_r),
+    ]
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted_pos = filter_dataset_by_values(
+                dataset=dataset_counted_pos,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    ### output
+    print_dict(dataset_counted_pos)
+    print_counts(dataset_counted_pos, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted_pos,
+        x_axis="software_modeling",
+        y_axis="count",
+        z_axis="software_data",
+    )
+
+    ### plot_style
+    matrix = draw_heatmap(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        z_values=z_values,
+        labels_spec={
+            "x_label": "Software Modeling",
+            "y_label": "Software Data",
+            "title": "Software Modeling X Software Data",
             "rotation": 45,
         },
     )
@@ -2036,40 +2174,150 @@ def _4_2(dataset):
         ax=ax,
         color="white",
     )
-    color_bar_labels(
-        ax=ax,
-        colors_map=colors_mapped,
-        orientation=orientation,
-    )
 
     legend_create_colorbar(
         ax=ax,
         title="Count",
-    )
-    legend1 = legend_create(
-        ax=ax,
-        handles=handles1,
-        title="Software Category",
-        loc="lower left",
-        bbox=(1, -0.3, 0.3, 1),
     )
 
     font_apply_plot(
         ax=ax,
         fonts=FONTS_PLOT,
     )
-    font_apply_legend(
-        legend=legend1,
-        fonts=FONTS_LEGEND,
-    )
-
-    text_update_legend(legend1)
 
     ### output
     show_plot()
     save_plot(
         fig=fig,
-        name="_4_2",
-        legends=[legend1],
+        name="_4_3",
+        legends=None,
+        extra_artists=None,
+    )
+
+
+def _4_4(dataset):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=["software_modeling", "software_render"],
+    )
+    dataset_counted_pre1 = count_dataset(
+        dataset=dataset_filtered,
+        fields=["software_modeling"],
+    )
+    dataset_counted_pre2 = count_dataset(
+        dataset=dataset_filtered,
+        fields=["software_render"],
+    )
+    dataset_counted_pos = count_dataset(
+        dataset=dataset_filtered,
+        fields=["software_modeling", "software_render"],
+    )
+
+    filter_values = ["software_modeling != ", "software_render != "]
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted_pos = filter_dataset_by_values(
+                dataset=dataset_counted_pos,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    filter_count = "count >= 5"
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted_pre1 = filter_dataset_by_count(
+            dataset=dataset_counted_pre1,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    filter_count = "count >= 3"
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted_pre2 = filter_dataset_by_count(
+            dataset=dataset_counted_pre2,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    selected_softwares_m = [r[0] for r in dataset_counted_pre1["software_modeling"]]
+    selected_softwares_r = [r[0] for r in dataset_counted_pre2["software_render"]]
+    filter_values = [
+        "software_modeling == " + ", ".join(selected_softwares_m),
+        "software_render == " + ", ".join(selected_softwares_r),
+    ]
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted_pos = filter_dataset_by_values(
+                dataset=dataset_counted_pos,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    ### output
+    print_dict(dataset_counted_pos)
+    print_counts(dataset_counted_pos, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted_pos,
+        x_axis="software_modeling",
+        y_axis="count",
+        z_axis="software_render",
+    )
+
+    ### plot_style
+    matrix = draw_heatmap(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        z_values=z_values,
+        labels_spec={
+            "x_label": "Software Modeling",
+            "y_label": "Software Render",
+            "title": "Software Modeling X Software Render",
+            "rotation": 45,
+        },
+    )
+
+    number_heatmap(
+        ax=ax,
+        matrix=matrix,
+    )
+
+    color_heatmap(
+        ax=ax,
+        matrix=matrix,
+        cmap="viridis",
+    )
+    color_heatmap_labels(
+        ax=ax,
+        color="white",
+    )
+
+    legend_create_colorbar(
+        ax=ax,
+        title="Count",
+    )
+
+    font_apply_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+
+    ### output
+    show_plot()
+    save_plot(
+        fig=fig,
+        name="_4_4",
+        legends=None,
         extra_artists=None,
     )
