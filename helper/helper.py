@@ -26,28 +26,25 @@ def get_unique_values(values):
 def calculate_labels_nested(x_values, y_values, z_values):
     tree = {}
 
-    # Group children by parent to sum totals
     for parent, value, child in zip(x_values, y_values, z_values):
         if parent not in tree:
             tree[parent] = []
         tree[parent].append((child, value))
 
-    # Build aligned lists
     inner_labels = []
     inner_labels_count = []
     outer_labels = []
     outer_labels_count = []
     inner_outer_links = []
 
-    # Sort to ensure visual consistency
-    for parent in sorted(tree.keys()):
+    for parent in tree.keys():
         child_list = tree[parent]
         parent_total = 0
 
         for child, value in child_list:
             outer_labels.append(child)
             outer_labels_count.append(value)
-            inner_outer_links.append(parent)  # Track the parent
+            inner_outer_links.append(parent)
             parent_total += value
 
         inner_labels.append(parent)

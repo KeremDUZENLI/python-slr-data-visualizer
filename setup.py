@@ -2321,3 +2321,149 @@ def _4_4(dataset):
         legends=None,
         extra_artists=None,
     )
+
+
+#############################################
+################### sankey #################
+#############################################
+
+
+def _3_1(dataset):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=["study_focus", "historical_site_type", "technique"],
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=["study_focus", "historical_site_type", "technique"],
+    )
+
+    filter_values = None
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    filter_count = None
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_dict(dataset_counted)
+    print_counts(dataset_counted, decimal=1)
+    # fig, ax = draw_plot(8, 6)
+
+    # ### plot_get
+    # x_values, y_values, z_values = get_labels(
+    #     dataset=dataset_counted,
+    #     x_axis="study_focus",
+    #     y_axis="historical_site_type",
+    #     z_axis="technique",
+    # )
+
+    # colors_map = get_colors_map(
+    #     values=z_values,
+    #     colors=COLORS,
+    #     color_field="historical_site_type",
+    # )
+
+    # handles1 = get_legend_handles(
+    #     values=z_values,
+    #     colors_map=colors_map,
+    # )
+    # handles2 = get_legend_handles(
+    #     values=["Custom A", "Custom B", "Custom C"],
+    #     colors_map={
+    #         "Custom A": "#ff0000",
+    #         "Custom B": "#008000",
+    #         "Custom C": "#0000ff",
+    #     },
+    # )
+
+    # ### plot_style
+    # orientation = "v"
+    # z_values_list = draw_bar_2D(
+    #     ax=ax,
+    #     x_values=x_values,
+    #     y_values=y_values,
+    #     z_values=z_values,
+    #     labels_spec={
+    #         "x_label": "Year",
+    #         "y_label": "Number of Studies",
+    #         "title": "Number of Studies by Historical Site Type",
+    #         "rotation": 45,
+    #     },
+    #     orientation=orientation,
+    # )
+
+    # number_bar(
+    #     ax=ax,
+    #     orientation=orientation,
+    #     offset=1,
+    # )
+    # add_grid(
+    #     ax=ax,
+    #     orientation=orientation,
+    # )
+
+    # color_bar(
+    #     ax=ax,
+    #     coloring_values_list=z_values_list,
+    #     colors_map=colors_map,
+    #     border=False,
+    # )
+    # color_bar_labels(
+    #     ax=ax,
+    #     colors_map=colors_map,
+    #     orientation=orientation,
+    # )
+
+    # legend1 = legend_create(
+    #     ax=ax,
+    #     handles=handles1,
+    #     title="Historical Site Type",
+    #     loc="upper left",
+    # )
+    # legend2 = legend_create(
+    #     ax=ax,
+    #     handles=handles2,
+    #     title="Custom Legend",
+    #     loc="lower left",
+    # )
+
+    # font_apply_plot(
+    #     ax=ax,
+    #     fonts=FONTS_PLOT,
+    # )
+    # font_apply_legend(
+    #     legend=legend1,
+    #     fonts=FONTS_LEGEND,
+    # )
+    # font_apply_legend(
+    #     legend=legend2,
+    #     fonts=FONTS_LEGEND,
+    # )
+
+    # text_clean_legend(legend1)
+    # text_clean_legend(legend2)
+
+    # ### output
+    # show_plot()
+    # save_plot(
+    #     fig=fig,
+    #     name="_3_1",
+    #     legends=[legend1, legend2],
+    #     extra_artists=None,
+    # )
