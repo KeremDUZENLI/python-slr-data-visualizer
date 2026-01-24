@@ -6,6 +6,7 @@ from config.config import (
 
 from helper.helper import (
     calculate_labels_nested,
+    calculate_sankey_flows,
     calculate_labels_pos_bar,
     parse_string,
 )
@@ -50,6 +51,7 @@ from plot_style._0_draw import (
     draw_pie_nested,
     draw_sunburst,
     draw_heatmap,
+    draw_sankey,
 )
 from plot_style._1_number import (
     number_bar,
@@ -64,6 +66,7 @@ from plot_style._2_color import (
     color_pie,
     color_sunburst,
     color_heatmap,
+    color_sankey,
     color_bar_labels,
     color_pie_labels,
     color_sunburst_labels,
@@ -2363,107 +2366,50 @@ def _3_1(dataset):
     ### output
     print_dict(dataset_counted)
     print_counts(dataset_counted, decimal=1)
-    # fig, ax = draw_plot(8, 6)
+    ax = draw_plot_plotly()
 
-    # ### plot_get
-    # x_values, y_values, z_values = get_labels(
-    #     dataset=dataset_counted,
-    #     x_axis="study_focus",
-    #     y_axis="historical_site_type",
-    #     z_axis="technique",
-    # )
+    ### plot_get
+    list_1 = [r[0] for r in dataset_counted["study_focus"]]
+    list_2 = [r[0] for r in dataset_counted["historical_site_type"]]
+    list_3 = [r[0] for r in dataset_counted["technique"]]
+    counts = dataset_counted["count"]
 
-    # colors_map = get_colors_map(
-    #     values=z_values,
-    #     colors=COLORS,
-    #     color_field="historical_site_type",
-    # )
+    (
+        all_labels,
+        sources,
+        targets,
+        values,
+    ) = calculate_sankey_flows(list_1, list_2, list_3, counts)
 
-    # handles1 = get_legend_handles(
-    #     values=z_values,
-    #     colors_map=colors_map,
-    # )
-    # handles2 = get_legend_handles(
-    #     values=["Custom A", "Custom B", "Custom C"],
-    #     colors_map={
-    #         "Custom A": "#ff0000",
-    #         "Custom B": "#008000",
-    #         "Custom C": "#0000ff",
-    #     },
-    # )
+    colors_1 = get_colors_map(values=list_1, colors=COLORS, color_field="study_focus")
+    colors_2 = get_colors_map(
+        values=list_2, colors=COLORS, color_field="historical_site_type"
+    )
+    colors_3 = get_colors_map(values=list_3, colors=COLORS, color_field="technique")
+    full_colors_map = {**colors_1, **colors_2, **colors_3}
 
-    # ### plot_style
-    # orientation = "v"
-    # z_values_list = draw_bar_2D(
-    #     ax=ax,
-    #     x_values=x_values,
-    #     y_values=y_values,
-    #     z_values=z_values,
-    #     labels_spec={
-    #         "x_label": "Year",
-    #         "y_label": "Number of Studies",
-    #         "title": "Number of Studies by Historical Site Type",
-    #         "rotation": 45,
-    #     },
-    #     orientation=orientation,
-    # )
+    ### plot_style
+    fig = draw_sankey(
+        ax=ax,
+        labels=all_labels,
+        sources=sources,
+        targets=targets,
+        values=values,
+        labels_spec={
+            "title": "Workflow: Focus -> Site -> Technique",
+        },
+    )
 
-    # number_bar(
-    #     ax=ax,
-    #     orientation=orientation,
-    #     offset=1,
-    # )
-    # add_grid(
-    #     ax=ax,
-    #     orientation=orientation,
-    # )
+    color_sankey(
+        ax=fig,
+        labels=all_labels,
+        colors_map=full_colors_map,
+    )
 
-    # color_bar(
-    #     ax=ax,
-    #     coloring_values_list=z_values_list,
-    #     colors_map=colors_map,
-    #     border=False,
-    # )
-    # color_bar_labels(
-    #     ax=ax,
-    #     colors_map=colors_map,
-    #     orientation=orientation,
-    # )
+    font_apply_plot(
+        ax=fig,
+        fonts=FONTS_PLOT,
+    )
 
-    # legend1 = legend_create(
-    #     ax=ax,
-    #     handles=handles1,
-    #     title="Historical Site Type",
-    #     loc="upper left",
-    # )
-    # legend2 = legend_create(
-    #     ax=ax,
-    #     handles=handles2,
-    #     title="Custom Legend",
-    #     loc="lower left",
-    # )
-
-    # font_apply_plot(
-    #     ax=ax,
-    #     fonts=FONTS_PLOT,
-    # )
-    # font_apply_legend(
-    #     legend=legend1,
-    #     fonts=FONTS_LEGEND,
-    # )
-    # font_apply_legend(
-    #     legend=legend2,
-    #     fonts=FONTS_LEGEND,
-    # )
-
-    # text_clean_legend(legend1)
-    # text_clean_legend(legend2)
-
-    # ### output
-    # show_plot()
-    # save_plot(
-    #     fig=fig,
-    #     name="_3_1",
-    #     legends=[legend1, legend2],
-    #     extra_artists=None,
-    # )
+    ### output
+    show_plot_plotly(fig)

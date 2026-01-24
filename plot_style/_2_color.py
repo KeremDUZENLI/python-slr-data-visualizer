@@ -83,6 +83,18 @@ def color_heatmap(ax, matrix, cmap):
     ax.imshow(matrix, cmap=cmap, aspect="auto")
 
 
+def color_sankey(ax, labels, colors_map):
+    trace = ax.data[0]
+    current_colors = list(trace.node.color)
+
+    for i, label in enumerate(labels):
+        color = colors_map.get(label)
+        if color:
+            current_colors[i] = color
+
+    trace.node.color = current_colors
+
+
 def color_bar_labels(ax, colors_map, orientation="v"):
     if orientation == "v":
         labels = ax.get_xticklabels()

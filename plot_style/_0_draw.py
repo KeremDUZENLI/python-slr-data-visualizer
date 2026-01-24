@@ -361,3 +361,33 @@ def draw_heatmap(ax, x_values, y_values, z_values, labels_spec):
     ax.set_title(labels_spec.get("title", ""))
 
     return matrix
+
+
+def draw_sankey(ax, labels, sources, targets, values, labels_spec):
+    trace = {
+        "type": "sankey",
+        "node": {
+            "pad": 15,
+            "thickness": 20,
+            "line": {"color": "black", "width": 0.5},
+            "label": labels,
+            "color": ["grey"] * len(labels),
+        },
+        "link": {
+            "source": sources,
+            "target": targets,
+            "value": values,
+            "color": "rgba(200, 200, 200, 0.5)",
+        },
+    }
+
+    ax.add_trace(trace)
+
+    ax.update_layout(
+        title_text=labels_spec.get("title", ""),
+        font_size=10,
+        height=600,
+        margin=dict(t=60, l=10, r=10, b=10),
+    )
+
+    return ax
