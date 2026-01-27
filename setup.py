@@ -49,8 +49,9 @@ from plot_style._0_draw import (
     draw_stacked,
     draw_pie,
     draw_pie_nested,
-    draw_sunburst,
     draw_heatmap,
+    draw_scatter,
+    draw_sunburst,
     draw_sankey,
 )
 from plot_style._1_number import (
@@ -64,13 +65,15 @@ from plot_style._2_color import (
     color_bar,
     color_area,
     color_pie,
-    color_sunburst,
     color_heatmap,
-    color_sankey,
+    color_sunburst,
+    color_sankey_nodes,
+    color_sankey_links,
     color_bar_labels,
     color_pie_labels,
-    color_sunburst_labels,
     color_heatmap_labels,
+    color_sunburst_labels,
+    color_sankey_labels,
     color_labels_extra,
 )
 from plot_style._3_legend import (
@@ -90,8 +93,6 @@ from plot_style._5_text import (
 ################################################
 #################### bar_1D ####################
 ################################################
-
-
 def _1_0(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -535,8 +536,6 @@ def _5_0(dataset):
 ################################################
 #################### bar_2D ####################
 ################################################
-
-
 def _1_1(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -963,8 +962,6 @@ def _3_4(dataset):
 #############################################
 ################## stacked ##################
 #############################################
-
-
 def _2_3_area(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1404,8 +1401,6 @@ def _4_5_area(dataset):
 #############################################
 #################### pie ####################
 #############################################
-
-
 def _1_3(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1496,8 +1491,6 @@ def _1_3(dataset):
 #############################################
 ################# pie_nested ################
 #############################################
-
-
 def _1_4(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1717,121 +1710,8 @@ def _3_2(dataset):
 
 
 #############################################
-################## sunburst #################
-#############################################
-
-
-def _1_4_S(dataset):
-    ### operation
-    dataset_filtered = filter_dataset_by_fields(
-        dataset=dataset,
-        fields=["historical_site_type", "historical_site_type_sub"],
-    )
-    dataset_counted = count_dataset(
-        dataset=dataset_filtered,
-        fields=["historical_site_type", "historical_site_type_sub"],
-    )
-
-    filter_values = None
-    if filter_values:
-        for filter_value in filter_values:
-            field, values, operation = parse_string(text=filter_value)
-            dataset_counted = filter_dataset_by_values(
-                dataset=dataset_counted,
-                field=field,
-                values=values,
-                include=operation,
-            )
-
-    filter_count = None
-    if filter_count:
-        field, values, operation = parse_string(text=filter_count)
-        dataset_counted = filter_dataset_by_count(
-            dataset=dataset_counted,
-            field=field,
-            value=int(values[0]),
-            operation=operation,
-        )
-
-    ### output
-    print_dict(dataset_counted)
-    print_counts(dataset_counted, decimal=1)
-    ax = draw_plot_plotly()
-
-    ### plot_get
-    x_values, y_values, z_values = get_labels(
-        dataset=dataset_counted,
-        x_axis="historical_site_type",
-        y_axis="count",
-        z_axis="historical_site_type_sub",
-    )
-
-    (
-        inner_labels,
-        inner_labels_count,
-        outer_labels,
-        outer_labels_count,
-        inner_outer_links,
-    ) = calculate_labels_nested(x_values, y_values, z_values)
-
-    all_labels = inner_labels + outer_labels
-    all_parents = [""] * len(inner_labels) + inner_outer_links
-    all_counts = inner_labels_count + outer_labels_count
-
-    inner_colors_map = get_colors_map(
-        values=inner_labels,
-        colors=COLORS,
-        color_field="historical_site_type",
-    )
-    outer_colors_map = get_colors_map(
-        values=outer_labels,
-        colors=COLORS,
-        color_field="historical_site_type_sub",
-    )
-    full_colors_map = {**inner_colors_map, **outer_colors_map}
-
-    ### plot_style
-    fig = draw_sunburst(
-        ax=ax,
-        all_labels=all_labels,
-        all_parents=all_parents,
-        all_counts=all_counts,
-        labels_spec={
-            "title": "Historical Site Type & Sub-Type Distribution",
-        },
-    )
-
-    color_sunburst(
-        ax=fig,
-        coloring_values_list=all_labels,
-        colors_map=full_colors_map,
-        border=False,
-    )
-    color_sunburst_labels(
-        ax=fig,
-        color="white",
-        target="inner",
-    )
-    color_sunburst_labels(
-        ax=fig,
-        color="black",
-        target="outer",
-    )
-
-    font_apply_plot(
-        ax=fig,
-        fonts=FONTS_PLOT,
-    )
-
-    ### output
-    show_plot_plotly(fig)
-
-
-#############################################
 ################### heatmap #################
 #############################################
-
-
 def _3_3(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -2327,10 +2207,218 @@ def _4_4(dataset):
 
 
 #############################################
-################### sankey #################
+################### scatter #################
 #############################################
+def _5_1(dataset):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=["country", "historical_site_type"],
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=["country", "historical_site_type"],
+    )
+
+    filter_values = None
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    filter_count = None
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_dict(dataset_counted)
+    print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted,
+        x_axis="country",
+        y_axis="count",
+        z_axis="historical_site_type",
+    )
+
+    ### plot_style
+    min_count, max_count = draw_scatter(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        z_values=z_values,
+        labels_spec={
+            "x_label": "Country",
+            "y_label": "Historical Site Type",
+            "title": "Country X Historical Site Type",
+            "rotation": 45,
+        },
+    )
+
+    add_grid(
+        ax=ax,
+        orientation="v",
+    )
+    add_grid(
+        ax=ax,
+        orientation="h",
+    )
+
+    # color_heatmap(
+    #     ax=ax,
+    #     matrix=matrix,
+    #     cmap="viridis",
+    # )
+    # color_heatmap_labels(
+    #     ax=ax,
+    #     color="white",
+    # )
+
+    # legend_create_colorbar(
+    #     ax=ax,
+    #     title="Count",
+    # )
+
+    # font_apply_plot(
+    #     ax=ax,
+    #     fonts=FONTS_PLOT,
+    # )
+
+    ### output
+    show_plot()
+    save_plot(
+        fig=fig,
+        name="_5_1",
+        legends=None,
+        extra_artists=None,
+    )
 
 
+#############################################
+################## sunburst #################
+#############################################
+def _1_4_S(dataset):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=["historical_site_type", "historical_site_type_sub"],
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=["historical_site_type", "historical_site_type_sub"],
+    )
+
+    filter_values = None
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    filter_count = None
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_dict(dataset_counted)
+    print_counts(dataset_counted, decimal=1)
+    ax = draw_plot_plotly()
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted,
+        x_axis="historical_site_type",
+        y_axis="count",
+        z_axis="historical_site_type_sub",
+    )
+
+    (
+        inner_labels,
+        inner_labels_count,
+        outer_labels,
+        outer_labels_count,
+        inner_outer_links,
+    ) = calculate_labels_nested(x_values, y_values, z_values)
+
+    all_labels = inner_labels + outer_labels
+    all_parents = [""] * len(inner_labels) + inner_outer_links
+    all_counts = inner_labels_count + outer_labels_count
+
+    inner_colors_map = get_colors_map(
+        values=inner_labels,
+        colors=COLORS,
+        color_field="historical_site_type",
+    )
+    outer_colors_map = get_colors_map(
+        values=outer_labels,
+        colors=COLORS,
+        color_field="historical_site_type_sub",
+    )
+    full_colors_map = {**inner_colors_map, **outer_colors_map}
+
+    ### plot_style
+    fig = draw_sunburst(
+        ax=ax,
+        all_labels=all_labels,
+        all_parents=all_parents,
+        all_counts=all_counts,
+        labels_spec={
+            "title": "Historical Site Type & Sub-Type Distribution",
+        },
+    )
+
+    color_sunburst(
+        ax=fig,
+        coloring_values_list=all_labels,
+        colors_map=full_colors_map,
+        border=False,
+    )
+    color_sunburst_labels(
+        ax=fig,
+        color="white",
+        target="inner",
+    )
+    color_sunburst_labels(
+        ax=fig,
+        color="black",
+        target="outer",
+    )
+
+    font_apply_plot(
+        ax=fig,
+        fonts=FONTS_PLOT,
+    )
+
+    ### output
+    show_plot_plotly(fig)
+
+
+#############################################
+#################### sankey #################
+#############################################
 def _3_1(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -2369,41 +2457,52 @@ def _3_1(dataset):
     ax = draw_plot_plotly()
 
     ### plot_get
-    list_1 = [r[0] for r in dataset_counted["study_focus"]]
-    list_2 = [r[0] for r in dataset_counted["historical_site_type"]]
-    list_3 = [r[0] for r in dataset_counted["technique"]]
+    column1 = [r[0] for r in dataset_counted["study_focus"]]
+    column2 = [r[0] for r in dataset_counted["historical_site_type"]]
+    column3 = [r[0] for r in dataset_counted["technique"]]
     counts = dataset_counted["count"]
 
     (
-        all_labels,
+        labels,
         sources,
         targets,
         values,
-    ) = calculate_sankey_flows(list_1, list_2, list_3, counts)
+    ) = calculate_sankey_flows(column1, column2, column3, counts)
 
-    colors_1 = get_colors_map(values=list_1, colors=COLORS, color_field="study_focus")
+    colors_1 = get_colors_map(values=column1, colors=COLORS, color_field="study_focus")
     colors_2 = get_colors_map(
-        values=list_2, colors=COLORS, color_field="historical_site_type"
+        values=column2, colors=COLORS, color_field="historical_site_type"
     )
-    colors_3 = get_colors_map(values=list_3, colors=COLORS, color_field="technique")
+    colors_3 = get_colors_map(values=column3, colors=COLORS, color_field="technique")
     full_colors_map = {**colors_1, **colors_2, **colors_3}
 
     ### plot_style
     fig = draw_sankey(
         ax=ax,
-        labels=all_labels,
+        labels=labels,
         sources=sources,
         targets=targets,
         values=values,
         labels_spec={
-            "title": "Workflow: Focus -> Site -> Technique",
+            "title": "Workflow: Study Focus -> Site -> Technique",
         },
     )
 
-    color_sankey(
+    color_sankey_nodes(
         ax=fig,
-        labels=all_labels,
+        labels_list=labels,
         colors_map=full_colors_map,
+        pad=15,
+        thickness=20,
+    )
+    color_sankey_links(
+        ax=fig,
+        color="gray",
+        opacity=0.25,
+    )
+    color_sankey_labels(
+        ax=fig,
+        color="black",
     )
 
     font_apply_plot(

@@ -1,3 +1,5 @@
+import matplotlib.colors as mcolors
+
 DEFAULT_COLOR = "#cccccc"
 
 
@@ -62,6 +64,10 @@ def color_pie(ax, coloring_values_list, colors_map, border=False):
             slice.set_linewidth(1)
 
 
+def color_heatmap(ax, matrix, cmap):
+    ax.imshow(matrix, cmap=cmap, aspect="auto")
+
+
 def color_sunburst(ax, coloring_values_list, colors_map, border=False):
     colors = []
 
@@ -79,20 +85,34 @@ def color_sunburst(ax, coloring_values_list, colors_map, border=False):
         ax.update_traces(marker=dict(line=dict(color="black", width=1)))
 
 
-def color_heatmap(ax, matrix, cmap):
-    ax.imshow(matrix, cmap=cmap, aspect="auto")
-
-
-def color_sankey(ax, labels, colors_map):
+def color_sankey_nodes(ax, labels_list, colors_map, pad=15, thickness=20):
     trace = ax.data[0]
-    current_colors = list(trace.node.color)
+    colors = list(trace.node.color)
 
-    for i, label in enumerate(labels):
+    for i, label in enumerate(labels_list):
         color = colors_map.get(label)
         if color:
-            current_colors[i] = color
+            colors[i] = color
 
-    trace.node.color = current_colors
+    trace.node.pad = pad
+    trace.node.thickness = thickness
+    trace.node.color = colors
+
+
+def color_sankey_links(ax, color, opacity=0.25):
+    trace = ax.data[0]
+
+    if color in ["source", "target"]:
+        indices = getattr(trace.link, color)
+        base_colors = [trace.node.color[i] for i in indices]
+    else:
+        base_colors = color
+
+    if isinstance(base_colors, list):
+        new_colors = [_hex_to_rgba(color, opacity) for color in base_colors]
+        trace.link.color = new_colors
+    else:
+        trace.link.color = _hex_to_rgba(base_colors, opacity)
 
 
 def color_bar_labels(ax, colors_map, orientation="v"):
@@ -120,36 +140,42 @@ def color_pie_labels(ax, color, target=None):
             text.set_color(color)
 
 
-def color_sunburst_labels(ax, color, target=None):
-    for trace in ax.data:
-        if trace.type == "sunburst":
-            count = len(trace.labels)
-            existing_color = trace.insidetextfont.color or DEFAULT_COLOR
-
-            if isinstance(existing_color, (list, tuple)):
-                current_colors = list(existing_color)
-            else:
-                current_colors = [existing_color] * count
-
-            parents = trace.parents
-            for i, parent in enumerate(parents):
-                is_inner = parent == ""
-
-                if target == "inner" and is_inner:
-                    current_colors[i] = color
-                if target == "outer" and not is_inner:
-                    current_colors[i] = color
-                if target is None:
-                    current_colors[i] = color
-
-            trace.update(insidetextfont=dict(color=current_colors))
-
-
 def color_heatmap_labels(ax, color):
     for text in ax.texts:
 
         if text.get_gid() == "labels_heatmap_numbers":
             text.set_color(color)
+
+
+def color_sunburst_labels(ax, color, target=None):
+    for trace in ax.data:
+        count = len(trace.labels)
+        existing_color = trace.insidetextfont.color or DEFAULT_COLOR
+
+        if isinstance(existing_color, (list, tuple)):
+            current_colors = list(existing_color)
+        else:
+            current_colors = [existing_color] * count
+
+        parents = trace.parents
+        for i, parent in enumerate(parents):
+            is_inner = parent == ""
+
+            if target == "inner" and is_inner:
+                current_colors[i] = color
+            if target == "outer" and not is_inner:
+                current_colors[i] = color
+            if target is None:
+                current_colors[i] = color
+
+        trace.update(insidetextfont=dict(color=current_colors))
+
+
+def color_sankey_labels(ax, color):
+    for trace in ax.data:
+        trace.update(textfont=dict(color=color))
+
+    ax.update_layout(title_font=dict(color=color))
 
 
 def color_labels_extra(ax, colors_map):
@@ -159,3 +185,23 @@ def color_labels_extra(ax, colors_map):
 
         if color is not None:
             text.set_color(color)
+
+
+def _hex_to_rgba(color, opacity):
+    if isinstance(color, str) and color.startswith("#"):
+        clean = color.lstrip("#")
+        if len(clean) in (6, 8):
+            r = int(clean[0:2], 16)
+            g = int(clean[2:4], 16)
+            b = int(clean[4:6], 16)
+            return f"rgba({r}, {g}, {b}, {opacity})"
+        return color
+
+    try:
+        rgb = mcolors.to_rgb(color)
+        r = int(rgb[0] * 255)
+        g = int(rgb[1] * 255)
+        b = int(rgb[2] * 255)
+        return f"rgba({r}, {g}, {b}, {opacity})"
+    except (ValueError, TypeError):
+        return color

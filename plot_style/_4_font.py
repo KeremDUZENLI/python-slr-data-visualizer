@@ -14,6 +14,8 @@ def font_apply_plot(ax, fonts):
             for trace in ax.data:
                 if trace.type == "sunburst":
                     _font_apply_sunburst(trace, fonts)
+                if trace.type == "sankey":
+                    _font_apply_sankey(trace, fonts)
         return
 
     _font_apply_to_text(ax.title, fonts.get("title"))
@@ -122,3 +124,28 @@ def _font_apply_sunburst(trace, fonts):
     trace.update(
         insidetextfont=dict(size=sizes, family=families), texttemplate=templates
     )
+
+
+def _font_apply_sankey(trace, fonts):
+    font_style = {}
+    _font_apply_to_dict(font_style, fonts.get("sankey_label"))
+
+    plotly_font = {}
+    if "size" in font_style:
+        plotly_font["size"] = font_style["size"]
+    if "family" in font_style:
+        plotly_font["family"] = font_style["family"]
+
+    labels = trace.node.label
+    new_labels = []
+
+    for label in labels:
+        fmt = label
+        if font_style.get("weight") == "bold":
+            fmt = f"<b>{fmt}</b>"
+        if font_style.get("style") == "italic":
+            fmt = f"<i>{fmt}</i>"
+        new_labels.append(fmt)
+
+    trace.update(textfont=plotly_font)
+    trace.node.update(label=new_labels)

@@ -284,33 +284,6 @@ def draw_pie_nested(
     return inner_labels_list + outer_labels_list
 
 
-def draw_sunburst(ax, all_labels, all_parents, all_counts, labels_spec):
-    fmt = "%{label}<br>%{percentRoot:.1%}"
-
-    trace = {
-        "type": "sunburst",
-        "labels": all_labels,
-        "parents": all_parents,
-        "values": all_counts,
-        "branchvalues": "total",
-        "maxdepth": 2,
-        "texttemplate": fmt,
-        "textinfo": "text",
-        "insidetextorientation": "auto",
-    }
-
-    ax.add_trace(trace)
-
-    ax.update_layout(
-        title=labels_spec.get("title", ""),
-        margin=dict(t=60, l=0, r=0, b=0),
-        width=500,
-        height=500,
-    )
-
-    return ax
-
-
 def draw_heatmap(ax, x_values, y_values, z_values, labels_spec):
     x_values_list = []
     for x_value in x_values:
@@ -363,13 +336,121 @@ def draw_heatmap(ax, x_values, y_values, z_values, labels_spec):
     return matrix
 
 
+def draw_scatter(ax, x_values, y_values, z_values, labels_spec, x_order=None):
+    x_values_list = []
+    for x_value in x_values:
+        x_values_list.append(str(x_value))
+
+    z_values_list = []
+    for z_value in z_values:
+        z_values_list.append(str(z_value))
+
+    if x_order:
+        x_uniques_list = x_order
+    else:
+        x_uniques_list = get_unique_values(x_values_list)
+
+    z_uniques_list = get_unique_values(z_values_list)
+
+    x_map = {}
+    index_counter = 0
+    for x_value in x_uniques_list:
+        x_map[x_value] = index_counter
+        index_counter += 1
+
+    z_map = {}
+    index_counter = 0
+    for z_value in z_uniques_list:
+        z_map[z_value] = index_counter
+        index_counter += 1
+
+    plot_x = []
+    plot_y = []
+    plot_bubble = []
+
+    counts = [float(y) for y in y_values]
+    min_count = min(counts) if counts else 0
+    max_count = max(counts) if counts else 1
+
+    min_size = 50
+    max_size = 500
+
+    for i in range(len(x_values_list)):
+        x = x_values_list[i]
+        y = y_values[i]
+        z = z_values_list[i]
+
+        col = x_map.get(x)
+        row = z_map.get(z)
+
+        if row is not None and col is not None:
+            plot_x.append(col)
+            plot_y.append(row)
+
+            val = float(y)
+            if max_count == min_count:
+                norm = 0.5
+            else:
+                norm = (val - min_count) / (max_count - min_count)
+
+            size = min_size + (norm * (max_size - min_size))
+            plot_bubble.append(size)
+
+    ax.scatter(
+        plot_x,
+        plot_y,
+        s=plot_bubble,
+        color="steelblue",
+        edgecolor="black",
+        alpha=0.7,
+        zorder=3,
+    )
+    ax.set_xticks(range(len(x_uniques_list)))
+    ax.set_yticks(range(len(z_uniques_list)))
+    ax.set_xticklabels(
+        x_uniques_list,
+        rotation=labels_spec.get("rotation", 0),
+        ha="right",
+    )
+    ax.set_yticklabels(z_uniques_list)
+    ax.set_xlabel(labels_spec.get("x_label", ""))
+    ax.set_ylabel(labels_spec.get("y_label", ""))
+    ax.set_title(labels_spec.get("title", ""))
+
+    return min_count, max_count
+
+
+def draw_sunburst(ax, all_labels, all_parents, all_counts, labels_spec):
+    fmt = "%{label}<br>%{percentRoot:.1%}"
+
+    trace = {
+        "type": "sunburst",
+        "labels": all_labels,
+        "parents": all_parents,
+        "values": all_counts,
+        "branchvalues": "total",
+        "maxdepth": 2,
+        "texttemplate": fmt,
+        "textinfo": "text",
+        "insidetextorientation": "auto",
+    }
+
+    ax.add_trace(trace)
+
+    ax.update_layout(
+        title=labels_spec.get("title", ""),
+        margin=dict(t=60, l=0, r=0, b=0),
+        width=500,
+        height=500,
+    )
+
+    return ax
+
+
 def draw_sankey(ax, labels, sources, targets, values, labels_spec):
     trace = {
         "type": "sankey",
         "node": {
-            "pad": 15,
-            "thickness": 20,
-            "line": {"color": "black", "width": 0.5},
             "label": labels,
             "color": ["grey"] * len(labels),
         },
@@ -377,17 +458,16 @@ def draw_sankey(ax, labels, sources, targets, values, labels_spec):
             "source": sources,
             "target": targets,
             "value": values,
-            "color": "rgba(200, 200, 200, 0.5)",
         },
     }
 
     ax.add_trace(trace)
 
     ax.update_layout(
-        title_text=labels_spec.get("title", ""),
-        font_size=10,
-        height=600,
-        margin=dict(t=60, l=10, r=10, b=10),
+        title=labels_spec.get("title", ""),
+        margin=dict(t=60, l=0, r=0, b=0),
+        width=500,
+        height=500,
     )
 
     return ax

@@ -59,39 +59,38 @@ def calculate_labels_nested(x_values, y_values, z_values):
     )
 
 
-def calculate_sankey_flows(list_1, list_2, list_3, counts):
-    # 1. Get unique values per column
-    u1 = get_unique_values(list_1)
-    u2 = get_unique_values(list_2)
-    u3 = get_unique_values(list_3)
+def calculate_sankey_flows(column1, column2, column3, counts):
+    column1_uniques = get_unique_values(column1)
+    column2_uniques = get_unique_values(column2)
+    column3_uniques = get_unique_values(column3)
 
-    all_labels = u1 + u2 + u3
+    labels = column1_uniques + column2_uniques + column3_uniques
 
-    offset_2 = len(u1)
-    offset_3 = len(u1) + len(u2)
+    offset2 = len(column1_uniques)
+    offset3 = len(column1_uniques) + len(column2_uniques)
 
-    map_1 = {v: i for i, v in enumerate(u1)}
-    map_2 = {v: i + offset_2 for i, v in enumerate(u2)}
-    map_3 = {v: i + offset_3 for i, v in enumerate(u3)}
+    map1 = {v: i for i, v in enumerate(column1_uniques)}
+    map2 = {v: i + offset2 for i, v in enumerate(column2_uniques)}
+    map3 = {v: i + offset3 for i, v in enumerate(column3_uniques)}
 
     sources = []
     targets = []
     values = []
 
-    for v1, v2, v3, count in zip(list_1, list_2, list_3, counts):
+    for v1, v2, v3, count in zip(column1, column2, column3, counts):
 
         # Link 1: Left -> Mid
-        sources.append(map_1[v1])
-        targets.append(map_2[v2])
+        sources.append(map1[v1])
+        targets.append(map2[v2])
         values.append(count)
 
         # Link 2: Mid -> Right
-        sources.append(map_2[v2])
-        targets.append(map_3[v3])
+        sources.append(map2[v2])
+        targets.append(map3[v3])
         values.append(count)
 
     return (
-        all_labels,
+        labels,
         sources,
         targets,
         values,
