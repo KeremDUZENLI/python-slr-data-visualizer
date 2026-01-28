@@ -1,4 +1,4 @@
-def legend_create(ax, handles, title="", loc="best", bbox=None):
+def legend_create(ax, handles, title="", loc="best", bbox=None, **kwargs):
     if bbox is None:
         bbox = (1, 0, 0.3, 1)
 
@@ -11,6 +11,7 @@ def legend_create(ax, handles, title="", loc="best", bbox=None):
         mode="expand",
         framealpha=0.5,
         # frameon=False,
+        **kwargs,
     )
 
     ax.add_artist(legend)

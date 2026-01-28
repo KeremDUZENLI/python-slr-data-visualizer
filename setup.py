@@ -41,6 +41,7 @@ from plot_get._2_get_colors import (
 )
 from plot_get._3_get_legend import (
     get_legend_handles,
+    get_legend_handles_bubble,
 )
 
 from plot_style._0_draw import (
@@ -66,6 +67,7 @@ from plot_style._2_color import (
     color_area,
     color_pie,
     color_heatmap,
+    color_scatter,
     color_sunburst,
     color_sankey_nodes,
     color_sankey_links,
@@ -397,11 +399,11 @@ def _5_0(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
         dataset=dataset,
-        fields=["country"],
+        fields=["continent"],
     )
     dataset_counted = count_dataset(
         dataset=dataset_filtered,
-        fields=["country"],
+        fields=["continent"],
     )
 
     filter_values = None
@@ -433,7 +435,7 @@ def _5_0(dataset):
     ### plot_get
     x_values, y_values = get_labels(
         dataset=dataset_counted,
-        x_axis="country",
+        x_axis="continent",
         y_axis="count",
         z_axis=None,
     )
@@ -441,7 +443,7 @@ def _5_0(dataset):
     colors_map = get_colors_map(
         values=x_values,
         colors=COLORS,
-        color_field="country",
+        color_field="continent",
     )
 
     handles1 = get_legend_handles(
@@ -1000,7 +1002,7 @@ def _2_3_area(dataset):
     fig, ax = draw_plot(8, 6)
 
     ### plot_get
-    z_values_order = ["VR", "AR", "MR", "XR"]
+    stack_order = ["VR", "AR", "MR", "XR"]
     x_values, y_values, z_values = get_labels(
         dataset=dataset_counted,
         x_axis="year",
@@ -1015,7 +1017,7 @@ def _2_3_area(dataset):
     )
 
     handles1 = get_legend_handles(
-        values=z_values_order,
+        values=stack_order,
         colors_map=colors_map,
     )
     handles2 = get_legend_handles(
@@ -1041,7 +1043,7 @@ def _2_3_area(dataset):
             "rotation": 45,
         },
         orientation="area",
-        z_order=z_values_order,
+        stack_order=stack_order,
     )
 
     number_area(
@@ -1142,7 +1144,7 @@ def _2_3_bar(dataset):
     fig, ax = draw_plot(8, 6)
 
     ### plot_get
-    z_values_order = ["VR", "AR", "MR", "XR"]
+    stack_order = ["VR", "AR", "MR", "XR"]
     x_values, y_values, z_values = get_labels(
         dataset=dataset_counted,
         x_axis="year",
@@ -1157,7 +1159,7 @@ def _2_3_bar(dataset):
     )
 
     handles1 = get_legend_handles(
-        values=z_values_order,
+        values=stack_order,
         colors_map=colors_map,
     )
     handles2 = get_legend_handles(
@@ -1183,7 +1185,7 @@ def _2_3_bar(dataset):
             "rotation": 45,
         },
         orientation=orientation,
-        z_order=z_values_order,
+        stack_order=stack_order,
     )
 
     number_bar(
@@ -1339,7 +1341,7 @@ def _4_5_area(dataset):
             "rotation": 45,
         },
         orientation="area",
-        z_order=None,
+        stack_order=None,
     )
 
     add_grid(
@@ -2212,12 +2214,11 @@ def _4_4(dataset):
 def _5_1(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
-        dataset=dataset,
-        fields=["country", "historical_site_type"],
+        dataset=dataset, fields=["continent", "country", "historical_site_type"]
     )
     dataset_counted = count_dataset(
         dataset=dataset_filtered,
-        fields=["country", "historical_site_type"],
+        fields=["continent", "country", "historical_site_type"],
     )
 
     filter_values = None
@@ -2253,9 +2254,40 @@ def _5_1(dataset):
         y_axis="count",
         z_axis="historical_site_type",
     )
+    continent_values = [row[0] for row in dataset_counted["continent"]]
+    count_values = [min(y_values), max(y_values)]
+    marker_config = {
+        "linecolor": "white",
+        "marker": "o",
+        "facecolor": "steelblue",
+        "edgecolor": "black",
+        "edgewidth": 0,
+        "markersize": [7, 25],
+        "opacity": 0.5,
+    }
+
+    colors_map = get_colors_map(
+        values=continent_values,
+        colors=COLORS,
+        color_field="continent",
+    )
+    colors_mapped = map_colors_map(
+        colors_from=x_values,
+        colors_to=continent_values,
+        colors_map=colors_map,
+    )
+
+    handles1 = get_legend_handles_bubble(
+        values=count_values,
+        config=marker_config,
+    )
+    handles2 = get_legend_handles(
+        values=continent_values,
+        colors_map=colors_map,
+    )
 
     ### plot_style
-    min_count, max_count = draw_scatter(
+    draw_scatter(
         ax=ax,
         x_values=x_values,
         y_values=y_values,
@@ -2266,43 +2298,63 @@ def _5_1(dataset):
             "title": "Country X Historical Site Type",
             "rotation": 45,
         },
+        count_values=count_values,
+        markersize=marker_config["markersize"],
     )
 
     add_grid(
         ax=ax,
+        orientation="both",
+    )
+
+    color_scatter(
+        ax=ax,
+        config=marker_config,
+    )
+    color_bar_labels(
+        ax=ax,
+        colors_map=colors_mapped,
         orientation="v",
     )
-    add_grid(
+
+    legend1 = legend_create(
         ax=ax,
-        orientation="h",
+        handles=handles1,
+        title="Frequency",
+        loc="upper left",
+        bbox=(1, 0, 0.3, 1),
+        labelspacing=1.0,  # Vertical spacing
+        handletextpad=1.0,  # Icon--Text spacing
+        borderpad=1.0,  # Border padding
+    )
+    legend2 = legend_create(
+        ax=ax,
+        handles=handles2,
+        title="Region",
+        loc="lower left",
     )
 
-    # color_heatmap(
-    #     ax=ax,
-    #     matrix=matrix,
-    #     cmap="viridis",
-    # )
-    # color_heatmap_labels(
-    #     ax=ax,
-    #     color="white",
-    # )
+    font_apply_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+    font_apply_legend(
+        legend=legend1,
+        fonts=FONTS_LEGEND,
+    )
+    font_apply_legend(
+        legend=legend2,
+        fonts=FONTS_LEGEND,
+    )
 
-    # legend_create_colorbar(
-    #     ax=ax,
-    #     title="Count",
-    # )
-
-    # font_apply_plot(
-    #     ax=ax,
-    #     fonts=FONTS_PLOT,
-    # )
+    text_clean_legend(legend2)
 
     ### output
     show_plot()
     save_plot(
         fig=fig,
         name="_5_1",
-        legends=None,
+        legends=[legend1, legend2],
         extra_artists=None,
     )
 
@@ -2469,9 +2521,15 @@ def _3_1(dataset):
         values,
     ) = calculate_sankey_flows(column1, column2, column3, counts)
 
-    colors_1 = get_colors_map(values=column1, colors=COLORS, color_field="study_focus")
+    colors_1 = get_colors_map(
+        values=column1,
+        colors=COLORS,
+        color_field="study_focus",
+    )
     colors_2 = get_colors_map(
-        values=column2, colors=COLORS, color_field="historical_site_type"
+        values=column2,
+        colors=COLORS,
+        color_field="historical_site_type",
     )
     colors_3 = get_colors_map(values=column3, colors=COLORS, color_field="technique")
     full_colors_map = {**colors_1, **colors_2, **colors_3}
@@ -2512,3 +2570,146 @@ def _3_1(dataset):
 
     ### output
     show_plot_plotly(fig)
+
+
+#############################################
+##################### map ###################
+#############################################
+def _5_2(dataset):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=["country"],
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=["country"],
+    )
+
+    filter_values = None
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    filter_count = None
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_dict(dataset_counted)
+    print_counts(dataset_counted, decimal=1)
+    # fig, ax = draw_plot(8, 6)
+
+    # ### plot_get
+    # x_values, y_values = get_labels(
+    #     dataset=dataset_counted,
+    #     x_axis="continent",
+    #     y_axis="count",
+    #     z_axis=None,
+    # )
+
+    # colors_map = get_colors_map(
+    #     values=x_values,
+    #     colors=COLORS,
+    #     color_field="continent",
+    # )
+
+    # handles1 = get_legend_handles(
+    #     values=x_values,
+    #     colors_map=colors_map,
+    # )
+    # handles2 = get_legend_handles(
+    #     values=["Custom A", "Custom B", "Custom C"],
+    #     colors_map={
+    #         "Custom A": "#ff0000",
+    #         "Custom B": "#008000",
+    #         "Custom C": "#0000ff",
+    #     },
+    # )
+
+    # ### plot_style
+    # orientation = "v"
+    # x_values_list = draw_bar_1D(
+    #     ax=ax,
+    #     x_values=x_values,
+    #     y_values=y_values,
+    #     labels_spec={
+    #         "x_label": "Continents",
+    #         "y_label": "Number of Studies",
+    #         "title": "Studies Per Year",
+    #         "rotation": 45,
+    #     },
+    #     orientation=orientation,
+    # )
+
+    # number_bar(
+    #     ax=ax,
+    #     orientation=orientation,
+    #     offset=1,
+    # )
+    # add_grid(
+    #     ax=ax,
+    #     orientation=orientation,
+    # )
+
+    # color_bar(
+    #     ax=ax,
+    #     coloring_values_list=x_values_list,
+    #     colors_map=colors_map,
+    #     border=False,
+    # )
+    # color_bar_labels(
+    #     ax=ax,
+    #     colors_map=colors_map,
+    #     orientation=orientation,
+    # )
+
+    # legend1 = legend_create(
+    #     ax=ax,
+    #     handles=handles1,
+    #     title="Continents",
+    #     loc="upper left",
+    # )
+    # legend2 = legend_create(
+    #     ax=ax,
+    #     handles=handles2,
+    #     title="Custom Legend",
+    #     loc="lower left",
+    # )
+
+    # font_apply_plot(
+    #     ax=ax,
+    #     fonts=FONTS_PLOT,
+    # )
+    # font_apply_legend(
+    #     legend=legend1,
+    #     fonts=FONTS_LEGEND,
+    # )
+    # font_apply_legend(
+    #     legend=legend2,
+    #     fonts=FONTS_LEGEND,
+    # )
+
+    # text_clean_legend(legend1)
+    # text_clean_legend(legend2)
+
+    # ### output
+    # show_plot()
+    # save_plot(
+    #     fig=fig,
+    #     name="_5_2",
+    #     legends=[legend1, legend2],
+    #     extra_artists=None,
+    # )

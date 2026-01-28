@@ -68,6 +68,14 @@ def color_heatmap(ax, matrix, cmap):
     ax.imshow(matrix, cmap=cmap, aspect="auto")
 
 
+def color_scatter(ax, config):
+    for collection in ax.collections:
+        collection.set_facecolor(config.get("facecolor"))
+        collection.set_edgecolor(config.get("edgecolor"))
+        collection.set_linewidth(config.get("edgewidth"))
+        collection.set_alpha(config.get("opacity"))
+
+
 def color_sunburst(ax, coloring_values_list, colors_map, border=False):
     colors = []
 

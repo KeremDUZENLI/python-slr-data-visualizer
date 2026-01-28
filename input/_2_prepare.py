@@ -24,22 +24,27 @@ def group_dataset_by_fields(datasets, stack_by, axes):
     return dataset_grouped
 
 
-def map_dataset_column(dataset, field, mapping):
-    dataset_mapped = create_empty_dataset(dataset.keys())
+def map_dataset_column(dataset, field_from, field_to, mapping):
+    all_fields = list(dataset.keys())
+    if field_to not in all_fields:
+        all_fields.append(field_to)
 
-    # Copy unchanged fields
+    dataset_mapped = create_empty_dataset(all_fields)
+
     for key in dataset:
-        if key != field:
-            for value in dataset[key]:
-                dataset_mapped[key].append(value)
+        if key == field_to:
+            continue
 
-    # Map the specified field
-    if field in dataset:
-        for row in dataset[field]:
+        for value in dataset[key]:
+            dataset_mapped[key].append(value)
+
+    if field_from in dataset:
+        for row in dataset[field_from]:
             mapped_row = []
             for value in row:
                 mapped_row.append(mapping.get(value, value))
-            dataset_mapped[field].append(mapped_row)
+
+            dataset_mapped[field_to].append(mapped_row)
 
     return dataset_mapped
 

@@ -107,9 +107,12 @@ def add_labels_extra(ax, labels_center, orientation="v", offset=15):
     return texts
 
 
-def add_grid(ax, orientation="v"):
+def add_grid(ax, orientation="v", linewidth=0.5, opacity=0.5):
     ax.set_axisbelow(True)
     if orientation == "v":
-        ax.yaxis.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
+        ax.yaxis.grid(visible=True, linestyle="--", linewidth=linewidth, alpha=opacity)
     if orientation == "h":
-        ax.xaxis.grid(visible=True, linestyle="--", linewidth=0.7, alpha=0.7)
+        ax.xaxis.grid(visible=True, linestyle="--", linewidth=linewidth, alpha=opacity)
+    if orientation == "both":
+        ax.yaxis.grid(visible=True, linestyle="--", linewidth=linewidth, alpha=opacity)
+        ax.xaxis.grid(visible=True, linestyle="--", linewidth=linewidth, alpha=opacity)

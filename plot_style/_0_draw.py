@@ -111,7 +111,7 @@ def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
 
 
 def draw_stacked(
-    ax, x_values, y_values, z_values, labels_spec, orientation="v", z_order=None
+    ax, x_values, y_values, z_values, labels_spec, orientation="v", stack_order=None
 ):
     x_values_list = []
     for x_value in x_values:
@@ -122,7 +122,7 @@ def draw_stacked(
         z_values_list.append(str(z_value))
 
     x_uniques_list = get_unique_values(x_values_list)
-    z_uniques_list = z_order if z_order else get_unique_values(z_values_list)
+    z_uniques_list = stack_order if stack_order else get_unique_values(z_values_list)
 
     # x_map = {
     # '2015': 0, '2016': 1, '2017': 2, '2018': 3, '2019': 4,
@@ -336,7 +336,9 @@ def draw_heatmap(ax, x_values, y_values, z_values, labels_spec):
     return matrix
 
 
-def draw_scatter(ax, x_values, y_values, z_values, labels_spec, x_order=None):
+def draw_scatter(
+    ax, x_values, y_values, z_values, labels_spec, count_values, markersize
+):
     x_values_list = []
     for x_value in x_values:
         x_values_list.append(str(x_value))
@@ -345,11 +347,7 @@ def draw_scatter(ax, x_values, y_values, z_values, labels_spec, x_order=None):
     for z_value in z_values:
         z_values_list.append(str(z_value))
 
-    if x_order:
-        x_uniques_list = x_order
-    else:
-        x_uniques_list = get_unique_values(x_values_list)
-
+    x_uniques_list = get_unique_values(x_values_list)
     z_uniques_list = get_unique_values(z_values_list)
 
     x_map = {}
@@ -368,12 +366,11 @@ def draw_scatter(ax, x_values, y_values, z_values, labels_spec, x_order=None):
     plot_y = []
     plot_bubble = []
 
-    counts = [float(y) for y in y_values]
-    min_count = min(counts) if counts else 0
-    max_count = max(counts) if counts else 1
+    min_count = count_values[0]
+    max_count = count_values[1]
 
-    min_size = 50
-    max_size = 500
+    min_size = markersize[0] * markersize[0]
+    max_size = markersize[1] * markersize[1]
 
     for i in range(len(x_values_list)):
         x = x_values_list[i]
@@ -387,11 +384,10 @@ def draw_scatter(ax, x_values, y_values, z_values, labels_spec, x_order=None):
             plot_x.append(col)
             plot_y.append(row)
 
-            val = float(y)
             if max_count == min_count:
                 norm = 0.5
             else:
-                norm = (val - min_count) / (max_count - min_count)
+                norm = (y - min_count) / (max_count - min_count)
 
             size = min_size + (norm * (max_size - min_size))
             plot_bubble.append(size)
@@ -400,9 +396,6 @@ def draw_scatter(ax, x_values, y_values, z_values, labels_spec, x_order=None):
         plot_x,
         plot_y,
         s=plot_bubble,
-        color="steelblue",
-        edgecolor="black",
-        alpha=0.7,
         zorder=3,
     )
     ax.set_xticks(range(len(x_uniques_list)))
@@ -416,8 +409,6 @@ def draw_scatter(ax, x_values, y_values, z_values, labels_spec, x_order=None):
     ax.set_xlabel(labels_spec.get("x_label", ""))
     ax.set_ylabel(labels_spec.get("y_label", ""))
     ax.set_title(labels_spec.get("title", ""))
-
-    return min_count, max_count
 
 
 def draw_sunburst(ax, all_labels, all_parents, all_counts, labels_spec):

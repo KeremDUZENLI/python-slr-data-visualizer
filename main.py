@@ -39,8 +39,10 @@ from setup import (
     _5_1,
     ### sunburst ###
     _1_4_S,
-    ### heatmap ###
+    ### sankey ###
     _3_1,
+    ### map ###
+    _5_2,
 )
 
 
@@ -65,7 +67,8 @@ DATASET_SOFTWARE_STACKED = group_dataset_by_fields(
 )
 DATASET_COUNTRY_MAPPED = map_dataset_column(
     dataset=DATASET,
-    field="country",
+    field_from="country",
+    field_to="continent",
     mapping=COUNTRY_TO_CONTINENT,
 )
 DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
@@ -125,7 +128,7 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 #############################################
 ################## scatter ##################
 #############################################
-_5_1(DATASET)
+# _5_1(DATASET_COUNTRY_MAPPED)
 
 
 #############################################
@@ -138,3 +141,9 @@ _5_1(DATASET)
 ################### sankey ##################
 #############################################
 # _3_1(DATASET)
+
+
+#############################################
+#################### map ####################
+#############################################
+_5_2(DATASET)

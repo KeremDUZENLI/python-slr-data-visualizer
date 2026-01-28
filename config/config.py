@@ -1,13 +1,4 @@
 COLORS = {
-    "country": {
-        "Africa": "#ff0000",
-        "Antarctica": "#000000",
-        "Asia": "#008000",
-        "Europe": "#0000ff",
-        "North America": "#800000",
-        "South America": "#008000",
-        "Oceania": "#000080",
-    },
     "study_focus": {
         "Reconstruction": "#ff0000",
         "Restoration": "#008000",
@@ -93,6 +84,15 @@ COLORS = {
         "Software Data": "#ff0000",
         "Software Modeling": "#008000",
         "Software Render": "#0000ff",
+    },
+    "continent": {
+        "Africa": "#ff0000",
+        "Antarctica": "#000000",
+        "Asia": "#008000",
+        "Europe": "#0000ff",
+        "North America": "#800000",
+        "South America": "#008000",
+        "Oceania": "#000080",
     },
 }
 
