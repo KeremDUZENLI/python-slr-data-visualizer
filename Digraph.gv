@@ -1,0 +1,51 @@
+digraph {
+	nodesep=0.45 rankdir=TB ranksep=0.72 splines=polyline
+	search [label="Studies identified via
+systematic search
+(n = 614)" fillcolor=white fontsize=14 height=0.6 shape=box style="rounded,filled" width=4.5]
+	duplicates [label="Duplicates & non-relevant records removed
+(n = 256)" fillcolor=white fontsize=14 height=0.6 shape=box style="rounded,filled" width=4.5]
+	screening [label="Studies after deduplication
+(n = 358)" fillcolor=white fontsize=14 height=0.6 shape=box style="rounded,filled" width=4.5]
+	search -> duplicates
+	duplicates -> screening
+	excluded [label="Studies excluded (score < 4.5)
+(n = 266)" fillcolor=white fontsize=14 height=0.6 shape=box style="rounded,filled" width=4.5]
+	eligible [label="Studies passing eligibility screening
+(n = 92)" fillcolor=white fontsize=14 height=0.6 shape=box style="rounded,filled" width=4.5]
+	screening -> excluded
+	screening -> eligible
+	religious [label="Studies on religious buildings
+(n = 18)" fillcolor=white fontsize=14 height=0.6 shape=box style="rounded,filled" width=4.5]
+	hmd [label="Studies using HMD technology
+(n = 16)" fillcolor=white fontsize=14 height=0.6 shape=box style="rounded,filled" width=4.5]
+	eligible -> religious
+	religious -> hmd
+	final [label="Final selected studies:
+Reconstruction-focused
+(n = 6)" fillcolor=white fontsize=14 height=0.6 penwidth=2 shape=box style="rounded,filled" width=4.5]
+	hmd -> final
+	note1 [label="Step 1 - Exclusions:
+• Duplicate records
+• Non-peer-reviewed
+• Book chapters" fillcolor="#F9F9F9" fontsize=12 shape=note style=filled]
+	note2 [label="Step 2 - Screening Criteria:
+✔ Case study or prototype
+✔ Historical reconstruction
+✔ VR/AR/MR/XR integration" fillcolor="#F9F9F9" fontsize=12 shape=note style=filled]
+	note3 [label="Step 3 - Final Filtering:
+✔ Religious buildings
+✔ HMD implementation
+✔ Reconstruction focus" fillcolor="#F9F9F9" fontsize=12 shape=note style=filled]
+	duplicates -> note1 [arrowhead=none style=dotted]
+	screening -> note2 [arrowhead=none style=dotted]
+	hmd -> note3 [arrowhead=none style=dotted]
+	search [fillcolor="#CCE5FF" style="rounded,filled"]
+	screening [fillcolor="#CCE5FF" style="rounded,filled"]
+	eligible [fillcolor="#CCE5FF" style="rounded,filled"]
+	religious [fillcolor="#CCE5FF" style="rounded,filled"]
+	hmd [fillcolor="#CCE5FF" style="rounded,filled"]
+	final [fillcolor="#CCE5FF" style="rounded,filled"]
+	duplicates [fillcolor="#F8F8F8" style="dashed,filled"]
+	excluded [fillcolor="#F8F8F8" style="dashed,filled"]
+}

@@ -146,6 +146,15 @@ def color_map(ax, cmap, border=False, frame=False):
     ax.update_layout(geo=dict(showframe=frame))
 
 
+def color_prisma(ax, nodes, style, fillcolor):
+    for node in nodes:
+        ax.node(
+            node,
+            style=style,
+            fillcolor=fillcolor,
+        )
+
+
 def color_bar_labels(ax, colors_map, orientation="v"):
     if orientation == "v":
         labels = ax.get_xticklabels()

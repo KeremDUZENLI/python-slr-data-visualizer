@@ -192,6 +192,14 @@ FONTS_PLOT = {
         "weight": "bold",
         "style": "normal",
     },
+    "prisma_node": {
+        "size": 14,
+        "family": "calibri bold",
+    },
+    "prisma_edge": {
+        "size": 10,
+        "family": "calibri",
+    },
     "labels_extra": {
         "size": 8,
         "family": "sans-serif",

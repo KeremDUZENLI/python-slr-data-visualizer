@@ -23,6 +23,30 @@ def get_unique_values(values):
     return unique_values
 
 
+def get_unique_count(dataset, field):
+    all_ids = []
+
+    if field in dataset:
+        for cell in dataset[field]:
+            if len(cell) > 0:
+                all_ids.append(cell[0])
+
+    return len(set(all_ids))
+
+
+def add_dataset_id(dataset, field):
+    dataset_with_id = dataset.copy()
+
+    num_rows = get_num_rows(dataset)
+    ids = []
+    for i in range(1, num_rows + 1):
+        ids.append([str(i)])
+
+    dataset_with_id[field] = ids
+
+    return dataset_with_id
+
+
 def correct_values(values, correction_map):
     corrected_values = []
 

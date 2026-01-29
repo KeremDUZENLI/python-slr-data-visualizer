@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import plotly.graph_objects as go
+import graphviz
 
 
 # ----------------- Matplotlib -----------------
@@ -41,3 +42,30 @@ def draw_plot_plotly():
 
 def show_plot_plotly(fig):
     fig.show()
+
+
+# ----------------- Graphviz -----------------
+
+
+def draw_plot_graphviz(name, position, splines, nodesep, ranksep):
+    dot = graphviz.Digraph(
+        filename=name,
+        directory="figure",
+    )
+
+    dot.attr(
+        rankdir=position,
+        splines=splines,
+        nodesep=nodesep,
+        ranksep=ranksep,
+    )
+    return dot
+
+
+def show_plot_graphviz(dot):
+    dot.view()
+
+
+def save_plot_graphviz(dot, name):
+    output_path = f"figure/{name}"
+    dot.render(output_path, format="png", cleanup=True)

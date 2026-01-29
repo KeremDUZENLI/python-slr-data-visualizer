@@ -486,3 +486,114 @@ def draw_map(ax, countries, counts, labels_spec):
     )
 
     return ax
+
+
+def draw_prisma(dot, values, labels_spec):
+    # --- 1. Set Main Title ---
+    title = labels_spec.get("title", "")
+    if title:
+        dot.attr(label=f"\n{title}\n", labelloc="t")
+
+    # --- Node Style Config (White Box) ---
+    box_style = {
+        "shape": "box",
+        "style": "rounded,filled",
+        "fillcolor": "white",
+        "height": "0.6",
+        "width": "4.5",
+    }
+
+    # --- Exclusion/Note Style Config (Grey Box) ---
+    note_style = {
+        "shape": "note",
+        "style": "filled",
+        "fillcolor": "#F9F9F9",
+        "fontsize": "12",
+    }
+
+    # 1. IDENTIFICATION PHASE
+    dot.node(
+        "search",
+        f"Studies identified via\nsystematic search\n(n = {values['search']})",
+        **box_style,
+    )
+
+    dot.node(
+        "duplicates",
+        f"Duplicates & non-relevant records removed\n(n = {values['duplicates']})",
+        **box_style,
+    )
+
+    dot.node(
+        "screening",
+        f"Studies after deduplication\n(n = {values['screening']})",
+        **box_style,
+    )
+
+    dot.edge("search", "duplicates")
+    dot.edge("duplicates", "screening")
+
+    # 2. SCREENING PHASE
+    dot.node(
+        "excluded",
+        f"Studies excluded (score < 4.5)\n(n = {values['excluded']})",
+        **box_style,
+    )
+
+    dot.node(
+        "eligible",
+        f"Studies passing eligibility screening\n(n = {values['eligible']})",
+        **box_style,
+    )
+
+    dot.edge("screening", "excluded")
+    dot.edge("screening", "eligible")
+
+    # 3. FILTERING PHASE
+    dot.node(
+        "religious",
+        f"Studies on religious buildings\n(n = {values['religious']})",
+        **box_style,
+    )
+
+    dot.node("hmd", f"Studies using HMD technology\n(n = {values['hmd']})", **box_style)
+
+    dot.edge("eligible", "religious")
+    dot.edge("religious", "hmd")
+
+    # 4. FINAL INCLUSION
+    dot.node(
+        "final",
+        f"Final selected studies:\nReconstruction-focused\n(n = {values['final']})",
+        **box_style,
+        penwidth="2",
+    )
+
+    dot.edge("hmd", "final")
+
+    # 5. SIDE NOTES (Exclusion Criteria)
+    # We use html-like labels for bullet points if needed, or plain text
+    dot.node(
+        "note1",
+        "Step 1 - Exclusions:\n• Duplicate records\n• Non-peer-reviewed\n• Book chapters",
+        **note_style,
+    )
+
+    dot.node(
+        "note2",
+        "Step 2 - Screening Criteria:\n✔ Case study or prototype\n✔ Historical reconstruction\n✔ VR/AR/MR/XR integration",
+        **note_style,
+    )
+
+    dot.node(
+        "note3",
+        "Step 3 - Final Filtering:\n✔ Religious buildings\n✔ HMD implementation\n✔ Reconstruction focus",
+        **note_style,
+    )
+
+    # Align notes with invisible edges or constrained ranks
+    dot.edge("duplicates", "note1", style="dotted", arrowhead="none")
+    dot.edge("screening", "note2", style="dotted", arrowhead="none")
+    dot.edge("hmd", "note3", style="dotted", arrowhead="none")
+
+    return dot

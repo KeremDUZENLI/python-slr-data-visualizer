@@ -5,6 +5,8 @@ from config.config import (
 )
 
 from helper.helper import (
+    get_unique_count,
+    add_dataset_id,
     correct_values,
     calculate_labels_nested,
     calculate_sankey_flows,
@@ -31,6 +33,9 @@ from output._2_plots import (
     save_plot,
     draw_plot_plotly,
     show_plot_plotly,
+    draw_plot_graphviz,
+    show_plot_graphviz,
+    save_plot_graphviz,
 )
 
 from plot_get._1_get_labels import (
@@ -56,6 +61,7 @@ from plot_style._0_draw import (
     draw_sunburst,
     draw_sankey,
     draw_map,
+    draw_prisma,
 )
 from plot_style._1_number import (
     number_bar,
@@ -74,6 +80,7 @@ from plot_style._2_color import (
     color_sankey_nodes,
     color_sankey_links,
     color_map,
+    color_prisma,
     color_bar_labels,
     color_pie_labels,
     color_heatmap_labels,
@@ -2671,3 +2678,123 @@ def _5_2(dataset):
 
     ### output
     show_plot_plotly(fig)
+
+
+#############################################
+################## prisma ###################
+#############################################
+def _0_1(dataset):
+    dataset_with_id = add_dataset_id(dataset=dataset, field="id")
+
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset_with_id,
+        fields=[
+            "id",
+            "year",
+            "country",
+            "study_focus",
+            "historical_site_type",
+            "historical_site_type_sub",
+            "device",
+        ],
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=[
+            "id",
+            "year",
+            "country",
+            "study_focus",
+            "historical_site_type",
+            "historical_site_type_sub",
+            "device",
+        ],
+    )
+
+    ### filtering
+    print_counts(dataset_counted, decimal=1)
+    n_total = get_unique_count(dataset=dataset_counted, field="id")
+    print(n_total)
+
+    dataset_counted_religious = filter_dataset_by_values(
+        dataset=dataset_counted,
+        field="historical_site_type_sub",
+        values=["Religious"],
+        include=True,
+    )
+    print_counts(dataset_counted_religious, decimal=1)
+    n_religious = get_unique_count(dataset=dataset_counted_religious, field="id")
+    print(n_religious)
+
+    dataset_counted_device = filter_dataset_by_values(
+        dataset=dataset_counted_religious,
+        field="device",
+        values=["HMD"],
+        include=True,
+    )
+    print_counts(dataset_counted_device, decimal=1)
+    n_device = get_unique_count(dataset=dataset_counted_device, field="id")
+    print(n_device)
+
+    dataset_counted_studyfocus = filter_dataset_by_values(
+        dataset=dataset_counted_device,
+        field="study_focus",
+        values=["Reconstruction"],
+        include=True,
+    )
+    print_counts(dataset_counted_studyfocus, decimal=1)
+    n_studyfocus = get_unique_count(dataset=dataset_counted_studyfocus, field="id")
+    print(n_studyfocus)
+
+    values = {
+        "search": 614,
+        "duplicates": 256,
+        "screening": 358,
+        "excluded": 266,
+        "eligible": n_total,
+        "religious": n_religious,
+        "hmd": n_device,
+        "final": n_studyfocus,
+    }
+    print(values)
+
+    ### output
+    name = "_0_1"
+    dot = draw_plot_graphviz(
+        name=name,
+        position="TB",
+        splines="polyline",
+        nodesep="0.45",
+        ranksep="0.72",
+    )
+
+    draw_prisma(
+        dot=dot,
+        values=values,
+        labels_spec={
+            "title": "PRISMA Flow Diagram",
+        },
+    )
+
+    color_prisma(
+        ax=dot,
+        nodes=["search", "screening", "eligible", "religious", "hmd", "final"],
+        style="rounded,filled",
+        fillcolor="#CCE5FF",
+    )
+    color_prisma(
+        ax=dot,
+        nodes=["duplicates", "excluded"],
+        style="dashed,filled",
+        fillcolor="#F8F8F8",
+    )
+
+    font_apply_plot(
+        ax=dot,
+        fonts=FONTS_PLOT,
+    )
+
+    ### output
+    show_plot_graphviz(dot=dot)
+    save_plot_graphviz(dot=dot, name=name)
