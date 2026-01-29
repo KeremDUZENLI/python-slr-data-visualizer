@@ -50,6 +50,13 @@ def font_apply_plot(ax, fonts):
 
 
 def font_apply_legend(legend, fonts):
+    if hasattr(legend, "update_layout"):
+        if legend.data:
+            for trace in legend.data:
+                if trace.type == "choropleth":
+                    _font_apply_choropleth_legend(trace, fonts)
+        return
+
     _font_apply_to_text(legend.get_title(), fonts.get("legend_title"))
 
     for text in legend.get_texts():
@@ -149,3 +156,33 @@ def _font_apply_sankey(trace, fonts):
 
     trace.update(textfont=plotly_font)
     trace.node.update(label=new_labels)
+
+
+def _font_apply_choropleth_legend(trace, fonts):
+    title_style = {}
+    tick_style = {}
+    _font_apply_to_dict(title_style, fonts.get("legend_title"))
+    _font_apply_to_dict(tick_style, fonts.get("legend_text"))
+
+    plotly_title_font = {}
+    if "size" in title_style:
+        plotly_title_font["size"] = title_style["size"]
+    if "family" in title_style:
+        plotly_title_font["family"] = title_style["family"]
+
+    plotly_tick_font = {}
+    if "size" in tick_style:
+        plotly_tick_font["size"] = tick_style["size"]
+    if "family" in tick_style:
+        plotly_tick_font["family"] = tick_style["family"]
+
+    label = trace.colorbar.title.text
+    if label:
+        fmt = label
+        if title_style.get("weight") == "bold":
+            fmt = f"<b>{fmt}</b>"
+        if title_style.get("style") == "italic":
+            fmt = f"<i>{fmt}</i>"
+        trace.colorbar.title.text = fmt
+
+    trace.colorbar.update(title_font=plotly_title_font, tickfont=plotly_tick_font)

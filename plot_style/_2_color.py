@@ -123,6 +123,29 @@ def color_sankey_links(ax, color, opacity=0.25):
         trace.link.color = _hex_to_rgba(base_colors, opacity)
 
 
+def color_map(ax, cmap, border=False, frame=False):
+    update_dict = {
+        "colorscale": cmap,
+    }
+
+    if border == True:
+        update_dict["marker"] = {
+            "line": {
+                "color": "black",
+                "width": 0.5,
+            }
+        }
+    if border == False:
+        update_dict["marker"] = {
+            "line": {
+                "width": 0,
+            }
+        }
+
+    ax.update_traces(update_dict)
+    ax.update_layout(geo=dict(showframe=frame))
+
+
 def color_bar_labels(ax, colors_map, orientation="v"):
     if orientation == "v":
         labels = ax.get_xticklabels()
@@ -184,6 +207,19 @@ def color_sankey_labels(ax, color):
         trace.update(textfont=dict(color=color))
 
     ax.update_layout(title_font=dict(color=color))
+
+
+def color_map_labels(ax, color):
+    ax.update_layout(
+        title_font=dict(color=color),
+    )
+
+    ax.update_traces(
+        colorbar=dict(
+            title_font=dict(color=color),
+            tickfont=dict(color=color),
+        )
+    )
 
 
 def color_labels_extra(ax, colors_map):

@@ -462,3 +462,27 @@ def draw_sankey(ax, labels, sources, targets, values, labels_spec):
     )
 
     return ax
+
+
+def draw_map(ax, countries, counts, labels_spec):
+    trace = {
+        "type": "choropleth",
+        "locations": countries,
+        "locationmode": "country names",
+        "z": counts,
+        "showscale": True,
+    }
+
+    ax.add_trace(trace)
+
+    ax.update_layout(
+        title=labels_spec.get("title", ""),
+        margin=dict(t=60, l=0, r=0, b=0),
+        width=500,
+        height=500,
+        geo={
+            "projection": {"type": "natural earth"},
+        },
+    )
+
+    return ax

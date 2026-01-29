@@ -23,6 +23,16 @@ def get_unique_values(values):
     return unique_values
 
 
+def correct_values(values, correction_map):
+    corrected_values = []
+
+    for value in values:
+        corrected_name = correction_map.get(value, value)
+        corrected_values.append(corrected_name)
+
+    return corrected_values
+
+
 def calculate_labels_nested(x_values, y_values, z_values):
     tree = {}
 

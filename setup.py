@@ -5,6 +5,7 @@ from config.config import (
 )
 
 from helper.helper import (
+    correct_values,
     calculate_labels_nested,
     calculate_sankey_flows,
     calculate_labels_pos_bar,
@@ -54,6 +55,7 @@ from plot_style._0_draw import (
     draw_scatter,
     draw_sunburst,
     draw_sankey,
+    draw_map,
 )
 from plot_style._1_number import (
     number_bar,
@@ -71,16 +73,19 @@ from plot_style._2_color import (
     color_sunburst,
     color_sankey_nodes,
     color_sankey_links,
+    color_map,
     color_bar_labels,
     color_pie_labels,
     color_heatmap_labels,
     color_sunburst_labels,
     color_sankey_labels,
+    color_map_labels,
     color_labels_extra,
 )
 from plot_style._3_legend import (
     legend_create,
     legend_create_colorbar,
+    legend_create_mapbar,
 )
 from plot_style._4_font import (
     font_apply_plot,
@@ -2610,106 +2615,59 @@ def _5_2(dataset):
     ### output
     print_dict(dataset_counted)
     print_counts(dataset_counted, decimal=1)
-    # fig, ax = draw_plot(8, 6)
+    ax = draw_plot_plotly()
 
-    # ### plot_get
-    # x_values, y_values = get_labels(
-    #     dataset=dataset_counted,
-    #     x_axis="continent",
-    #     y_axis="count",
-    #     z_axis=None,
-    # )
+    ### plot_get
+    x_values, y_values = get_labels(
+        dataset=dataset_counted,
+        x_axis="country",
+        y_axis="count",
+        z_axis=None,
+    )
+    corrected_values = correct_values(
+        values=x_values,
+        correction_map={
+            "Turkiye": "Turkey",
+            "USA": "United States",
+            "UK": "United Kingdom",
+            "South Korea": "Korea, South",
+        },
+    )
 
-    # colors_map = get_colors_map(
-    #     values=x_values,
-    #     colors=COLORS,
-    #     color_field="continent",
-    # )
+    ### plot_style
+    fig = draw_map(
+        ax=ax,
+        countries=corrected_values,
+        counts=y_values,
+        labels_spec={
+            "title": "Geographical Distribution of Publications",
+        },
+    )
 
-    # handles1 = get_legend_handles(
-    #     values=x_values,
-    #     colors_map=colors_map,
-    # )
-    # handles2 = get_legend_handles(
-    #     values=["Custom A", "Custom B", "Custom C"],
-    #     colors_map={
-    #         "Custom A": "#ff0000",
-    #         "Custom B": "#008000",
-    #         "Custom C": "#0000ff",
-    #     },
-    # )
+    legend_cbar = legend_create_mapbar(
+        ax=fig,
+        title="Publications",
+    )
 
-    # ### plot_style
-    # orientation = "v"
-    # x_values_list = draw_bar_1D(
-    #     ax=ax,
-    #     x_values=x_values,
-    #     y_values=y_values,
-    #     labels_spec={
-    #         "x_label": "Continents",
-    #         "y_label": "Number of Studies",
-    #         "title": "Studies Per Year",
-    #         "rotation": 45,
-    #     },
-    #     orientation=orientation,
-    # )
+    color_map(
+        ax=fig,
+        cmap="YlOrRd",
+        border=True,
+        frame=True,
+    )
+    color_map_labels(
+        ax=fig,
+        color="black",
+    )
 
-    # number_bar(
-    #     ax=ax,
-    #     orientation=orientation,
-    #     offset=1,
-    # )
-    # add_grid(
-    #     ax=ax,
-    #     orientation=orientation,
-    # )
+    font_apply_plot(
+        ax=fig,
+        fonts=FONTS_PLOT,
+    )
+    font_apply_legend(
+        legend=legend_cbar,
+        fonts=FONTS_LEGEND,
+    )
 
-    # color_bar(
-    #     ax=ax,
-    #     coloring_values_list=x_values_list,
-    #     colors_map=colors_map,
-    #     border=False,
-    # )
-    # color_bar_labels(
-    #     ax=ax,
-    #     colors_map=colors_map,
-    #     orientation=orientation,
-    # )
-
-    # legend1 = legend_create(
-    #     ax=ax,
-    #     handles=handles1,
-    #     title="Continents",
-    #     loc="upper left",
-    # )
-    # legend2 = legend_create(
-    #     ax=ax,
-    #     handles=handles2,
-    #     title="Custom Legend",
-    #     loc="lower left",
-    # )
-
-    # font_apply_plot(
-    #     ax=ax,
-    #     fonts=FONTS_PLOT,
-    # )
-    # font_apply_legend(
-    #     legend=legend1,
-    #     fonts=FONTS_LEGEND,
-    # )
-    # font_apply_legend(
-    #     legend=legend2,
-    #     fonts=FONTS_LEGEND,
-    # )
-
-    # text_clean_legend(legend1)
-    # text_clean_legend(legend2)
-
-    # ### output
-    # show_plot()
-    # save_plot(
-    #     fig=fig,
-    #     name="_5_2",
-    #     legends=[legend1, legend2],
-    #     extra_artists=None,
-    # )
+    ### output
+    show_plot_plotly(fig)
