@@ -221,39 +221,70 @@ FONTS_LEGEND = {
 
 
 STYLE_PRISMA = {
-    "box": {
+    "box_main": {
         "id": "box",
-        "shape": "box",
-        "style": "rounded,filled",
-        "width": "4.5",
-        "height": "0.6",
+        ### font ###
         "fontsize": "14",
         "fontname": "Calibri Bold",
+        ### color ###
+        "fontcolor": "black",
+        "fillcolor": "#CCE5FF",
+        ### shape ###
+        "shape": "box",
+        "style": "rounded,filled",
+        ### size ###
+        "width": "4.5",
+        "height": "0.6",
+    },
+    "box_excluded": {
+        "id": "box",
+        ### font ###
+        "fontsize": "14",
+        "fontname": "Calibri Bold",
+        ### color ###
+        "fontcolor": "black",
+        "fillcolor": "#FFFFFF",
+        ### shape ###
+        "shape": "box",
+        "style": "dashed,filled",
+        ### size ###
+        "width": "4.5",
+        "height": "0.6",
     },
     "note": {
         "id": "note",
-        "shape": "note",
-        "style": "filled",
+        ### font ###
         "fontsize": "12",
         "fontname": "Calibri",
-    },
-    "edge": {
-        "id": "edge",
-        "fontsize": "10",
-        "fontname": "Calibri",
+        ### color ###
+        "fontcolor": "black",
+        "fillcolor": "#F8F8F8",
+        ### shape ###
+        "shape": "note",
+        "style": "filled",
     },
     "edge_flow": {
         "id": "edge",
-        "style": "solid",
-        "arrowhead": "normal",
+        ### font ###
         "fontsize": "10",
         "fontname": "Calibri",
+        ### color ###
+        "fontcolor": "black",
+        "color": "black",
+        ### style ###
+        "arrowhead": "normal",
+        "style": "solid",
     },
     "edge_note": {
         "id": "edge",
-        "style": "dotted",
-        "arrowhead": "none",
+        ### font ###
         "fontsize": "10",
         "fontname": "Calibri",
+        ### color ###
+        "fontcolor": "black",
+        "color": "black",
+        ### style ###
+        "arrowhead": "none",
+        "style": "dotted",
     },
 }

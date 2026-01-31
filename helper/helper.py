@@ -23,17 +23,6 @@ def get_unique_values(values):
     return unique_values
 
 
-def get_unique_count(dataset, field):
-    all_ids = []
-
-    if field in dataset:
-        for cell in dataset[field]:
-            if len(cell) > 0:
-                all_ids.append(cell[0])
-
-    return len(set(all_ids))
-
-
 def add_dataset_id(dataset, field):
     dataset_with_id = dataset.copy()
 

@@ -6,7 +6,6 @@ from config.config import (
 )
 
 from helper.helper import (
-    get_unique_count,
     add_dataset_id,
     correct_values,
     calculate_labels_nested,
@@ -22,6 +21,7 @@ from operation._1_filter import (
 )
 from operation._2_count import (
     count_dataset,
+    get_unique_count,
 )
 
 from output._1_print import (
@@ -83,14 +83,12 @@ from plot_style._2_color import (
     color_sankey_nodes,
     color_sankey_links,
     color_map,
-    color_prisma,
     color_bar_labels,
     color_pie_labels,
     color_heatmap_labels,
     color_sunburst_labels,
     color_sankey_labels,
     color_map_labels,
-    color_prisma_labels,
     color_labels_extra,
 )
 from plot_style._3_legend import (
@@ -2792,33 +2790,27 @@ def _0_1(dataset):
             ("hmd", "note3"),
         ],
     }
-
     draw_prisma_nodes(
         dot=dot,
         nodes=topology["nodes"],
     )
-    draw_prisma_edges(
-        dot=dot,
-        edges=topology["flow"],
-    )
-    draw_prisma_edges(
-        dot=dot,
-        edges=topology["notes"],
-    )
 
     style_prisma(
         ax=dot,
-        config=STYLE_PRISMA["box"],
+        config=STYLE_PRISMA["box_main"],
         nodes=[
             "search",
-            "duplicates",
             "screening",
-            "excluded",
             "eligible",
             "religious",
             "hmd",
             "final",
         ],
+    )
+    style_prisma(
+        ax=dot,
+        config=STYLE_PRISMA["box_excluded"],
+        nodes=["duplicates", "excluded"],
     )
     style_prisma(
         ax=dot,
@@ -2831,42 +2823,20 @@ def _0_1(dataset):
     )
     style_prisma(
         ax=dot,
-        config=STYLE_PRISMA["edge"],
-    )
-    style_prisma(
-        ax=dot,
         config=STYLE_PRISMA["edge_flow"],
     )
+    draw_prisma_edges(
+        dot=dot,
+        edges=topology["flow"],
+    )
+
     style_prisma(
         ax=dot,
         config=STYLE_PRISMA["edge_note"],
     )
-
-    color_prisma(
-        ax=dot,
-        fillcolor="#CCE5FF",
-        fontcolor="black",
-        nodes=["search", "screening", "eligible", "religious", "hmd", "final"],
-    )
-    color_prisma(
-        ax=dot,
-        fillcolor="#F8F8F8",
-        fontcolor="black",
-        nodes=["duplicates", "excluded"],
-    )
-    color_prisma(
-        ax=dot,
-        fillcolor="#F8F8F8",
-        fontcolor="black",
-        nodes=["note1", "note2", "note3"],
-    )
-    color_prisma_labels(
-        ax=dot,
-        fontcolors_map={
-            "fontcolor_edge": "black",
-            "fontcolor_node": "black",
-            "color_edge": "black",
-        },
+    draw_prisma_edges(
+        dot=dot,
+        edges=topology["notes"],
     )
 
     ### output
