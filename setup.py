@@ -2,6 +2,7 @@ from config.config import (
     COLORS,
     FONTS_PLOT,
     FONTS_LEGEND,
+    STYLE_PRISMA,
 )
 
 from helper.helper import (
@@ -61,7 +62,8 @@ from plot_style._0_draw import (
     draw_sunburst,
     draw_sankey,
     draw_map,
-    draw_prisma,
+    draw_prisma_nodes,
+    draw_prisma_edges,
 )
 from plot_style._1_number import (
     number_bar,
@@ -69,6 +71,7 @@ from plot_style._1_number import (
     number_heatmap,
     add_labels_extra,
     add_grid,
+    style_prisma,
 )
 from plot_style._2_color import (
     color_bar,
@@ -87,6 +90,7 @@ from plot_style._2_color import (
     color_sunburst_labels,
     color_sankey_labels,
     color_map_labels,
+    color_prisma_labels,
     color_labels_extra,
 )
 from plot_style._3_legend import (
@@ -2711,21 +2715,16 @@ def _0_1(dataset):
             "device",
         ],
     )
+    n_eligible = get_unique_count(dataset=dataset_counted, field="id")
 
-    ### filtering
-    print_counts(dataset_counted, decimal=1)
-    n_total = get_unique_count(dataset=dataset_counted, field="id")
-    print(n_total)
-
+    ### filter
     dataset_counted_religious = filter_dataset_by_values(
         dataset=dataset_counted,
         field="historical_site_type_sub",
         values=["Religious"],
         include=True,
     )
-    print_counts(dataset_counted_religious, decimal=1)
     n_religious = get_unique_count(dataset=dataset_counted_religious, field="id")
-    print(n_religious)
 
     dataset_counted_device = filter_dataset_by_values(
         dataset=dataset_counted_religious,
@@ -2733,9 +2732,7 @@ def _0_1(dataset):
         values=["HMD"],
         include=True,
     )
-    print_counts(dataset_counted_device, decimal=1)
     n_device = get_unique_count(dataset=dataset_counted_device, field="id")
-    print(n_device)
 
     dataset_counted_studyfocus = filter_dataset_by_values(
         dataset=dataset_counted_device,
@@ -2743,21 +2740,18 @@ def _0_1(dataset):
         values=["Reconstruction"],
         include=True,
     )
-    print_counts(dataset_counted_studyfocus, decimal=1)
     n_studyfocus = get_unique_count(dataset=dataset_counted_studyfocus, field="id")
-    print(n_studyfocus)
 
     values = {
         "search": 614,
         "duplicates": 256,
         "screening": 358,
         "excluded": 266,
-        "eligible": n_total,
+        "eligible": n_eligible,
         "religious": n_religious,
         "hmd": n_device,
         "final": n_studyfocus,
     }
-    print(values)
 
     ### output
     name = "_0_1"
@@ -2769,30 +2763,110 @@ def _0_1(dataset):
         ranksep="0.72",
     )
 
-    draw_prisma(
-        dot=dot,
-        values=values,
-        labels_spec={
-            "title": "PRISMA Flow Diagram",
+    topology = {
+        "nodes": {
+            "search": f"Studies identified via\nsystematic search\n(n = {values['search']})",
+            "duplicates": f"Duplicates & non-relevant records removed\n(n = {values['duplicates']})",
+            "screening": f"Studies after deduplication\n(n = {values['screening']})",
+            "excluded": f"Studies excluded (score < 4.5)\n(n = {values['excluded']})",
+            "eligible": f"Studies passing eligibility screening\n(n = {values['eligible']})",
+            "religious": f"Studies on religious buildings\n(n = {values['religious']})",
+            "hmd": f"Studies using HMD technology\n(n = {values['hmd']})",
+            "final": f"Final selected studies:\nReconstruction-focused\n(n = {values['final']})",
+            "note1": "Step 1 - Exclusions:\n• Duplicate records\n• Non-peer-reviewed\n• Book chapters",
+            "note2": "Step 2 - Screening Criteria:\n✔ Case study or prototype\n✔ Historical reconstruction\n✔ VR/AR/MR/XR integration",
+            "note3": "Step 3 - Final Filtering:\n✔ Religious buildings\n✔ HMD implementation\n✔ Reconstruction focus",
         },
+        "flow": [
+            ("search", "duplicates"),
+            ("duplicates", "screening"),
+            ("screening", "excluded"),
+            ("screening", "eligible"),
+            ("eligible", "religious"),
+            ("religious", "hmd"),
+            ("hmd", "final"),
+        ],
+        "notes": [
+            ("duplicates", "note1"),
+            ("screening", "note2"),
+            ("hmd", "note3"),
+        ],
+    }
+
+    draw_prisma_nodes(
+        dot=dot,
+        nodes=topology["nodes"],
+    )
+    draw_prisma_edges(
+        dot=dot,
+        edges=topology["flow"],
+    )
+    draw_prisma_edges(
+        dot=dot,
+        edges=topology["notes"],
+    )
+
+    style_prisma(
+        ax=dot,
+        config=STYLE_PRISMA["box"],
+        nodes=[
+            "search",
+            "duplicates",
+            "screening",
+            "excluded",
+            "eligible",
+            "religious",
+            "hmd",
+            "final",
+        ],
+    )
+    style_prisma(
+        ax=dot,
+        config=STYLE_PRISMA["note"],
+        nodes=[
+            "note1",
+            "note2",
+            "note3",
+        ],
+    )
+    style_prisma(
+        ax=dot,
+        config=STYLE_PRISMA["edge"],
+    )
+    style_prisma(
+        ax=dot,
+        config=STYLE_PRISMA["edge_flow"],
+    )
+    style_prisma(
+        ax=dot,
+        config=STYLE_PRISMA["edge_note"],
     )
 
     color_prisma(
         ax=dot,
-        nodes=["search", "screening", "eligible", "religious", "hmd", "final"],
-        style="rounded,filled",
         fillcolor="#CCE5FF",
+        fontcolor="black",
+        nodes=["search", "screening", "eligible", "religious", "hmd", "final"],
     )
     color_prisma(
         ax=dot,
-        nodes=["duplicates", "excluded"],
-        style="dashed,filled",
         fillcolor="#F8F8F8",
+        fontcolor="black",
+        nodes=["duplicates", "excluded"],
     )
-
-    font_apply_plot(
+    color_prisma(
         ax=dot,
-        fonts=FONTS_PLOT,
+        fillcolor="#F8F8F8",
+        fontcolor="black",
+        nodes=["note1", "note2", "note3"],
+    )
+    color_prisma_labels(
+        ax=dot,
+        fontcolors_map={
+            "fontcolor_edge": "black",
+            "fontcolor_node": "black",
+            "color_edge": "black",
+        },
     )
 
     ### output

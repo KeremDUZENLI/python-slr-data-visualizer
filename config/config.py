@@ -192,14 +192,6 @@ FONTS_PLOT = {
         "weight": "bold",
         "style": "normal",
     },
-    "prisma_node": {
-        "size": 14,
-        "family": "calibri bold",
-    },
-    "prisma_edge": {
-        "size": 10,
-        "family": "calibri",
-    },
     "labels_extra": {
         "size": 8,
         "family": "sans-serif",
@@ -224,5 +216,44 @@ FONTS_LEGEND = {
         "weight": "normal",
         "style": "normal",
         "stretch": "condensed",
+    },
+}
+
+
+STYLE_PRISMA = {
+    "box": {
+        "id": "box",
+        "shape": "box",
+        "style": "rounded,filled",
+        "width": "4.5",
+        "height": "0.6",
+        "fontsize": "14",
+        "fontname": "Calibri Bold",
+    },
+    "note": {
+        "id": "note",
+        "shape": "note",
+        "style": "filled",
+        "fontsize": "12",
+        "fontname": "Calibri",
+    },
+    "edge": {
+        "id": "edge",
+        "fontsize": "10",
+        "fontname": "Calibri",
+    },
+    "edge_flow": {
+        "id": "edge",
+        "style": "solid",
+        "arrowhead": "normal",
+        "fontsize": "10",
+        "fontname": "Calibri",
+    },
+    "edge_note": {
+        "id": "edge",
+        "style": "dotted",
+        "arrowhead": "none",
+        "fontsize": "10",
+        "fontname": "Calibri",
     },
 }

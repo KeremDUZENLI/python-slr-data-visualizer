@@ -146,13 +146,14 @@ def color_map(ax, cmap, border=False, frame=False):
     ax.update_layout(geo=dict(showframe=frame))
 
 
-def color_prisma(ax, nodes, style, fillcolor):
-    for node in nodes:
-        ax.node(
-            node,
-            style=style,
-            fillcolor=fillcolor,
-        )
+def color_prisma(ax, fillcolor, fontcolor, nodes=None):
+    if nodes:
+        for node in nodes:
+            ax.node(
+                node,
+                fillcolor=fillcolor,
+                fontcolor=fontcolor,
+            )
 
 
 def color_bar_labels(ax, colors_map, orientation="v"):
@@ -229,6 +230,12 @@ def color_map_labels(ax, color):
             tickfont=dict(color=color),
         )
     )
+
+
+def color_prisma_labels(ax, fontcolors_map):
+    ax.edge_attr["fontcolor"] = fontcolors_map["fontcolor_edge"]
+    ax.node_attr["fontcolor"] = fontcolors_map["fontcolor_node"]
+    ax.edge_attr["color"] = fontcolors_map["color_edge"]
 
 
 def color_labels_extra(ax, colors_map):

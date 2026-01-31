@@ -116,3 +116,22 @@ def add_grid(ax, orientation="v", linewidth=0.5, opacity=0.5):
     if orientation == "both":
         ax.yaxis.grid(visible=True, linestyle="--", linewidth=linewidth, alpha=opacity)
         ax.xaxis.grid(visible=True, linestyle="--", linewidth=linewidth, alpha=opacity)
+
+
+def style_prisma(ax, config, nodes=None):
+    clean_config = config.copy()
+    config_id = clean_config.pop("id", "")
+
+    if config_id == "title":
+        ax.graph_attr.update(clean_config)
+        return
+
+    if config_id == "edge":
+        ax.edge_attr.update(clean_config)
+        return
+
+    if config_id == "box" or config_id == "note":
+        if nodes:
+            for node in nodes:
+                ax.node(node, **clean_config)
+        return

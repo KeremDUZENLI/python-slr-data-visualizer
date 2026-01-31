@@ -18,10 +18,6 @@ def font_apply_plot(ax, fonts):
                     _font_apply_sankey(trace, fonts)
         return
 
-    if hasattr(ax, "node_attr") and hasattr(ax, "edge_attr"):
-        _font_apply_graphviz(ax, fonts)
-        return
-
     _font_apply_to_text(ax.title, fonts.get("title"))
     _font_apply_to_text(ax.xaxis.label, fonts.get("xlabel"))
     _font_apply_to_text(ax.yaxis.label, fonts.get("ylabel"))
@@ -190,23 +186,3 @@ def _font_apply_choropleth_legend(trace, fonts):
         trace.colorbar.title.text = fmt
 
     trace.colorbar.update(title_font=plotly_title_font, tickfont=plotly_tick_font)
-
-
-def _font_apply_graphviz(trace, fonts):
-    title_config = fonts.get("title")
-    if "size" in title_config:
-        trace.graph_attr["fontsize"] = str(title_config["size"])
-    if "family" in title_config:
-        trace.graph_attr["fontname"] = title_config["family"]
-
-    node_config = fonts.get("prisma_node")
-    if "size" in node_config:
-        trace.node_attr["fontsize"] = str(node_config["size"])
-    if "family" in node_config:
-        trace.node_attr["fontname"] = node_config["family"]
-
-    edge_config = fonts.get("prisma_edge")
-    if "size" in edge_config:
-        trace.edge_attr["fontsize"] = str(edge_config["size"])
-    if "family" in edge_config:
-        trace.edge_attr["fontname"] = edge_config["family"]
