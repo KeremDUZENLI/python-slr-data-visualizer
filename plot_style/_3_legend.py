@@ -1,12 +1,9 @@
-def legend_create(ax, handles, title="", loc="best", bbox=None, **kwargs):
-    if bbox is None:
-        bbox = (1, 0, 0.3, 1)
-
+def legend_create(ax, handles, legend_spec, **kwargs):
     legend = ax.legend(
         handles=handles,
-        title=title,
-        loc=loc,
-        bbox_to_anchor=bbox,
+        title=legend_spec.get("title", ""),
+        loc=legend_spec.get("loc", "best"),
+        bbox_to_anchor=legend_spec.get("bbox", (1, 0, 0.3, 1)),
         borderaxespad=0.5,
         mode="expand",
         framealpha=0.5,

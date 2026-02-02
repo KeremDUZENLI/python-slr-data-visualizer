@@ -20,11 +20,7 @@ def get_labels(dataset, x_axis, y_axis=None, z_axis=None):
             z_val = _extract_value(z_raw[i])
             z_values.append(z_val)
 
-    if y_axis and z_axis:
-        return x_values, y_values, z_values
-    if y_axis:
-        return x_values, y_values
-    return x_values
+    return x_values, y_values, z_values
 
 
 def _extract_value(cell):

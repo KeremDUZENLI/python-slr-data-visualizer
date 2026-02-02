@@ -155,3 +155,69 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 ################## prisma ###################
 #############################################
 # _0_1(DATASET)
+
+
+##############################################
+################## refactor ##################
+##############################################
+
+from setup import bar_1D, generate_legend
+from output._2_plots import (
+    show_plot,
+    save_plot,
+)
+
+
+fig, ax, x_values, y_values, z_values, colors_map = bar_1D(
+    dataset=DATASET,
+    fields=["year"],
+    filter_values=None,
+    filter_count=None,
+    x_axis="year",
+    y_axis="count",
+    z_axis=None,
+    color_field="year",
+    orientation="v",
+    labels_spec={
+        "x_label": "Year",
+        "y_label": "Number of Studies",
+        "title": "Studies Per Year",
+        "rotation": 45,
+    },
+    bar_borders=False,
+    bar_numbers=True,
+    grids=True,
+)
+
+legend1 = generate_legend(
+    ax=ax,
+    values=x_values,
+    colors_map=colors_map,
+    legend_spec={
+        "title": "Year",
+        "loc": "upper left",
+        "bbox": (1, 0, 0.3, 1),
+    },
+)
+legend2 = generate_legend(
+    ax=ax,
+    values=["Custom A", "Custom B", "Custom C"],
+    colors_map={
+        "Custom A": "#ff0000",
+        "Custom B": "#008000",
+        "Custom C": "#0000ff",
+    },
+    legend_spec={
+        "title": "Custom Legend",
+        "loc": "lower left",
+        "bbox": (1, 0, 0.3, 1),
+    },
+)
+
+show_plot()
+save_plot(
+    fig=fig,
+    name="1.0",
+    legends=[legend1, legend2],
+    extra_artists=None,
+)

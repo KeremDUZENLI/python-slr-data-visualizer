@@ -8,13 +8,13 @@ import numpy as np
 
 
 def draw_bar_1D(ax, x_values, y_values, labels_spec, orientation="v"):
-    x_values_list = []
+    coloring_values = []
     for x_value in x_values:
-        x_values_list.append(str(x_value))
+        coloring_values.append(str(x_value))
 
     positions = []
     index = 0
-    for _ in x_values_list:
+    for _ in coloring_values:
         positions.append(index)
         index += 1
 
@@ -24,7 +24,7 @@ def draw_bar_1D(ax, x_values, y_values, labels_spec, orientation="v"):
 
         ax.set_xticks(positions)
         ax.set_xticklabels(
-            x_values_list,
+            coloring_values,
             rotation=labels_spec.get("rotation", 0),
             ha="right",
         )
@@ -36,7 +36,7 @@ def draw_bar_1D(ax, x_values, y_values, labels_spec, orientation="v"):
             ax.barh(pos, width)
 
         ax.set_yticks(positions)
-        ax.set_yticklabels(x_values_list)
+        ax.set_yticklabels(coloring_values)
         ax.set_xlabel(labels_spec.get("y_label", ""))
         ax.set_ylabel(labels_spec.get("x_label", ""))
         ax.invert_yaxis()
@@ -44,7 +44,7 @@ def draw_bar_1D(ax, x_values, y_values, labels_spec, orientation="v"):
     offset_frame(ax=ax, height=y_values, orientation=orientation, offset=1)
     ax.set_title(labels_spec.get("title", ""))
 
-    return x_values_list
+    return coloring_values
 
 
 def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):

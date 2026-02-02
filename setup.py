@@ -200,7 +200,7 @@ def _1_0(dataset):
 
     color_bar(
         ax=ax,
-        coloring_values_list=x_values_list,
+        coloring_values=x_values_list,
         colors_map=colors_map,
         border=False,
     )
@@ -286,7 +286,7 @@ def _4_1(dataset):
     print_counts(dataset_counted, decimal=1)
     fig, ax = draw_plot(8, 6)
 
-    ### plot_get
+    ## plot_get
     x_values, y_values, z_values = get_labels(
         dataset=dataset_counted,
         x_axis="software",
@@ -355,7 +355,7 @@ def _4_1(dataset):
 
     color_bar(
         ax=ax,
-        coloring_values_list=x_values_list,
+        coloring_values=x_values_list,
         colors_map=colors_mapped,
         border=True,
     )
@@ -500,7 +500,7 @@ def _5_0(dataset):
 
     color_bar(
         ax=ax,
-        coloring_values_list=x_values_list,
+        coloring_values=x_values_list,
         colors_map=colors_map,
         border=False,
     )
@@ -644,7 +644,7 @@ def _1_1(dataset):
 
     color_bar(
         ax=ax,
-        coloring_values_list=z_values_list,
+        coloring_values=z_values_list,
         colors_map=colors_map,
         border=False,
     )
@@ -785,7 +785,7 @@ def _2_1(dataset):
 
     color_bar(
         ax=ax,
-        coloring_values_list=z_values_list,
+        coloring_values=z_values_list,
         colors_map=colors_map,
         border=False,
     )
@@ -926,7 +926,7 @@ def _3_4(dataset):
 
     color_bar(
         ax=ax,
-        coloring_values_list=z_values_list,
+        coloring_values=z_values_list,
         colors_map=colors_map,
         border=False,
     )
@@ -1071,7 +1071,7 @@ def _2_3_area(dataset):
 
     color_area(
         ax=ax,
-        coloring_values_list=coloring_values_list,
+        coloring_values=coloring_values_list,
         colors_map=colors_map,
         border=False,
     )
@@ -1107,7 +1107,7 @@ def _2_3_area(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_clean_legend(legend1, version="upper")
+    text_clean_legend(legend1, type="upper")
     text_clean_legend(legend2)
 
     ### output
@@ -1214,7 +1214,7 @@ def _2_3_bar(dataset):
 
     color_bar(
         ax=ax,
-        coloring_values_list=coloring_values_list,
+        coloring_values=coloring_values_list,
         colors_map=colors_map,
         border=False,
     )
@@ -1250,7 +1250,7 @@ def _2_3_bar(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_clean_legend(legend1, version="upper")
+    text_clean_legend(legend1, type="upper")
     text_clean_legend(legend2)
 
     ### output
@@ -1365,7 +1365,7 @@ def _4_5_area(dataset):
 
     color_area(
         ax=ax,
-        coloring_values_list=coloring_values_list,
+        coloring_values=coloring_values_list,
         colors_map=colors_map,
         border=False,
     )
@@ -1401,7 +1401,7 @@ def _4_5_area(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_clean_legend(legend1, version="title")
+    text_clean_legend(legend1, type="title")
     text_clean_legend(legend2)
 
     ### output
@@ -1480,7 +1480,7 @@ def _1_3(dataset):
 
     color_pie(
         ax=ax,
-        coloring_values_list=x_values_list,
+        coloring_values=x_values_list,
         colors_map=colors_map,
         border=True,
     )
@@ -1586,7 +1586,7 @@ def _1_4(dataset):
 
     color_pie(
         ax=ax,
-        coloring_values_list=labels_list,
+        coloring_values=labels_list,
         colors_map=full_colors_map,
         border=False,
     )
@@ -1695,7 +1695,7 @@ def _3_2(dataset):
 
     color_pie(
         ax=ax,
-        coloring_values_list=labels_list,
+        coloring_values=labels_list,
         colors_map=full_colors_map,
         border=False,
     )
@@ -2458,7 +2458,7 @@ def _1_4_S(dataset):
 
     color_sunburst(
         ax=fig,
-        coloring_values_list=all_labels,
+        coloring_values=all_labels,
         colors_map=full_colors_map,
         border=False,
     )
@@ -2842,3 +2842,131 @@ def _0_1(dataset):
     ### output
     show_plot_graphviz(dot=dot)
     save_plot_graphviz(dot=dot, name=name)
+
+
+##############################################
+################## refactor ##################
+##############################################
+
+
+def bar_1D(
+    dataset,
+    fields,
+    filter_values,
+    filter_count,
+    x_axis,
+    y_axis,
+    z_axis,
+    color_field,
+    orientation,
+    labels_spec=None,
+    bar_borders=False,
+    bar_numbers=True,
+    grids=True,
+):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=fields,
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=fields,
+    )
+
+    filter_values = filter_values
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    filter_count = filter_count
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_dict(dataset_counted)
+    print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted,
+        x_axis=x_axis,
+        y_axis=y_axis,
+        z_axis=z_axis,
+    )
+    colors_map = get_colors_map(
+        colors=COLORS,
+        color_field=color_field,
+    )
+
+    ### plot_style
+    coloring_values = draw_bar_1D(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        labels_spec=labels_spec,
+        orientation=orientation,
+    )
+
+    color_bar(
+        ax=ax,
+        coloring_values=coloring_values,
+        colors_map=colors_map,
+        border=bar_borders,
+    )
+    color_bar_labels(
+        ax=ax,
+        colors_map=colors_map,
+        orientation=orientation,
+    )
+
+    font_apply_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+
+    ### Extra ###
+    if bar_numbers:
+        number_bar(
+            ax=ax,
+            orientation=orientation,
+        )
+    if grids:
+        add_grid(
+            ax=ax,
+            orientation=orientation,
+        )
+
+    return fig, ax, x_values, y_values, z_values, colors_map
+
+
+def generate_legend(ax, values, colors_map, legend_spec):
+    handles = get_legend_handles(
+        values=values,
+        colors_map=colors_map,
+    )
+    legend = legend_create(
+        ax=ax,
+        handles=handles,
+        legend_spec=legend_spec,
+    )
+    font_apply_legend(
+        legend=legend,
+        fonts=FONTS_LEGEND,
+    )
+    text_clean_legend(legend)
+
+    return legend

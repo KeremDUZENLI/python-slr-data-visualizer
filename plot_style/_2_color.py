@@ -3,15 +3,15 @@ import matplotlib.colors as mcolors
 DEFAULT_COLOR = "#cccccc"
 
 
-def color_bar(ax, coloring_values_list, colors_map, border=False):
+def color_bar(ax, coloring_values, colors_map, border=False):
     index = 0
 
     bars = ax.patches
     for bar in bars:
-        if index >= len(coloring_values_list):
+        if index >= len(coloring_values):
             break
 
-        label = coloring_values_list[index]
+        label = coloring_values[index]
         color = colors_map.get(label)
 
         if color is None:
@@ -26,15 +26,15 @@ def color_bar(ax, coloring_values_list, colors_map, border=False):
         index += 1
 
 
-def color_area(ax, coloring_values_list, colors_map, border=False):
+def color_area(ax, coloring_values, colors_map, border=False):
     index = 0
 
     areas = ax.collections
     for area in areas:
-        if index >= len(coloring_values_list):
+        if index >= len(coloring_values):
             break
 
-        label = coloring_values_list[index]
+        label = coloring_values[index]
         color = colors_map.get(label)
 
         if color is None:
@@ -49,9 +49,9 @@ def color_area(ax, coloring_values_list, colors_map, border=False):
         index += 1
 
 
-def color_pie(ax, coloring_values_list, colors_map, border=False):
+def color_pie(ax, coloring_values, colors_map, border=False):
     slices = ax.patches
-    for slice, label in zip(slices, coloring_values_list):
+    for slice, label in zip(slices, coloring_values):
         color = colors_map.get(label)
 
         if color is None:
@@ -76,10 +76,10 @@ def color_scatter(ax, config):
         collection.set_alpha(config.get("opacity"))
 
 
-def color_sunburst(ax, coloring_values_list, colors_map, border=False):
+def color_sunburst(ax, coloring_values, colors_map, border=False):
     colors = []
 
-    for label in coloring_values_list:
+    for label in coloring_values:
         color = colors_map.get(label)
 
         if color is None:

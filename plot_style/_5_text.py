@@ -1,11 +1,11 @@
-def text_clean_labels(texts, version="title"):
+def text_clean_labels(texts, type="title"):
     for text in texts:
-        text.set_text(_text_clean(text.get_text(), version=version))
+        text.set_text(_text_clean(text.get_text(), version=type))
 
 
-def text_clean_legend(legend, version="title"):
+def text_clean_legend(legend, type="title"):
     for text in legend.get_texts():
-        text.set_text(_text_clean(text.get_text(), version=version))
+        text.set_text(_text_clean(text.get_text(), version=type))
     return legend
 
 
