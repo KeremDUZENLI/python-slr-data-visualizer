@@ -161,14 +161,10 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 ################## refactor ##################
 ##############################################
 
-from setup import bar_1D, generate_legend
-from output._2_plots import (
-    show_plot,
-    save_plot,
-)
+from setup import bar_1D
 
 
-fig, ax, x_values, y_values, z_values, colors_map = bar_1D(
+bar_1D(
     dataset=DATASET,
     fields=["year"],
     filter_values=None,
@@ -176,48 +172,115 @@ fig, ax, x_values, y_values, z_values, colors_map = bar_1D(
     x_axis="year",
     y_axis="count",
     z_axis=None,
-    color_field="year",
     orientation="v",
+    color_field="year",
+    color_mapping=False,
+    bar_borders=False,
+    bar_numbers=True,
+    grids=True,
+    labels_extra=None,
     labels_spec={
         "x_label": "Year",
         "y_label": "Number of Studies",
         "title": "Studies Per Year",
         "rotation": 45,
     },
+    legends_config=[
+        {
+            "source": "dataset",
+            "values": "year",
+            "legend_spec": {
+                "title": "Year",
+                "loc": "upper left",
+                "bbox": (1, 0, 0.3, 1),
+            },
+        },
+    ],
+    save_name="1.0",
+)
+
+
+bar_1D(
+    dataset=DATASET_SOFTWARE_STACKED,
+    fields=["software_category", "software"],
+    filter_values=["software != "],
+    filter_count="count >= 5",
+    x_axis="software",
+    y_axis="count",
+    z_axis="software_category",
+    orientation="h",
+    color_field="software_category",
+    color_mapping=True,
     bar_borders=False,
     bar_numbers=True,
     grids=True,
+    labels_extra="software_category",
+    labels_spec={
+        "x_label": "",
+        "y_label": "Number of Studies",
+        "title": "Studies Per Year",
+        "rotation": 45,
+    },
+    legends_config=[
+        {
+            "source": "dataset",
+            "values": "software_category",
+            "legend_spec": {
+                "title": "Software Category",
+                "loc": "upper left",
+                "bbox": (1, 0, 0.3, 1),
+            },
+        },
+        {
+            "source": "custom",
+            "values": ["Custom A", "Custom B", "Custom C"],
+            "colors_map": {
+                "Custom A": "#ff0000",
+                "Custom B": "#008000",
+                "Custom C": "#0000ff",
+            },
+            "legend_spec": {
+                "title": "Custom Legend",
+                "loc": "lower left",
+                "bbox": (1, 0, 0.3, 1),
+            },
+        },
+    ],
+    save_name="4.1",
 )
 
-legend1 = generate_legend(
-    ax=ax,
-    values=x_values,
-    colors_map=colors_map,
-    legend_spec={
-        "title": "Year",
-        "loc": "upper left",
-        "bbox": (1, 0, 0.3, 1),
-    },
-)
-legend2 = generate_legend(
-    ax=ax,
-    values=["Custom A", "Custom B", "Custom C"],
-    colors_map={
-        "Custom A": "#ff0000",
-        "Custom B": "#008000",
-        "Custom C": "#0000ff",
-    },
-    legend_spec={
-        "title": "Custom Legend",
-        "loc": "lower left",
-        "bbox": (1, 0, 0.3, 1),
-    },
-)
 
-show_plot()
-save_plot(
-    fig=fig,
-    name="1.0",
-    legends=[legend1, legend2],
-    extra_artists=None,
+bar_1D(
+    dataset=DATASET_COUNTRY_MAPPED,
+    fields=["continent"],
+    filter_values=None,
+    filter_count=None,
+    x_axis="continent",
+    y_axis="count",
+    z_axis=None,
+    orientation="v",
+    color_field="continent",
+    color_mapping=False,
+    bar_borders=False,
+    bar_numbers=True,
+    grids=True,
+    labels_extra=None,
+    labels_spec={
+        "x_label": "Continents",
+        "y_label": "Number of Studies",
+        "title": "Studies Per Year",
+        "rotation": 45,
+    },
+    legends_config=[
+        {
+            "source": "dataset",
+            "values": "continent",
+            "legend_spec": {
+                "title": "Continents",
+                "loc": "upper left",
+                "bbox": (1, 0, 0.3, 1),
+            },
+        },
+    ],
+    save_name="5.0",
 )

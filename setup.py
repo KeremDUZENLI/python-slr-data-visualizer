@@ -299,7 +299,6 @@ def _4_1(dataset):
     )
 
     colors_map = get_colors_map(
-        values=z_values,
         colors=COLORS,
         color_field="software_category",
     )
@@ -2857,12 +2856,16 @@ def bar_1D(
     x_axis,
     y_axis,
     z_axis,
-    color_field,
     orientation,
-    labels_spec=None,
+    color_field,
+    color_mapping=False,
     bar_borders=False,
     bar_numbers=True,
     grids=True,
+    labels_extra=None,
+    labels_spec=None,
+    legends_config=None,
+    save_name="chart",
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -2912,7 +2915,7 @@ def bar_1D(
         color_field=color_field,
     )
 
-    ### plot_style
+    ### plot_draw
     coloring_values = draw_bar_1D(
         ax=ax,
         x_values=x_values,
@@ -2921,24 +2924,37 @@ def bar_1D(
         orientation=orientation,
     )
 
-    color_bar(
-        ax=ax,
-        coloring_values=coloring_values,
-        colors_map=colors_map,
-        border=bar_borders,
-    )
-    color_bar_labels(
-        ax=ax,
-        colors_map=colors_map,
-        orientation=orientation,
-    )
+    if color_mapping:
+        colors_mapped = map_colors_map(
+            colors_from=x_values,
+            colors_to=z_values,
+            colors_map=colors_map,
+        )
+        color_bar(
+            ax=ax,
+            coloring_values=coloring_values,
+            colors_map=colors_mapped,
+            border=bar_borders,
+        )
+        color_bar_labels(
+            ax=ax,
+            colors_map=colors_mapped,
+            orientation=orientation,
+        )
+    else:
+        color_bar(
+            ax=ax,
+            coloring_values=coloring_values,
+            colors_map=colors_map,
+            border=bar_borders,
+        )
+        color_bar_labels(
+            ax=ax,
+            colors_map=colors_map,
+            orientation=orientation,
+        )
 
-    font_apply_plot(
-        ax=ax,
-        fonts=FONTS_PLOT,
-    )
-
-    ### Extra ###
+    ### extra ###
     if bar_numbers:
         number_bar(
             ax=ax,
@@ -2949,24 +2965,63 @@ def bar_1D(
             ax=ax,
             orientation=orientation,
         )
+    extra_artists = None
+    if labels_extra:
+        labels_center = calculate_labels_pos_bar(
+            values=[i[0] for i in dataset_counted[labels_extra]],
+            distance=5,
+        )
+        texts = add_labels_extra(
+            ax=ax,
+            labels_center=labels_center,
+            orientation=orientation,
+            offset=15,
+        )
+        color_labels_extra(
+            ax=texts,
+            colors_map=colors_map,
+        )
+        text_clean_labels(texts)
+        extra_artists = texts
 
-    return fig, ax, x_values, y_values, z_values, colors_map
-
-
-def generate_legend(ax, values, colors_map, legend_spec):
-    handles = get_legend_handles(
-        values=values,
-        colors_map=colors_map,
-    )
-    legend = legend_create(
+    ### font ###
+    font_apply_plot(
         ax=ax,
-        handles=handles,
-        legend_spec=legend_spec,
+        fonts=FONTS_PLOT,
     )
-    font_apply_legend(
-        legend=legend,
-        fonts=FONTS_LEGEND,
-    )
-    text_clean_legend(legend)
 
-    return legend
+    ### legend ###
+    legends = []
+    if legends_config:
+        for config in legends_config:
+            if config.get("source") == "dataset":
+                labels = config.get("values", [])
+                values = [i[0] for i in dataset_counted[labels]]
+            if config.get("source") == "custom":
+                values = config.get("values", [])
+                colors_map = config.get("colors_map", {})
+
+            handles = get_legend_handles(
+                values=values,
+                colors_map=colors_map,
+            )
+            legend = legend_create(
+                ax=ax,
+                handles=handles,
+                legend_spec=config.get("legend_spec"),
+            )
+            font_apply_legend(
+                legend=legend,
+                fonts=FONTS_LEGEND,
+            )
+            text_clean_legend(legend)
+            legends.append(legend)
+
+    ### output ###
+    show_plot()
+    save_plot(
+        fig=fig,
+        name=save_name,
+        legends=legends,
+        extra_artists=extra_artists,
+    )
