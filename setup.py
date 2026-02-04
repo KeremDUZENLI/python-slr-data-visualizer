@@ -157,7 +157,7 @@ def _1_0(dataset):
     colors_map = get_colors_map(
         values=x_values,
         colors=COLORS,
-        color_field="year",
+        coloring_field="year",
     )
 
     handles1 = get_legend_handles(
@@ -300,7 +300,7 @@ def _4_1(dataset):
 
     colors_map = get_colors_map(
         colors=COLORS,
-        color_field="software_category",
+        coloring_field="software_category",
     )
     colors_mapped = map_colors_map(
         colors_from=x_values,
@@ -456,7 +456,7 @@ def _5_0(dataset):
     colors_map = get_colors_map(
         values=x_values,
         colors=COLORS,
-        color_field="continent",
+        coloring_field="continent",
     )
 
     handles1 = get_legend_handles(
@@ -599,7 +599,7 @@ def _1_1(dataset):
     colors_map = get_colors_map(
         values=z_values,
         colors=COLORS,
-        color_field="historical_site_type",
+        coloring_field="historical_site_type",
     )
 
     handles1 = get_legend_handles(
@@ -740,7 +740,7 @@ def _2_1(dataset):
     colors_map = get_colors_map(
         values=z_values,
         colors=COLORS,
-        color_field="device",
+        coloring_field="device",
     )
 
     handles1 = get_legend_handles(
@@ -881,7 +881,7 @@ def _3_4(dataset):
     colors_map = get_colors_map(
         values=z_values,
         colors=COLORS,
-        color_field="study_focus",
+        coloring_field="study_focus",
     )
 
     handles1 = get_legend_handles(
@@ -1026,7 +1026,7 @@ def _2_3_area(dataset):
     colors_map = get_colors_map(
         values=z_values,
         colors=COLORS,
-        color_field="platform",
+        coloring_field="platform",
     )
 
     handles1 = get_legend_handles(
@@ -1106,7 +1106,7 @@ def _2_3_area(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_clean_legend(legend1, type="upper")
+    text_clean_legend(legend1, casetype="upper")
     text_clean_legend(legend2)
 
     ### output
@@ -1168,7 +1168,7 @@ def _2_3_bar(dataset):
     colors_map = get_colors_map(
         values=z_values,
         colors=COLORS,
-        color_field="platform",
+        coloring_field="platform",
     )
 
     handles1 = get_legend_handles(
@@ -1249,7 +1249,7 @@ def _2_3_bar(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_clean_legend(legend1, type="upper")
+    text_clean_legend(legend1, casetype="upper")
     text_clean_legend(legend2)
 
     ### output
@@ -1328,7 +1328,7 @@ def _4_5_area(dataset):
     colors_map = get_colors_map(
         values=z_values,
         colors=COLORS,
-        color_field="software",
+        coloring_field="software",
     )
 
     handles1 = get_legend_handles(
@@ -1400,7 +1400,7 @@ def _4_5_area(dataset):
         fonts=FONTS_LEGEND,
     )
 
-    text_clean_legend(legend1, type="title")
+    text_clean_legend(legend1, casetype="title")
     text_clean_legend(legend2)
 
     ### output
@@ -1464,7 +1464,7 @@ def _1_3(dataset):
     colors_map = get_colors_map(
         values=x_values,
         colors=COLORS,
-        color_field="study_focus",
+        coloring_field="study_focus",
     )
 
     ### plot_style
@@ -1562,12 +1562,12 @@ def _1_4(dataset):
     inner_colors_map = get_colors_map(
         values=inner_labels,
         colors=COLORS,
-        color_field="historical_site_type",
+        coloring_field="historical_site_type",
     )
     outer_colors_map = get_colors_map(
         values=outer_labels,
         colors=COLORS,
-        color_field="historical_site_type_sub",
+        coloring_field="historical_site_type_sub",
     )
     full_colors_map = {**inner_colors_map, **outer_colors_map}
 
@@ -1671,12 +1671,12 @@ def _3_2(dataset):
     inner_colors_map = get_colors_map(
         values=inner_labels,
         colors=COLORS,
-        color_field="technique",
+        coloring_field="technique",
     )
     outer_colors_map = get_colors_map(
         values=outer_labels,
         colors=COLORS,
-        color_field="technique_sub",
+        coloring_field="technique_sub",
     )
     full_colors_map = {**inner_colors_map, **outer_colors_map}
 
@@ -1890,7 +1890,7 @@ def _4_2(dataset):
     colors_map = get_colors_map(
         values=selected_softwares_cat,
         colors=COLORS,
-        color_field="software_category",
+        coloring_field="software_category",
     )
     colors_mapped = map_colors_map(
         colors_from=selected_softwares,
@@ -2282,7 +2282,7 @@ def _5_1(dataset):
     colors_map = get_colors_map(
         values=continent_values,
         colors=COLORS,
-        color_field="continent",
+        coloring_field="continent",
     )
     colors_mapped = map_colors_map(
         colors_from=x_values,
@@ -2435,12 +2435,12 @@ def _1_4_S(dataset):
     inner_colors_map = get_colors_map(
         values=inner_labels,
         colors=COLORS,
-        color_field="historical_site_type",
+        coloring_field="historical_site_type",
     )
     outer_colors_map = get_colors_map(
         values=outer_labels,
         colors=COLORS,
-        color_field="historical_site_type_sub",
+        coloring_field="historical_site_type_sub",
     )
     full_colors_map = {**inner_colors_map, **outer_colors_map}
 
@@ -2537,14 +2537,14 @@ def _3_1(dataset):
     colors_1 = get_colors_map(
         values=column1,
         colors=COLORS,
-        color_field="study_focus",
+        coloring_field="study_focus",
     )
     colors_2 = get_colors_map(
         values=column2,
         colors=COLORS,
-        color_field="historical_site_type",
+        coloring_field="historical_site_type",
     )
-    colors_3 = get_colors_map(values=column3, colors=COLORS, color_field="technique")
+    colors_3 = get_colors_map(values=column3, colors=COLORS, coloring_field="technique")
     full_colors_map = {**colors_1, **colors_2, **colors_3}
 
     ### plot_style
@@ -2841,187 +2841,3 @@ def _0_1(dataset):
     ### output
     show_plot_graphviz(dot=dot)
     save_plot_graphviz(dot=dot, name=name)
-
-
-##############################################
-################## refactor ##################
-##############################################
-
-
-def bar_1D(
-    dataset,
-    fields,
-    filter_values,
-    filter_count,
-    x_axis,
-    y_axis,
-    z_axis,
-    orientation,
-    color_field,
-    color_mapping=False,
-    bar_borders=False,
-    bar_numbers=True,
-    grids=True,
-    labels_extra=None,
-    labels_spec=None,
-    legends_config=None,
-    save_name="chart",
-):
-    ### operation
-    dataset_filtered = filter_dataset_by_fields(
-        dataset=dataset,
-        fields=fields,
-    )
-    dataset_counted = count_dataset(
-        dataset=dataset_filtered,
-        fields=fields,
-    )
-
-    filter_values = filter_values
-    if filter_values:
-        for filter_value in filter_values:
-            field, values, operation = parse_string(text=filter_value)
-            dataset_counted = filter_dataset_by_values(
-                dataset=dataset_counted,
-                field=field,
-                values=values,
-                include=operation,
-            )
-
-    filter_count = filter_count
-    if filter_count:
-        field, values, operation = parse_string(text=filter_count)
-        dataset_counted = filter_dataset_by_count(
-            dataset=dataset_counted,
-            field=field,
-            value=int(values[0]),
-            operation=operation,
-        )
-
-    ### output
-    print_dict(dataset_counted)
-    print_counts(dataset_counted, decimal=1)
-    fig, ax = draw_plot(8, 6)
-
-    ### plot_get
-    x_values, y_values, z_values = get_labels(
-        dataset=dataset_counted,
-        x_axis=x_axis,
-        y_axis=y_axis,
-        z_axis=z_axis,
-    )
-    colors_map = get_colors_map(
-        colors=COLORS,
-        color_field=color_field,
-    )
-
-    ### plot_draw
-    coloring_values = draw_bar_1D(
-        ax=ax,
-        x_values=x_values,
-        y_values=y_values,
-        labels_spec=labels_spec,
-        orientation=orientation,
-    )
-
-    if color_mapping:
-        colors_mapped = map_colors_map(
-            colors_from=x_values,
-            colors_to=z_values,
-            colors_map=colors_map,
-        )
-        color_bar(
-            ax=ax,
-            coloring_values=coloring_values,
-            colors_map=colors_mapped,
-            border=bar_borders,
-        )
-        color_bar_labels(
-            ax=ax,
-            colors_map=colors_mapped,
-            orientation=orientation,
-        )
-    else:
-        color_bar(
-            ax=ax,
-            coloring_values=coloring_values,
-            colors_map=colors_map,
-            border=bar_borders,
-        )
-        color_bar_labels(
-            ax=ax,
-            colors_map=colors_map,
-            orientation=orientation,
-        )
-
-    ### extra ###
-    if bar_numbers:
-        number_bar(
-            ax=ax,
-            orientation=orientation,
-        )
-    if grids:
-        add_grid(
-            ax=ax,
-            orientation=orientation,
-        )
-    extra_artists = None
-    if labels_extra:
-        labels_center = calculate_labels_pos_bar(
-            values=[i[0] for i in dataset_counted[labels_extra]],
-            distance=5,
-        )
-        texts = add_labels_extra(
-            ax=ax,
-            labels_center=labels_center,
-            orientation=orientation,
-            offset=15,
-        )
-        color_labels_extra(
-            ax=texts,
-            colors_map=colors_map,
-        )
-        text_clean_labels(texts)
-        extra_artists = texts
-
-    ### font ###
-    font_apply_plot(
-        ax=ax,
-        fonts=FONTS_PLOT,
-    )
-
-    ### legend ###
-    legends = []
-    if legends_config:
-        for config in legends_config:
-            if config.get("source") == "dataset":
-                labels = config.get("values", [])
-                values = [i[0] for i in dataset_counted[labels]]
-            if config.get("source") == "custom":
-                values = config.get("values", [])
-                colors_map = config.get("colors_map", {})
-
-            handles = get_legend_handles(
-                values=values,
-                colors_map=colors_map,
-            )
-            legend = legend_create(
-                ax=ax,
-                handles=handles,
-                legend_spec=config.get("legend_spec"),
-            )
-            font_apply_legend(
-                legend=legend,
-                fonts=FONTS_LEGEND,
-            )
-            text_clean_legend(legend)
-            legends.append(legend)
-
-    ### output ###
-    show_plot()
-    save_plot(
-        fig=fig,
-        name=save_name,
-        legends=legends,
-        extra_artists=extra_artists,
-    )

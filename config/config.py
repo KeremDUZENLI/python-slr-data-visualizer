@@ -80,11 +80,6 @@ COLORS = {
         "Unity": "#0000ff33",
         "Unreal Engine": "#0000ff66",
     },
-    "labels_extra": {
-        "Software Data": "#ff0000",
-        "Software Modeling": "#008000",
-        "Software Render": "#0000ff",
-    },
     "continent": {
         "Africa": "#ff0000",
         "Antarctica": "#000000",

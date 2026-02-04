@@ -1,6 +1,6 @@
-def get_colors_map(colors, color_field):
-    if color_field in colors:
-        return colors[color_field]
+def get_colors_map(colors, coloring_field):
+    if coloring_field in colors:
+        return colors[coloring_field]
 
     return {}
 

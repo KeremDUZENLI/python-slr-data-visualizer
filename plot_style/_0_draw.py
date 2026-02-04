@@ -1,7 +1,6 @@
 from helper.helper import (
     get_unique_values,
     calculate_labels_pos_pie,
-    offset_frame,
     format_labels,
 )
 import numpy as np
@@ -41,7 +40,7 @@ def draw_bar_1D(ax, x_values, y_values, labels_spec, orientation="v"):
         ax.set_ylabel(labels_spec.get("x_label", ""))
         ax.invert_yaxis()
 
-    offset_frame(ax=ax, height=y_values, orientation=orientation, offset=1)
+    _offset_frame(ax=ax, height=y_values, orientation=orientation, offset=1)
     ax.set_title(labels_spec.get("title", ""))
 
     return coloring_values
@@ -52,12 +51,12 @@ def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
     for x_value in x_values:
         x_values_list.append(str(x_value))
 
-    z_values_list = []
+    coloring_values = []
     for z_value in z_values:
-        z_values_list.append(str(z_value))
+        coloring_values.append(str(z_value))
 
     x_uniques_list = get_unique_values(x_values_list)
-    z_uniques_list = get_unique_values(z_values_list)
+    z_uniques_list = get_unique_values(coloring_values)
 
     num_groups = len(z_uniques_list)
     total_width = 0.8
@@ -70,7 +69,7 @@ def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
         index += 1
 
     if orientation == "v":
-        for x_val, y_val, z_val in zip(x_values_list, y_values, z_values_list):
+        for x_val, y_val, z_val in zip(x_values_list, y_values, coloring_values):
             x_index = x_uniques_list.index(x_val)
             z_index = z_uniques_list.index(z_val)
 
@@ -89,7 +88,7 @@ def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
         ax.set_ylabel(labels_spec.get("y_label", ""))
 
     if orientation == "h":
-        for x_val, y_val, z_val in zip(x_values_list, y_values, z_values_list):
+        for x_val, y_val, z_val in zip(x_values_list, y_values, coloring_values):
             x_index = x_uniques_list.index(x_val)
             z_index = z_uniques_list.index(z_val)
 
@@ -104,10 +103,10 @@ def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
         ax.set_ylabel(labels_spec.get("x_label", ""))
         ax.invert_yaxis()
 
-    offset_frame(ax=ax, height=y_values, orientation=orientation, offset=1)
+    _offset_frame(ax=ax, height=y_values, orientation=orientation, offset=1)
     ax.set_title(labels_spec.get("title", ""))
 
-    return z_values_list
+    return coloring_values
 
 
 def draw_stacked(
@@ -161,14 +160,14 @@ def draw_stacked(
         index += 1
 
     y_values_total = [0.0] * len(x_uniques_list)
-    coloring_values_list = []
+    coloring_values = []
 
     if orientation == "v":
         for z_value in reversed(z_uniques_list):
             row_data = z_map[z_value]
             ax.bar(positions, row_data, bottom=y_values_total, label=z_value)
             y_values_total = [b + r for b, r in zip(y_values_total, row_data)]
-            coloring_values_list.extend([z_value] * len(positions))
+            coloring_values.extend([z_value] * len(positions))
 
         ax.set_xticks(positions)
         ax.set_xticklabels(
@@ -184,7 +183,7 @@ def draw_stacked(
             row_data = z_map[z_value]
             ax.barh(positions, row_data, left=y_values_total, label=z_value)
             y_values_total = [b + r for b, r in zip(y_values_total, row_data)]
-            coloring_values_list.extend([z_value] * len(positions))
+            coloring_values.extend([z_value] * len(positions))
 
         ax.set_yticks(positions)
         ax.set_yticklabels(x_uniques_list)
@@ -198,9 +197,9 @@ def draw_stacked(
             row_data = z_map[z_value]
             stack_data.append(row_data)
             y_values_total = [b + r for b, r in zip(y_values_total, row_data)]
-            coloring_values_list.append(z_value)
+            coloring_values.append(z_value)
 
-        ax.stackplot(positions, stack_data, labels=coloring_values_list)
+        ax.stackplot(positions, stack_data, labels=coloring_values)
         ax.set_xticks(positions)
         ax.set_xticklabels(
             x_uniques_list,
@@ -211,18 +210,18 @@ def draw_stacked(
         ax.set_ylabel(labels_spec.get("y_label", ""))
         orientation = "v"
 
-    offset_frame(ax=ax, height=y_values_total, orientation=orientation, offset=1)
+    _offset_frame(ax=ax, height=y_values_total, orientation=orientation, offset=1)
     ax.set_title(labels_spec.get("title", ""))
 
-    return coloring_values_list
+    return coloring_values
 
 
 def draw_pie(ax, x_values, y_values, labels_spec):
-    x_values_list = []
+    coloring_values = []
     for x in x_values:
-        x_values_list.append(str(x))
+        coloring_values.append(str(x))
 
-    lbls = format_labels(values=x_values_list, decimal=1)
+    lbls = format_labels(values=coloring_values, decimal=1)
     pcnt = calculate_labels_pos_pie(inner_radius=0.0, outer_radius=1.0)
 
     _, _, autotexts = ax.pie(
@@ -238,7 +237,7 @@ def draw_pie(ax, x_values, y_values, labels_spec):
     ax.set_title(labels_spec.get("title", ""))
     ax.axis("equal")
 
-    return x_values_list
+    return coloring_values
 
 
 def draw_pie_nested(
@@ -496,3 +495,16 @@ def draw_prisma_nodes(dot, nodes):
 def draw_prisma_edges(dot, edges):
     for src, dst in edges:
         dot.edge(src, dst)
+
+
+def _offset_frame(ax, height, orientation, offset=1):
+    max_height = max(height)
+    change = max_height * (1 + (offset * 0.1))
+
+    if orientation == "v":
+        if max_height > 0:
+            ax.set_ylim(0, change)
+
+    if orientation == "h":
+        if max_height > 0:
+            ax.set_xlim(0, change)

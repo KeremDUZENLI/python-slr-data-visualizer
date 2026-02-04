@@ -140,19 +140,6 @@ def calculate_labels_pos_pie(inner_radius, outer_radius):
     return labels_center
 
 
-def offset_frame(ax, height, orientation, offset=1):
-    max_height = max(height)
-    change = max_height * (1 + (offset * 0.1))
-
-    if orientation == "v":
-        if max_height > 0:
-            ax.set_ylim(0, change)
-
-    if orientation == "h":
-        if max_height > 0:
-            ax.set_xlim(0, change)
-
-
 def format_labels(values, decimal=0):
     state = {"index": -1}
 

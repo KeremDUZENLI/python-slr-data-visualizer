@@ -1,20 +1,20 @@
-def text_clean_labels(texts, type="title"):
+def text_clean_labels(texts, casetype="title"):
     for text in texts:
-        text.set_text(_text_clean(text.get_text(), version=type))
+        text.set_text(_text_clean(text.get_text(), casetype=casetype))
 
 
-def text_clean_legend(legend, type="title"):
+def text_clean_legend(legend, casetype="title"):
     for text in legend.get_texts():
-        text.set_text(_text_clean(text.get_text(), version=type))
+        text.set_text(_text_clean(text.get_text(), casetype=casetype))
     return legend
 
 
-def _text_clean(name, version="title"):
+def _text_clean(name, casetype="title"):
     text = str(name).replace("_", " ").strip()
 
-    if version == "title":
+    if casetype == "title":
         return text.title()
-    if version == "upper":
+    if casetype == "upper":
         return text.upper()
-    if version == "original":
+    if casetype == "original":
         return text

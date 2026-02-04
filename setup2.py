@@ -1,0 +1,641 @@
+from config.config import (
+    COLORS,
+    FONTS_PLOT,
+    FONTS_LEGEND,
+    STYLE_PRISMA,
+)
+
+from helper.helper import (
+    add_dataset_id,
+    correct_values,
+    calculate_labels_nested,
+    calculate_sankey_flows,
+    calculate_labels_pos_bar,
+    parse_string,
+)
+
+from operation._1_filter import (
+    filter_dataset_by_fields,
+    filter_dataset_by_values,
+    filter_dataset_by_count,
+)
+from operation._2_count import (
+    count_dataset,
+    get_unique_count,
+)
+
+from output._1_print import (
+    print_dict,
+    print_counts,
+)
+from output._2_plots import (
+    draw_plot,
+    show_plot,
+    save_plot,
+    draw_plot_plotly,
+    show_plot_plotly,
+    draw_plot_graphviz,
+    show_plot_graphviz,
+    save_plot_graphviz,
+)
+
+from plot_get._1_get_labels import (
+    get_labels,
+)
+from plot_get._2_get_colors import (
+    get_colors_map,
+    map_colors_map,
+)
+from plot_get._3_get_legend import (
+    get_legend_handles,
+    get_legend_handles_bubble,
+)
+
+from plot_style._0_draw import (
+    draw_bar_1D,
+    draw_bar_2D,
+    draw_stacked,
+    draw_pie,
+    draw_pie_nested,
+    draw_heatmap,
+    draw_scatter,
+    draw_sunburst,
+    draw_sankey,
+    draw_map,
+    draw_prisma_nodes,
+    draw_prisma_edges,
+)
+from plot_style._1_number import (
+    number_bar,
+    number_area,
+    number_heatmap,
+    add_labels_extra,
+    add_grid,
+    style_prisma,
+)
+from plot_style._2_color import (
+    color_bar,
+    color_area,
+    color_pie,
+    color_heatmap,
+    color_scatter,
+    color_sunburst,
+    color_sankey_nodes,
+    color_sankey_links,
+    color_map,
+    color_bar_labels,
+    color_pie_labels,
+    color_heatmap_labels,
+    color_sunburst_labels,
+    color_sankey_labels,
+    color_map_labels,
+    color_labels_extra,
+)
+from plot_style._3_legend import (
+    legend_create,
+    legend_create_colorbar,
+    legend_create_mapbar,
+)
+from plot_style._4_font import (
+    font_apply_plot,
+    font_apply_legend,
+)
+from plot_style._5_text import (
+    text_clean_labels,
+    text_clean_legend,
+)
+
+
+def bar_1D(
+    dataset,
+    fields,
+    filter_values,
+    filter_count,
+    x_axis,
+    y_axis,
+    z_axis,
+    orientation,
+    coloring_field,
+    color_mapping=False,
+    bar_borders=False,
+    bar_numbers=True,
+    grids=True,
+    labels_extra=None,
+    labels_spec=None,
+    legends_config=None,
+    save_name="chart",
+):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=fields,
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=fields,
+    )
+
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted,
+        x_axis=x_axis,
+        y_axis=y_axis,
+        z_axis=z_axis,
+    )
+    colors_map = get_colors_map(
+        colors=COLORS,
+        coloring_field=coloring_field,
+    )
+
+    ### plot_draw
+    coloring_values = draw_bar_1D(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        labels_spec=labels_spec,
+        orientation=orientation,
+    )
+
+    if color_mapping:
+        colors_mapped = map_colors_map(
+            colors_from=x_values,
+            colors_to=z_values,
+            colors_map=colors_map,
+        )
+        color_bar(
+            ax=ax,
+            coloring_values=coloring_values,
+            colors_map=colors_mapped,
+            border=bar_borders,
+        )
+        color_bar_labels(
+            ax=ax,
+            colors_map=colors_mapped,
+            orientation=orientation,
+        )
+    else:
+        color_bar(
+            ax=ax,
+            coloring_values=coloring_values,
+            colors_map=colors_map,
+            border=bar_borders,
+        )
+        color_bar_labels(
+            ax=ax,
+            colors_map=colors_map,
+            orientation=orientation,
+        )
+
+    ### extra ###
+    if bar_numbers:
+        number_bar(
+            ax=ax,
+            orientation=orientation,
+            offset=1,
+        )
+    if grids:
+        add_grid(
+            ax=ax,
+            orientation=orientation,
+            linewidth=0.5,
+            opacity=0.5,
+        )
+    extra_artists = None
+    if labels_extra:
+        labels_center = calculate_labels_pos_bar(
+            values=[i[0] for i in dataset_counted[labels_extra]],
+            distance=5,
+        )
+        texts = add_labels_extra(
+            ax=ax,
+            labels_center=labels_center,
+            orientation=orientation,
+            offset=15,
+        )
+        color_labels_extra(
+            ax=texts,
+            colors_map=colors_map,
+        )
+        text_clean_labels(
+            texts=texts,
+            casetype="title",
+        )
+        extra_artists = texts
+
+    ### font ###
+    font_apply_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+
+    ### legend ###
+    legends = []
+    if legends_config:
+        for config in legends_config:
+            if config.get("source") == "dataset":
+                labels = config.get("values", [])
+                values = [i[0] for i in dataset_counted[labels]]
+            if config.get("source") == "custom":
+                values = config.get("values", [])
+                colors_map = config.get("colors_map", {})
+
+            handles = get_legend_handles(
+                values=values,
+                colors_map=colors_map,
+            )
+            legend = legend_create(
+                ax=ax,
+                handles=handles,
+                legend_spec=config.get("legend_spec"),
+            )
+            font_apply_legend(
+                legend=legend,
+                fonts=FONTS_LEGEND,
+            )
+            text_clean_legend(
+                legend=legend,
+                casetype=config.get("casetype"),
+            )
+            legends.append(legend)
+
+    ### output ###
+    show_plot()
+    save_plot(
+        fig=fig,
+        name=save_name,
+        legends=legends,
+        extra_artists=extra_artists,
+    )
+
+
+def bar_2D(
+    dataset,
+    fields,
+    filter_values,
+    filter_count,
+    x_axis,
+    y_axis,
+    z_axis,
+    orientation,
+    coloring_field,
+    bar_borders=False,
+    bar_numbers=True,
+    grids=True,
+    labels_spec=None,
+    legends_config=None,
+    save_name="chart",
+):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=fields,
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=fields,
+    )
+
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted,
+        x_axis=x_axis,
+        y_axis=y_axis,
+        z_axis=z_axis,
+    )
+    colors_map = get_colors_map(
+        colors=COLORS,
+        coloring_field=coloring_field,
+    )
+
+    ### plot_draw
+    coloring_values = draw_bar_2D(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        z_values=z_values,
+        labels_spec=labels_spec,
+        orientation=orientation,
+    )
+
+    color_bar(
+        ax=ax,
+        coloring_values=coloring_values,
+        colors_map=colors_map,
+        border=bar_borders,
+    )
+    color_bar_labels(
+        ax=ax,
+        colors_map=colors_map,
+        orientation=orientation,
+    )
+
+    ### extra ###
+    if bar_numbers:
+        number_bar(
+            ax=ax,
+            orientation=orientation,
+            offset=1,
+        )
+    if grids:
+        add_grid(
+            ax=ax,
+            orientation=orientation,
+            linewidth=0.5,
+            opacity=0.5,
+        )
+
+    ### font ###
+    font_apply_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+
+    ### legend ###
+    legends = []
+    if legends_config:
+        for config in legends_config:
+            if config.get("source") == "dataset":
+                labels = config.get("values", [])
+                values = [i[0] for i in dataset_counted[labels]]
+            if config.get("source") == "custom":
+                values = config.get("values", [])
+                colors_map = config.get("colors_map", {})
+
+            handles = get_legend_handles(
+                values=values,
+                colors_map=colors_map,
+            )
+            legend = legend_create(
+                ax=ax,
+                handles=handles,
+                legend_spec=config.get("legend_spec"),
+            )
+            font_apply_legend(
+                legend=legend,
+                fonts=FONTS_LEGEND,
+            )
+            text_clean_legend(
+                legend=legend,
+                casetype=config.get("casetype"),
+            )
+            legends.append(legend)
+
+    ### output ###
+    show_plot()
+    save_plot(
+        fig=fig,
+        name=save_name,
+        legends=legends,
+    )
+
+
+def stacked(
+    dataset,
+    fields,
+    filter_pre,
+    filter_values,
+    filter_count,
+    x_axis,
+    y_axis,
+    z_axis,
+    orientation,
+    stack_order,
+    coloring_field,
+    bar_borders=False,
+    bar_numbers=True,
+    grids=True,
+    labels_spec=None,
+    legends_config=None,
+    save_name="chart",
+):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=fields,
+    )
+
+    if filter_pre:
+        dataset_counted_pre = count_dataset(
+            dataset=dataset_filtered,
+            fields=filter_pre,
+        )
+
+        target_field = ""
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted_pre = filter_dataset_by_values(
+                dataset=dataset_counted_pre,
+                field=field,
+                values=values,
+                include=operation,
+            )
+            target_field = field
+
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted_pre = filter_dataset_by_count(
+            dataset=dataset_counted_pre,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+        dataset_counted = count_dataset(
+            dataset=dataset_filtered,
+            fields=fields,
+        )
+
+        valid_items = [row[0] for row in dataset_counted_pre[target_field]]
+        dataset_counted = filter_dataset_by_values(
+            dataset=dataset_counted,
+            field=target_field,
+            values=valid_items,
+            include=True,
+        )
+        print_counts(dataset_counted_pre, decimal=1)
+    else:
+        dataset_counted = count_dataset(
+            dataset=dataset_filtered,
+            fields=fields,
+        )
+
+        if filter_values:
+            for filter_value in filter_values:
+                field, values, operation = parse_string(text=filter_value)
+                dataset_counted = filter_dataset_by_values(
+                    dataset=dataset_counted,
+                    field=field,
+                    values=values,
+                    include=operation,
+                )
+
+        if filter_count:
+            field, values, operation = parse_string(text=filter_count)
+            dataset_counted = filter_dataset_by_count(
+                dataset=dataset_counted,
+                field=field,
+                value=int(values[0]),
+                operation=operation,
+            )
+
+    ### output
+    print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted,
+        x_axis=x_axis,
+        y_axis=y_axis,
+        z_axis=z_axis,
+    )
+    colors_map = get_colors_map(
+        colors=COLORS,
+        coloring_field=coloring_field,
+    )
+
+    ### plot_draw
+    coloring_values = draw_stacked(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        z_values=z_values,
+        labels_spec=labels_spec,
+        orientation=orientation,
+        stack_order=stack_order,
+    )
+
+    if orientation == "area":
+        orientation = "v"
+        color_area(
+            ax=ax,
+            coloring_values=coloring_values,
+            colors_map=colors_map,
+            border=bar_borders,
+        )
+        if bar_numbers:
+            number_area(
+                ax=ax,
+                offset=1,
+            )
+    else:
+        color_bar(
+            ax=ax,
+            coloring_values=coloring_values,
+            colors_map=colors_map,
+            border=bar_borders,
+        )
+        if bar_numbers:
+            number_bar(
+                ax=ax,
+                orientation=orientation,
+                offset=1,
+            )
+
+    color_bar_labels(
+        ax=ax,
+        colors_map=colors_map,
+        orientation=orientation,
+    )
+
+    ### extra ###
+    if grids:
+        add_grid(
+            ax=ax,
+            orientation=orientation,
+            linewidth=0.5,
+            opacity=0.5,
+        )
+
+    ### font ###
+    font_apply_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+
+    ### legend ###
+    legends = []
+    if legends_config:
+        for config in legends_config:
+            if config.get("source") == "dataset":
+                labels = config.get("values", [])
+                values = [i[0] for i in dataset_counted[labels]]
+                colors_map = get_colors_map(
+                    colors=COLORS,
+                    coloring_field=config.get("coloring_field"),
+                )
+            if config.get("source") == "custom":
+                values = config.get("values", [])
+                colors_map = config.get("colors_map", {})
+
+            handles = get_legend_handles(
+                values=stack_order if stack_order else values,
+                colors_map=colors_map,
+            )
+            legend = legend_create(
+                ax=ax,
+                handles=handles,
+                legend_spec=config.get("legend_spec"),
+            )
+            font_apply_legend(
+                legend=legend,
+                fonts=FONTS_LEGEND,
+            )
+            text_clean_legend(
+                legend=legend,
+                casetype=config.get("casetype"),
+            )
+            legends.append(legend)
+
+    ### output ###
+    show_plot()
+    save_plot(
+        fig=fig,
+        name=save_name,
+        legends=legends,
+    )
