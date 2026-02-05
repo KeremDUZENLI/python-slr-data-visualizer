@@ -1,6 +1,8 @@
 import matplotlib.colors as mcolors
 
 DEFAULT_COLOR = "#cccccc"
+BORDER_COLOR = "black"
+BORDER_WIDTH = 0.5
 
 
 def color_bar(ax, coloring_values, colors_map, border=False):
@@ -20,8 +22,8 @@ def color_bar(ax, coloring_values, colors_map, border=False):
         bar.set_facecolor(color)
 
         if border:
-            bar.set_edgecolor("black")
-            bar.set_linewidth(1)
+            bar.set_edgecolor(BORDER_COLOR)
+            bar.set_linewidth(BORDER_WIDTH)
 
         index += 1
 
@@ -43,8 +45,8 @@ def color_area(ax, coloring_values, colors_map, border=False):
         area.set_facecolor(color)
 
         if border:
-            area.set_edgecolor("black")
-            area.set_linewidth(1)
+            area.set_edgecolor(BORDER_COLOR)
+            area.set_linewidth(BORDER_WIDTH)
 
         index += 1
 
@@ -60,8 +62,8 @@ def color_pie(ax, coloring_values, colors_map, border=False):
         slice.set_facecolor(color)
 
         if border:
-            slice.set_edgecolor("black")
-            slice.set_linewidth(1)
+            slice.set_edgecolor(BORDER_COLOR)
+            slice.set_linewidth(BORDER_WIDTH)
 
 
 def color_heatmap(ax, matrix, cmap):
@@ -90,7 +92,7 @@ def color_sunburst(ax, coloring_values, colors_map, border=False):
     ax.update_traces(marker=dict(colors=colors))
 
     if border:
-        ax.update_traces(marker=dict(line=dict(color="black", width=1)))
+        ax.update_traces(marker=dict(line=dict(color=BORDER_COLOR, width=BORDER_WIDTH)))
 
 
 def color_sankey_nodes(ax, labels_list, colors_map, pad=15, thickness=20):
@@ -131,8 +133,8 @@ def color_map(ax, cmap, border=False, frame=False):
     if border == True:
         update_dict["marker"] = {
             "line": {
-                "color": "black",
-                "width": 0.5,
+                "color": BORDER_COLOR,
+                "width": BORDER_WIDTH,
             }
         }
     if border == False:

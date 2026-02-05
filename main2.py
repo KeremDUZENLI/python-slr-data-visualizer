@@ -16,6 +16,9 @@ from setup2 import (
     bar_1D,
     bar_2D,
     stacked,
+    pie,
+    pie_nested,
+    heatmap,
 )
 
 
@@ -411,4 +414,133 @@ stacked(
         },
     ],
     save_name="4.5.area",
+)
+
+
+pie(
+    dataset=DATASET,
+    fields=["study_focus"],
+    filter_values=None,
+    filter_count=None,
+    x_axis="study_focus",
+    y_axis="count",
+    coloring_field="study_focus",
+    labels_color="white",
+    bar_borders=True,
+    labels_spec={
+        "title": "Study Focus Distribution",
+    },
+    save_name="1.3",
+)
+
+
+pie_nested(
+    dataset=DATASET,
+    fields=["historical_site_type", "historical_site_type_sub"],
+    filter_values=None,
+    filter_count=None,
+    x_axis="historical_site_type",
+    y_axis="count",
+    z_axis="historical_site_type_sub",
+    coloring_field_inner="historical_site_type",
+    coloring_field_outer="historical_site_type_sub",
+    labels_color_inner="white",
+    labels_color_outer="black",
+    bar_borders=False,
+    labels_spec={
+        "title": "Historical Site Type & Sub-Type Distribution",
+    },
+    save_name="1.4",
+)
+
+
+pie_nested(
+    dataset=DATASET,
+    fields=["technique", "technique_sub"],
+    filter_values=None,
+    filter_count=None,
+    x_axis="technique",
+    y_axis="count",
+    z_axis="technique_sub",
+    coloring_field_inner="technique",
+    coloring_field_outer="technique_sub",
+    labels_color_inner="white",
+    labels_color_outer="black",
+    bar_borders=False,
+    labels_spec={
+        "title": "Technique & Sub-Technique Distribution",
+    },
+    save_name="3.2",
+)
+
+
+heatmap(
+    dataset=DATASET,
+    fields=["historical_site_type", "technique"],
+    filter_pre=None,
+    filter_values=None,
+    filter_count=None,
+    x_axis="historical_site_type",
+    y_axis="count",
+    z_axis="technique",
+    cmap="viridis",
+    labels_color="white",
+    coloring_field=None,
+    bar_numbers=True,
+    labels_extra=None,
+    labels_spec={
+        "x_label": "Historical Site Type",
+        "y_label": "Technique",
+        "title": "Historical Site Type X Technique",
+        "rotation": 45,
+    },
+    save_name="3.3",
+)
+
+
+heatmap(
+    dataset=DATASET_SOFTWARE_STACKED,
+    fields=["software_category", "software", "technique"],
+    filter_pre=["software_category", "software"],
+    filter_values=["software != "],
+    filter_count="count >= 5",
+    x_axis="software",
+    y_axis="count",
+    z_axis="technique",
+    cmap="viridis",
+    labels_color="white",
+    coloring_field="software_category",
+    bar_numbers=True,
+    labels_extra="software_category",
+    labels_spec={
+        "x_label": "",
+        "y_label": "Technique",
+        "title": "Software X Technique",
+        "rotation": 45,
+    },
+    save_name="4.2",
+)
+
+
+heatmap(
+    dataset=DATASET_SOFTWARE_STACKED,
+    fields=["software_modeling", "software_data"],
+    filter_pre=["software_category", "software"],
+    filter_values=["software != "],
+    filter_count="count >= 5",
+    x_axis="software",
+    y_axis="count",
+    z_axis="technique",
+    cmap="viridis",
+    labels_color="white",
+    coloring_field="software_category",
+    bar_numbers=True,
+    labels_extra="software_category",
+    labels_spec={
+        "x_label": "",
+        "y_label": "Technique",
+        "title": "Software X Technique",
+        "rotation": 45,
+    },
+    save_name="4.3",
 )
