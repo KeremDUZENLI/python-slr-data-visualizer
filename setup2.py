@@ -866,8 +866,10 @@ def heatmap(
     dataset,
     fields,
     filter_pre,
+    filter_pre_sep,
     filter_values,
     filter_count,
+    filter_count_sep,
     x_axis,
     y_axis,
     z_axis,
@@ -922,7 +924,60 @@ def heatmap(
             values=valid_items,
             include=True,
         )
-        print_counts(dataset_counted_pre, decimal=1)
+
+    elif filter_pre_sep:
+        dataset_counted_pre1 = count_dataset(
+            dataset=dataset_filtered,
+            fields=filter_pre_sep[0],
+        )
+        dataset_counted_pre2 = count_dataset(
+            dataset=dataset_filtered,
+            fields=filter_pre_sep[1],
+        )
+        dataset_counted = count_dataset(
+            dataset=dataset_filtered,
+            fields=fields,
+        )
+
+        if filter_values:
+            target_fields = []
+            for filter_value in filter_values:
+                field, values, operation = parse_string(text=filter_value)
+                dataset_counted = filter_dataset_by_values(
+                    dataset=dataset_counted,
+                    field=field,
+                    values=values,
+                    include=operation,
+                )
+                target_fields.append(field)
+
+        if filter_count_sep:
+            field, values1, operation = parse_string(text=filter_count_sep[0])
+            dataset_counted_pre1 = filter_dataset_by_count(
+                dataset=dataset_counted_pre1,
+                field=field,
+                value=int(values1[0]),
+                operation=operation,
+            )
+
+            field, values2, operation = parse_string(text=filter_count_sep[1])
+            dataset_counted_pre2 = filter_dataset_by_count(
+                dataset=dataset_counted_pre2,
+                field=field,
+                value=int(values2[0]),
+                operation=operation,
+            )
+
+        valid_items1 = [r[0] for r in dataset_counted_pre1[target_fields[0]]]
+        valid_items2 = [r[0] for r in dataset_counted_pre2[target_fields[1]]]
+        for field in target_fields:
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=valid_items1 + valid_items2,
+                include=True,
+            )
+
     else:
         dataset_counted = count_dataset(
             dataset=dataset_filtered,
@@ -1043,4 +1098,177 @@ def heatmap(
         name=save_name,
         legends=None,
         extra_artists=extra_artists,
+    )
+
+
+def scatter(
+    dataset,
+    fields,
+    filter_values,
+    filter_count,
+    x_axis,
+    y_axis,
+    z_axis,
+    coloring_field,
+    color_mapping=False,
+    grids=True,
+    labels_spec=None,
+    save_name="chart",
+):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=fields,
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=fields,
+    )
+
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted,
+        x_axis=x_axis,
+        y_axis=y_axis,
+        z_axis=z_axis,
+    )
+    colors_map = get_colors_map(
+        colors=COLORS,
+        coloring_field=coloring_field,
+    )
+    count_values = [min(y_values), max(y_values)]
+    marker_config = {
+        "linecolor": "white",
+        "marker": "o",
+        "facecolor": "steelblue",
+        "edgecolor": "black",
+        "edgewidth": 0,
+        "markersize": [7, 25],
+        "opacity": 0.5,
+    }
+
+    legends = []
+    if color_mapping:
+        values = [row[0] for row in dataset_counted[coloring_field]]
+        colors_mapped = map_colors_map(
+            colors_from=x_values,
+            colors_to=values,
+            colors_map=colors_map,
+        )
+        handles_extra = get_legend_handles(
+            values=values,
+            colors_map=colors_map,
+        )
+        legend_extra = legend_create(
+            ax=ax,
+            handles=handles_extra,
+            legend_spec={
+                "title": "Region",
+                "loc": "lower left",
+                "bbox": (1, 0, 0.3, 1),
+            },
+        )
+        font_apply_legend(
+            legend=legend_extra,
+            fonts=FONTS_LEGEND,
+        )
+        text_clean_legend(
+            legend=legend_extra,
+            casetype="title",
+        )
+        legends.append(legend_extra)
+
+    ### plot_draw
+    draw_scatter(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        z_values=z_values,
+        labels_spec=labels_spec,
+        count_values=count_values,
+        markersize=marker_config["markersize"],
+    )
+
+    color_scatter(
+        ax=ax,
+        config=marker_config,
+    )
+    color_bar_labels(
+        ax=ax,
+        colors_map=colors_mapped,
+        orientation="v",
+    )
+
+    ### extra ###
+    if grids:
+        add_grid(
+            ax=ax,
+            orientation="both",
+            linewidth=0.5,
+            opacity=0.5,
+        )
+
+    ### font ###
+    font_apply_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+
+    ### legend ###
+    handles = get_legend_handles_bubble(
+        values=count_values,
+        config=marker_config,
+    )
+    legend = legend_create(
+        ax=ax,
+        handles=handles,
+        legend_spec={
+            "title": "Frequency",
+            "loc": "upper left",
+            "bbox": (1, 0, 0.3, 1),
+        },
+        labelspacing=1.0,  # Vertical spacing
+        handletextpad=1.0,  # Icon--Text spacing
+        borderpad=1.0,  # Border padding
+    )
+    font_apply_legend(
+        legend=legend,
+        fonts=FONTS_LEGEND,
+    )
+    text_clean_legend(
+        legend=legend,
+        casetype="title",
+    )
+    legends.append(legend)
+
+    ### output ###
+    show_plot()
+    save_plot(
+        fig=fig,
+        name=save_name,
+        legends=legends,
+        extra_artists=None,
     )

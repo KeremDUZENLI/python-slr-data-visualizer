@@ -2227,7 +2227,8 @@ def _4_4(dataset):
 def _5_1(dataset):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
-        dataset=dataset, fields=["continent", "country", "historical_site_type"]
+        dataset=dataset,
+        fields=["continent", "country", "historical_site_type"],
     )
     dataset_counted = count_dataset(
         dataset=dataset_filtered,
