@@ -20,6 +20,10 @@ from setup2 import (
     pie_nested,
     heatmap,
     scatter,
+    sunburst,
+    sankey,
+    map,
+    prisma,
 )
 
 
@@ -579,22 +583,157 @@ DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
 # )
 
 
-scatter(
-    dataset=DATASET_COUNTRY_MAPPED,
-    fields=["continent", "country", "historical_site_type"],
-    filter_values=None,
-    filter_count=None,
-    x_axis="country",
-    y_axis="count",
-    z_axis="historical_site_type",
-    coloring_field="continent",
-    color_mapping=True,
-    grids=True,
-    labels_spec={
-        "x_label": "Country",
-        "y_label": "Historical Site Type",
-        "title": "Country X Historical Site Type",
-        "rotation": 45,
+# scatter(
+#     dataset=DATASET_COUNTRY_MAPPED,
+#     fields=["continent", "country", "historical_site_type"],
+#     filter_values=None,
+#     filter_count=None,
+#     x_axis="country",
+#     y_axis="count",
+#     z_axis="historical_site_type",
+#     coloring_field="continent",
+#     color_mapping=True,
+#     grids=True,
+#     labels_spec={
+#         "x_label": "Country",
+#         "y_label": "Historical Site Type",
+#         "title": "Country X Historical Site Type",
+#         "rotation": 45,
+#     },
+#     legends_config=[
+#         {
+#             "source": "bubble",
+#             "legend_spec": {
+#                 "title": "Frequency",
+#                 "loc": "upper left",
+#                 "bbox": (1, 0, 0.3, 1),
+#             },
+#             # "casetype": "upper",
+#         },
+#         {
+#             "source": "dataset",
+#             "values": "continent",
+#             "coloring_field": "continent",
+#             "legend_spec": {
+#                 "title": "Region",
+#                 "loc": "lower left",
+#                 "bbox": (1, 0, 0.3, 1),
+#             },
+#             "casetype": "title",
+#         },
+#     ],
+#     save_name="5.1",
+# )
+
+
+# sunburst(
+#     dataset=DATASET,
+#     fields=["historical_site_type", "historical_site_type_sub"],
+#     filter_values=None,
+#     filter_count=None,
+#     x_axis="historical_site_type",
+#     y_axis="count",
+#     z_axis="historical_site_type_sub",
+#     coloring_field_inner="historical_site_type",
+#     coloring_field_outer="historical_site_type_sub",
+#     labels_color_inner="white",
+#     labels_color_outer="black",
+#     bar_borders=False,
+#     labels_spec={
+#         "title": "Historical Site Type & Sub-Type Distribution",
+#     },
+# )
+
+
+# sankey(
+#     dataset=DATASET,
+#     fields=["study_focus", "historical_site_type", "technique"],
+#     filter_values=None,
+#     filter_count=None,
+#     x_axis="study_focus",
+#     y_axis="historical_site_type",
+#     z_axis="technique",
+#     nodes_pad=15,
+#     nodes_thickness=20,
+#     links_color="gray",
+#     links_opacity=0.25,
+#     labels_color="black",
+#     labels_spec={
+#         "title": "Workflow: Study Focus -> Site -> Technique",
+#     },
+# )
+
+
+# map(
+#     dataset=DATASET,
+#     fields=["country"],
+#     filter_values=None,
+#     filter_count=None,
+#     x_axis="country",
+#     y_axis="count",
+#     labels_color="black",
+#     cmap="YlOrRd",
+#     borders=True,
+#     frame=True,
+#     labels_spec={
+#         "title": "Geographical Distribution of Publications",
+#     },
+# )
+
+
+prisma(
+    dataset=DATASET,
+    fields=[
+        "year",
+        "country",
+        "study_focus",
+        "historical_site_type",
+        "historical_site_type_sub",
+        "device",
+    ],
+    manual_values={
+        "search": 614,
+        "duplicates": 256,
+        "screening": 358,
+        "excluded": 266,
     },
-    save_name="5.1",
+    filter_seq=[
+        {"key": "religious", "filter": "historical_site_type_sub == Religious"},
+        {"key": "hmd", "filter": "device == HMD"},
+        {"key": "final", "filter": "study_focus == Reconstruction"},
+    ],
+    labels_spec={
+        "search": "Studies identified via\nsystematic search\n(n = {search})",
+        "duplicates": "Duplicates & non-relevant records removed\n(n = {duplicates})",
+        "screening": "Studies after deduplication\n(n = {screening})",
+        "excluded": "Studies excluded (score < 4.5)\n(n = {excluded})",
+        "eligible": "Studies passing eligibility screening\n(n = {eligible})",
+        "religious": "Studies on religious buildings\n(n = {religious})",
+        "hmd": "Studies using HMD technology\n(n = {hmd})",
+        "final": "Final selected studies:\nReconstruction-focused\n(n = {final})",
+        # Notes
+        "note1": "Step 1 - Exclusions:\n• Duplicate records\n• Non-peer-reviewed\n• Book chapters",
+        "note2": "Step 2 - Screening Criteria:\n✔ Case study or prototype\n✔ Historical reconstruction\n✔ VR/AR/MR/XR integration",
+        "note3": "Step 3 - Final Filtering:\n✔ Religious buildings\n✔ HMD implementation\n✔ Reconstruction focus",
+    },
+    flow_config=[
+        ("search", "duplicates"),
+        ("duplicates", "screening"),
+        ("screening", "excluded"),
+        ("screening", "eligible"),
+        ("eligible", "religious"),
+        ("religious", "hmd"),
+        ("hmd", "final"),
+    ],
+    notes_config=[
+        ("duplicates", "note1"),
+        ("screening", "note2"),
+        ("hmd", "note3"),
+    ],
+    style_groups={
+        "box_main": ["search", "screening", "eligible", "religious", "hmd", "final"],
+        "box_excluded": ["duplicates", "excluded"],
+        "note": ["note1", "note2", "note3"],
+    },
+    save_name="0.1",
 )

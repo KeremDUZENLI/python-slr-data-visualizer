@@ -67,5 +67,9 @@ def show_plot_graphviz(dot):
 
 
 def save_plot_graphviz(dot, name):
-    output_path = f"figure/{name}"
-    dot.render(output_path, format="png", cleanup=True)
+    output_path = f"{name}"
+    dot.render(
+        output_path,
+        format="png",
+        cleanup=True,
+    )

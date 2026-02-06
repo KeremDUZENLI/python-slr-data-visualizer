@@ -2545,7 +2545,11 @@ def _3_1(dataset):
         colors=COLORS,
         coloring_field="historical_site_type",
     )
-    colors_3 = get_colors_map(values=column3, colors=COLORS, coloring_field="technique")
+    colors_3 = get_colors_map(
+        values=column3,
+        colors=COLORS,
+        coloring_field="technique",
+    )
     full_colors_map = {**colors_1, **colors_2, **colors_3}
 
     ### plot_style
@@ -2643,7 +2647,7 @@ def _5_2(dataset):
         },
     )
 
-    ### plot_style
+    ### plot_draw
     fig = draw_map(
         ax=ax,
         countries=corrected_values,
@@ -2686,7 +2690,10 @@ def _5_2(dataset):
 ################## prisma ###################
 #############################################
 def _0_1(dataset):
-    dataset_with_id = add_dataset_id(dataset=dataset, field="id")
+    dataset_with_id = add_dataset_id(
+        dataset=dataset,
+        field="id",
+    )
 
     ### operation
     dataset_filtered = filter_dataset_by_fields(

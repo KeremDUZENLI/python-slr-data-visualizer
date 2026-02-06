@@ -1113,7 +1113,173 @@ def scatter(
     color_mapping=False,
     grids=True,
     labels_spec=None,
+    legends_config=None,
     save_name="chart",
+):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=fields,
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=fields,
+    )
+
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted, field=field, values=values, include=operation
+            )
+
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_counts(dataset_counted, decimal=1)
+    fig, ax = draw_plot(8, 6)
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted,
+        x_axis=x_axis,
+        y_axis=y_axis,
+        z_axis=z_axis,
+    )
+
+    marker_config = {
+        "linecolor": "white",
+        "marker": "o",
+        "facecolor": "steelblue",
+        "edgecolor": "black",
+        "edgewidth": 0,
+        "markersize": [7, 25],
+        "opacity": 0.5,
+    }
+
+    colors_mapped = None
+    if color_mapping:
+        colors_map = get_colors_map(
+            colors=COLORS,
+            coloring_field=coloring_field,
+        )
+        values = [row[0] for row in dataset_counted[coloring_field]]
+        colors_mapped = map_colors_map(
+            colors_from=x_values,
+            colors_to=values,
+            colors_map=colors_map,
+        )
+
+    ### plot_draw
+    draw_scatter(
+        ax=ax,
+        x_values=x_values,
+        y_values=y_values,
+        z_values=z_values,
+        labels_spec=labels_spec,
+        count_values=[min(y_values), max(y_values)],
+        markersize=marker_config["markersize"],
+    )
+
+    color_scatter(
+        ax=ax,
+        config=marker_config,
+    )
+
+    ### extra ###
+    if colors_mapped:
+        color_bar_labels(
+            ax=ax,
+            colors_map=colors_mapped,
+            orientation="v",
+        )
+    if grids:
+        add_grid(
+            ax=ax,
+            orientation="both",
+            linewidth=0.5,
+            opacity=0.5,
+        )
+
+    ### font ###
+    font_apply_plot(
+        ax=ax,
+        fonts=FONTS_PLOT,
+    )
+
+    ### legend ###
+    legends = []
+    if legends_config:
+        for config in legends_config:
+            if config.get("source") == "dataset":
+                values = [row[0] for row in dataset_counted[config.get("values")]]
+                colors_map = get_colors_map(
+                    colors=COLORS,
+                    coloring_field=config.get("coloring_field"),
+                )
+                handles = get_legend_handles(
+                    values=values,
+                    colors_map=colors_map,
+                )
+                kwargs = {}
+                text_clean_legend(
+                    legend=legend,
+                    casetype=config.get("casetype"),
+                )
+            if config.get("source") == "bubble":
+                handles = get_legend_handles_bubble(
+                    values=[min(y_values), max(y_values)],
+                    config=marker_config,
+                )
+                kwargs = {
+                    "labelspacing": 1.0,
+                    "handletextpad": 1.0,
+                    "borderpad": 1.0,
+                }
+
+            legend = legend_create(
+                ax=ax,
+                handles=handles,
+                legend_spec=config.get("legend_spec"),
+                **kwargs,
+            )
+            font_apply_legend(
+                legend=legend,
+                fonts=FONTS_LEGEND,
+            )
+            legends.append(legend)
+
+    ### output ###
+    show_plot()
+    save_plot(
+        fig=fig,
+        name=save_name,
+        legends=legends,
+        extra_artists=None,
+    )
+
+
+def sunburst(
+    dataset,
+    fields,
+    filter_values,
+    filter_count,
+    x_axis,
+    y_axis,
+    z_axis,
+    coloring_field_inner,
+    coloring_field_outer,
+    labels_color_inner,
+    labels_color_outer,
+    bar_borders=False,
+    labels_spec=None,
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1146,7 +1312,7 @@ def scatter(
 
     ### output
     print_counts(dataset_counted, decimal=1)
-    fig, ax = draw_plot(8, 6)
+    ax = draw_plot_plotly()
 
     ### plot_get
     x_values, y_values, z_values = get_labels(
@@ -1155,120 +1321,385 @@ def scatter(
         y_axis=y_axis,
         z_axis=z_axis,
     )
-    colors_map = get_colors_map(
-        colors=COLORS,
-        coloring_field=coloring_field,
-    )
-    count_values = [min(y_values), max(y_values)]
-    marker_config = {
-        "linecolor": "white",
-        "marker": "o",
-        "facecolor": "steelblue",
-        "edgecolor": "black",
-        "edgewidth": 0,
-        "markersize": [7, 25],
-        "opacity": 0.5,
-    }
+    (
+        inner_labels,
+        inner_labels_count,
+        outer_labels,
+        outer_labels_count,
+        inner_outer_links,
+    ) = calculate_labels_nested(x_values, y_values, z_values)
 
-    legends = []
-    if color_mapping:
-        values = [row[0] for row in dataset_counted[coloring_field]]
-        colors_mapped = map_colors_map(
-            colors_from=x_values,
-            colors_to=values,
-            colors_map=colors_map,
-        )
-        handles_extra = get_legend_handles(
-            values=values,
-            colors_map=colors_map,
-        )
-        legend_extra = legend_create(
-            ax=ax,
-            handles=handles_extra,
-            legend_spec={
-                "title": "Region",
-                "loc": "lower left",
-                "bbox": (1, 0, 0.3, 1),
-            },
-        )
-        font_apply_legend(
-            legend=legend_extra,
-            fonts=FONTS_LEGEND,
-        )
-        text_clean_legend(
-            legend=legend_extra,
-            casetype="title",
-        )
-        legends.append(legend_extra)
+    all_labels = inner_labels + outer_labels
+    all_parents = [""] * len(inner_labels) + inner_outer_links
+    all_counts = inner_labels_count + outer_labels_count
+
+    inner_colors_map = get_colors_map(
+        colors=COLORS,
+        coloring_field=coloring_field_inner,
+    )
+    outer_colors_map = get_colors_map(
+        colors=COLORS,
+        coloring_field=coloring_field_outer,
+    )
+    full_colors_map = {**inner_colors_map, **outer_colors_map}
 
     ### plot_draw
-    draw_scatter(
+    fig = draw_sunburst(
         ax=ax,
-        x_values=x_values,
-        y_values=y_values,
-        z_values=z_values,
+        all_labels=all_labels,
+        all_parents=all_parents,
+        all_counts=all_counts,
         labels_spec=labels_spec,
-        count_values=count_values,
-        markersize=marker_config["markersize"],
     )
 
-    color_scatter(
-        ax=ax,
-        config=marker_config,
+    color_sunburst(
+        ax=fig,
+        coloring_values=all_labels,
+        colors_map=full_colors_map,
+        border=bar_borders,
     )
-    color_bar_labels(
-        ax=ax,
-        colors_map=colors_mapped,
-        orientation="v",
+    color_sunburst_labels(
+        ax=fig,
+        color=labels_color_inner,
+        target="inner",
     )
-
-    ### extra ###
-    if grids:
-        add_grid(
-            ax=ax,
-            orientation="both",
-            linewidth=0.5,
-            opacity=0.5,
-        )
+    color_sunburst_labels(
+        ax=fig,
+        color=labels_color_outer,
+        target="outer",
+    )
 
     ### font ###
     font_apply_plot(
-        ax=ax,
+        ax=fig,
         fonts=FONTS_PLOT,
     )
 
-    ### legend ###
-    handles = get_legend_handles_bubble(
-        values=count_values,
-        config=marker_config,
+    ### output
+    show_plot_plotly(fig)
+
+
+def sankey(
+    dataset,
+    fields,
+    filter_values,
+    filter_count,
+    x_axis,
+    y_axis,
+    z_axis,
+    nodes_pad,
+    nodes_thickness,
+    links_color,
+    links_opacity,
+    labels_color,
+    labels_spec=None,
+):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=fields,
     )
-    legend = legend_create(
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=fields,
+    )
+
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_counts(dataset_counted, decimal=1)
+    ax = draw_plot_plotly()
+
+    ### plot_get
+    column1 = [r[0] for r in dataset_counted[x_axis]]
+    column2 = [r[0] for r in dataset_counted[y_axis]]
+    column3 = [r[0] for r in dataset_counted[z_axis]]
+    counts = dataset_counted["count"]
+
+    (
+        labels,
+        sources,
+        targets,
+        values,
+    ) = calculate_sankey_flows(column1, column2, column3, counts)
+
+    colors_1 = get_colors_map(
+        colors=COLORS,
+        coloring_field=x_axis,
+    )
+    colors_2 = get_colors_map(
+        colors=COLORS,
+        coloring_field=y_axis,
+    )
+    colors_3 = get_colors_map(
+        colors=COLORS,
+        coloring_field=z_axis,
+    )
+    full_colors_map = {**colors_1, **colors_2, **colors_3}
+
+    ### plot_draw
+    fig = draw_sankey(
         ax=ax,
-        handles=handles,
-        legend_spec={
-            "title": "Frequency",
-            "loc": "upper left",
-            "bbox": (1, 0, 0.3, 1),
+        labels=labels,
+        sources=sources,
+        targets=targets,
+        values=values,
+        labels_spec=labels_spec,
+    )
+
+    color_sankey_nodes(
+        ax=fig,
+        labels_list=labels,
+        colors_map=full_colors_map,
+        pad=nodes_pad,
+        thickness=nodes_thickness,
+    )
+    color_sankey_links(
+        ax=fig,
+        color=links_color,
+        opacity=links_opacity,
+    )
+    color_sankey_labels(
+        ax=fig,
+        color=labels_color,
+    )
+
+    ### font ###
+    font_apply_plot(
+        ax=fig,
+        fonts=FONTS_PLOT,
+    )
+
+    ### output
+    show_plot_plotly(fig)
+
+
+def map(
+    dataset,
+    fields,
+    filter_values,
+    filter_count,
+    x_axis,
+    y_axis,
+    labels_color,
+    cmap="YlOrRd",
+    borders=True,
+    frame=True,
+    labels_spec=None,
+):
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset,
+        fields=fields,
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=fields,
+    )
+
+    if filter_values:
+        for filter_value in filter_values:
+            field, values, operation = parse_string(text=filter_value)
+            dataset_counted = filter_dataset_by_values(
+                dataset=dataset_counted,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+    if filter_count:
+        field, values, operation = parse_string(text=filter_count)
+        dataset_counted = filter_dataset_by_count(
+            dataset=dataset_counted,
+            field=field,
+            value=int(values[0]),
+            operation=operation,
+        )
+
+    ### output
+    print_counts(dataset_counted, decimal=1)
+    ax = draw_plot_plotly()
+
+    ### plot_get
+    x_values, y_values, z_values = get_labels(
+        dataset=dataset_counted,
+        x_axis=x_axis,
+        y_axis=y_axis,
+        z_axis=None,
+    )
+    corrected_values = correct_values(
+        values=x_values,
+        correction_map={
+            "Turkiye": "Turkey",
+            "USA": "United States",
+            "UK": "United Kingdom",
+            "South Korea": "Korea, South",
         },
-        labelspacing=1.0,  # Vertical spacing
-        handletextpad=1.0,  # Icon--Text spacing
-        borderpad=1.0,  # Border padding
+    )
+
+    ### plot_draw
+    fig = draw_map(
+        ax=ax,
+        countries=corrected_values,
+        counts=y_values,
+        labels_spec=labels_spec,
+    )
+
+    legend_cbar = legend_create_mapbar(
+        ax=fig,
+        title="",
+    )
+
+    color_map(
+        ax=fig,
+        cmap=cmap,
+        border=borders,
+        frame=frame,
+    )
+    color_map_labels(
+        ax=fig,
+        color=labels_color,
+    )
+
+    ### font ###
+    font_apply_plot(
+        ax=fig,
+        fonts=FONTS_PLOT,
     )
     font_apply_legend(
-        legend=legend,
+        legend=legend_cbar,
         fonts=FONTS_LEGEND,
     )
-    text_clean_legend(
-        legend=legend,
-        casetype="title",
-    )
-    legends.append(legend)
 
-    ### output ###
-    show_plot()
-    save_plot(
-        fig=fig,
-        name=save_name,
-        legends=legends,
-        extra_artists=None,
+    ### output
+    show_plot_plotly(fig)
+
+
+def prisma(
+    dataset,
+    fields,
+    filter_seq,
+    manual_values,
+    labels_spec,
+    flow_config,
+    notes_config,
+    style_groups,
+    save_name="chart",
+):
+    dataset_with_id = add_dataset_id(
+        dataset=dataset,
+        field="id",
+    )
+
+    ### operation
+    dataset_filtered = filter_dataset_by_fields(
+        dataset=dataset_with_id,
+        fields=["id"] + fields,
+    )
+    dataset_counted = count_dataset(
+        dataset=dataset_filtered,
+        fields=["id"] + fields,
+    )
+
+    n_eligible = get_unique_count(dataset=dataset_counted, field="id")
+    calculated_values = {"eligible": n_eligible}
+    dataset_running = dataset_counted
+
+    if filter_seq:
+        for step in filter_seq:
+            key = step.get("key")
+            filter_str = step.get("filter")
+
+            field, values, operation = parse_string(text=filter_str)
+            dataset_running = filter_dataset_by_values(
+                dataset=dataset_running,
+                field=field,
+                values=values,
+                include=operation,
+            )
+
+            count = get_unique_count(dataset=dataset_running, field="id")
+            calculated_values[key] = count
+
+    all_values = {**manual_values, **calculated_values}
+
+    ### output
+    for i in all_values:
+        print(f"{i}: {all_values[i]}")
+
+    ### plot_draw
+    name = save_name
+    dot = draw_plot_graphviz(
+        name=name,
+        position="TB",
+        splines="polyline",
+        nodesep="0.45",
+        ranksep="0.72",
+    )
+
+    formatted_nodes = {}
+    for key, text_template in labels_spec.items():
+        try:
+            # This replaces {search} in string with 614, etc.
+            formatted_nodes[key] = text_template.format(**all_values)
+        except KeyError:
+            # Fallback for note nodes that don't have numbers
+            formatted_nodes[key] = text_template
+
+    draw_prisma_nodes(
+        dot=dot,
+        nodes=formatted_nodes,
+    )
+
+    ### plot_style
+    if style_groups:
+        for style_key, nodes in style_groups.items():
+            if style_key in STYLE_PRISMA:
+                style_prisma(
+                    ax=dot,
+                    config=STYLE_PRISMA[style_key],
+                    nodes=nodes,
+                )
+
+    style_prisma(
+        ax=dot,
+        config=STYLE_PRISMA["edge_flow"],
+    )
+    draw_prisma_edges(
+        dot=dot,
+        edges=flow_config,
+    )
+
+    if notes_config:
+        style_prisma(
+            ax=dot,
+            config=STYLE_PRISMA["edge_note"],
+        )
+        draw_prisma_edges(
+            dot=dot,
+            edges=notes_config,
+        )
+
+    ### output
+    show_plot_graphviz(dot=dot)
+    save_plot_graphviz(
+        dot=dot,
+        name=name,
     )
