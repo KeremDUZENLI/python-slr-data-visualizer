@@ -410,7 +410,7 @@ def draw_scatter(
     ax.set_title(labels_spec.get("title", ""))
 
 
-def draw_sunburst(ax, all_labels, all_parents, all_counts, labels_spec):
+def draw_sunburst(ax, all_labels, all_parents, all_counts):
     fmt = "%{label}<br>%{percentRoot:.1%}"
 
     trace = {
@@ -426,18 +426,10 @@ def draw_sunburst(ax, all_labels, all_parents, all_counts, labels_spec):
     }
 
     ax.add_trace(trace)
-
-    ax.update_layout(
-        title=labels_spec.get("title", ""),
-        margin=dict(t=60, l=0, r=0, b=0),
-        width=500,
-        height=500,
-    )
-
     return ax
 
 
-def draw_sankey(ax, labels, sources, targets, values, labels_spec):
+def draw_sankey(ax, labels, sources, targets, values):
     trace = {
         "type": "sankey",
         "node": {
@@ -452,18 +444,10 @@ def draw_sankey(ax, labels, sources, targets, values, labels_spec):
     }
 
     ax.add_trace(trace)
-
-    ax.update_layout(
-        title=labels_spec.get("title", ""),
-        margin=dict(t=60, l=0, r=0, b=0),
-        width=500,
-        height=500,
-    )
-
     return ax
 
 
-def draw_map(ax, countries, counts, labels_spec):
+def draw_map(ax, countries, counts):
     trace = {
         "type": "choropleth",
         "locations": countries,
@@ -473,17 +457,6 @@ def draw_map(ax, countries, counts, labels_spec):
     }
 
     ax.add_trace(trace)
-
-    ax.update_layout(
-        title=labels_spec.get("title", ""),
-        margin=dict(t=60, l=0, r=0, b=0),
-        width=500,
-        height=500,
-        geo={
-            "projection": {"type": "natural earth"},
-        },
-    )
-
     return ax
 
 

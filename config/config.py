@@ -253,7 +253,7 @@ STYLE_PRISMA = {
         "fontname": "Calibri",
         ### color ###
         "fontcolor": "black",
-        "fillcolor": "#F8F8F8",
+        "fillcolor": "#FFFFFF",
         ### shape ###
         "shape": "note",
         "style": "filled",

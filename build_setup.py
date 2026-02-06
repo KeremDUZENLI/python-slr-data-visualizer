@@ -25,7 +25,6 @@ from operation._2_count import (
 )
 
 from output._1_print import (
-    print_dict,
     print_counts,
 )
 from output._2_plots import (
@@ -456,7 +455,7 @@ def stacked(
     orientation,
     stack_order,
     coloring_field,
-    bar_borders=False,
+    stack_borders=False,
     bar_numbers=True,
     grids=True,
     labels_spec=None,
@@ -565,7 +564,7 @@ def stacked(
             ax=ax,
             coloring_values=coloring_values,
             colors_map=colors_map,
-            border=bar_borders,
+            border=stack_borders,
         )
         if bar_numbers:
             number_area(
@@ -577,7 +576,7 @@ def stacked(
             ax=ax,
             coloring_values=coloring_values,
             colors_map=colors_map,
-            border=bar_borders,
+            border=stack_borders,
         )
         if bar_numbers:
             number_bar(
@@ -660,7 +659,7 @@ def pie(
     y_axis,
     coloring_field,
     labels_color,
-    bar_borders=False,
+    pie_borders=False,
     labels_spec=None,
     save_name="chart",
 ):
@@ -721,7 +720,7 @@ def pie(
         ax=ax,
         coloring_values=coloring_values,
         colors_map=colors_map,
-        border=bar_borders,
+        border=pie_borders,
     )
     color_pie_labels(
         ax=ax,
@@ -757,7 +756,7 @@ def pie_nested(
     coloring_field_outer,
     labels_color_inner,
     labels_color_outer,
-    bar_borders=False,
+    pie_borders=False,
     labels_spec=None,
     save_name="chart",
 ):
@@ -833,7 +832,7 @@ def pie_nested(
         ax=ax,
         coloring_values=coloring_values,
         colors_map=full_colors_map,
-        border=bar_borders,
+        border=pie_borders,
     )
     color_pie_labels(
         ax=ax,
@@ -876,7 +875,7 @@ def heatmap(
     cmap,
     labels_color,
     coloring_field=None,
-    bar_numbers=True,
+    matrix_numbers=True,
     labels_extra=None,
     labels_spec=None,
     save_name="chart",
@@ -1030,7 +1029,7 @@ def heatmap(
     )
 
     ### extra ###
-    if bar_numbers:
+    if matrix_numbers:
         number_heatmap(
             ax=ax,
             matrix=matrix,
@@ -1278,8 +1277,9 @@ def sunburst(
     coloring_field_outer,
     labels_color_inner,
     labels_color_outer,
-    bar_borders=False,
+    pie_borders=False,
     labels_spec=None,
+    size=(500, 500),
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1349,14 +1349,19 @@ def sunburst(
         all_labels=all_labels,
         all_parents=all_parents,
         all_counts=all_counts,
-        labels_spec=labels_spec,
+    )
+    fig.update_layout(
+        title=labels_spec.get("title", ""),
+        margin=dict(t=60, l=0, r=0, b=0),
+        width=size[0],
+        height=size[1],
     )
 
     color_sunburst(
         ax=fig,
         coloring_values=all_labels,
         colors_map=full_colors_map,
-        border=bar_borders,
+        border=pie_borders,
     )
     color_sunburst_labels(
         ax=fig,
@@ -1393,6 +1398,7 @@ def sankey(
     links_opacity,
     labels_color,
     labels_spec=None,
+    size=(500, 500),
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1461,7 +1467,12 @@ def sankey(
         sources=sources,
         targets=targets,
         values=values,
-        labels_spec=labels_spec,
+    )
+    fig.update_layout(
+        title=labels_spec.get("title", ""),
+        margin=dict(t=60, l=0, r=0, b=0),
+        width=size[0],
+        height=size[1],
     )
 
     color_sankey_nodes(
@@ -1491,7 +1502,7 @@ def sankey(
     show_plot_plotly(fig)
 
 
-def map(
+def worldmap(
     dataset,
     fields,
     filter_values,
@@ -1503,6 +1514,7 @@ def map(
     borders=True,
     frame=True,
     labels_spec=None,
+    size=(500, 500),
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1559,7 +1571,15 @@ def map(
         ax=ax,
         countries=corrected_values,
         counts=y_values,
-        labels_spec=labels_spec,
+    )
+    fig.update_layout(
+        title=labels_spec.get("title", ""),
+        margin=dict(t=60, l=0, r=0, b=0),
+        width=size[0] if size[0] else None,
+        height=size[1] if size[1] else None,
+        geo={
+            "projection": {"type": "natural earth"},
+        },
     )
 
     legend_cbar = legend_create_mapbar(
@@ -1644,7 +1664,6 @@ def prisma(
     for i in all_values:
         print(f"{i}: {all_values[i]}")
 
-    ### plot_draw
     name = save_name
     dot = draw_plot_graphviz(
         name=name,
@@ -1663,6 +1682,7 @@ def prisma(
             # Fallback for note nodes that don't have numbers
             formatted_nodes[key] = text_template
 
+    ### plot_draw
     draw_prisma_nodes(
         dot=dot,
         nodes=formatted_nodes,
