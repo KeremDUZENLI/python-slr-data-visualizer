@@ -59,24 +59,30 @@ def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
     z_uniques_list = get_unique_values(coloring_values)
 
     num_groups = len(z_uniques_list)
-    total_width = 0.8
-    single_width = total_width / num_groups
+    golden_ratio = 1.618
+    single_bar_width = 0.22
+    total_width = num_groups * single_bar_width
 
     positions = []
-    index = 0
-    for _ in x_uniques_list:
-        positions.append(index)
-        index += 1
+    for i in range(len(x_uniques_list)):
+        positions.append(i * golden_ratio)
+
+    pos_map = dict(zip(x_uniques_list, positions))
+    z_map = {val: i for i, val in enumerate(z_uniques_list)}
 
     if orientation == "v":
         for x_val, y_val, z_val in zip(x_values_list, y_values, coloring_values):
-            x_index = x_uniques_list.index(x_val)
-            z_index = z_uniques_list.index(z_val)
+            x_center = pos_map[x_val]
+            z_index = z_map[z_val]
 
-            offset = (z_index * single_width) - (total_width / 2) + (single_width / 2)
-            final_pos = x_index + offset
+            offset = (
+                (z_index * single_bar_width)
+                - (total_width / 2)
+                + (single_bar_width / 2)
+            )
+            final_pos = x_center + offset
 
-            ax.bar(final_pos, y_val, width=single_width)
+            ax.bar(final_pos, y_val, width=single_bar_width)
 
         ax.set_xticks(positions)
         ax.set_xticklabels(
@@ -89,13 +95,17 @@ def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
 
     if orientation == "h":
         for x_val, y_val, z_val in zip(x_values_list, y_values, coloring_values):
-            x_index = x_uniques_list.index(x_val)
-            z_index = z_uniques_list.index(z_val)
+            x_center = pos_map[x_val]
+            z_index = z_map[z_val]
 
-            offset = (z_index * single_width) - (total_width / 2) + (single_width / 2)
-            final_pos = x_index + offset
+            offset = (
+                (z_index * single_bar_width)
+                - (total_width / 2)
+                + (single_bar_width / 2)
+            )
+            final_pos = x_center + offset
 
-            ax.barh(final_pos, y_val, height=single_width)
+            ax.barh(final_pos, y_val, height=single_bar_width)
 
         ax.set_yticks(positions)
         ax.set_yticklabels(x_uniques_list)
@@ -123,20 +133,12 @@ def draw_stacked(
     x_uniques_list = get_unique_values(x_values_list)
     z_uniques_list = stack_order if stack_order else get_unique_values(z_values_list)
 
-    # x_map = {
-    # '2015': 0, '2016': 1, '2017': 2, '2018': 3, '2019': 4,
-    # '2020': 5, '2021': 6, '2022': 7, '2023': 8, '2024': 9}
     x_map = {}
     index_counter = 0
     for x_value in x_uniques_list:
         x_map[x_value] = index_counter
         index_counter += 1
 
-    # z_map = {
-    # 'VR': [2.0, 1.0, 9.0, 4.0, 7.0, 10.0, 7.0, 14.0, 13.0, 9.0],
-    # 'AR': [3.0, 4.0, 4.0, 2.0, 3.0, 2.0, 2.0, 4.0, 4.0, 0.0],
-    # 'MR': [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.0, 1.0, 1.0],
-    # 'XR': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0]}
     z_map = {}
     for z_value in z_uniques_list:
         zeros_list = []
