@@ -1,97 +1,3 @@
-# COLORS = {
-#     "study_focus": {
-#         "Reconstruction": "#ff0000",
-#         "Restoration": "#008000",
-#         "Visualization": "#0000ff",
-#     },
-#     "historical_site_type": {
-#         "Archaeological Site": "#ff0000",
-#         "Artistic Feature": "#008000",
-#         "Building": "#0000ff",
-#         "Natural Space": "#800000",
-#     },
-#     "historical_site_type_sub": {
-#         "LandBased": "#ff000050",
-#         "Underwater": "#ff000050",
-#         "ArchitecturalAsset": "#00800050",
-#         "Artifact": "#00800050",
-#         "Fortification": "#0000ff50",
-#         "Religious": "#0000ff50",
-#         "UrbanSpace": "#0000ff50",
-#         "Cave": "#80000050",
-#     },
-#     "platform": {
-#         "VR": "#ff0000",
-#         "AR": "#008000",
-#         "MR": "#0000ff",
-#         "XR": "#800000",
-#     },
-#     "device": {
-#         "HMD": "#ff0000",
-#         "Immersive Display": "#008000",
-#         "Mobile": "#0000ff",
-#         "PC": "#800000",
-#     },
-#     "technique": {
-#         "3D Scanning": "#ff0000",
-#         "Data Processing": "#008000",
-#         "Geospatial Techniques": "#0000ff",
-#         "Image-Based Techniques": "#800000",
-#         "Modeling & Reconstruction": "#000080",
-#     },
-#     "technique_sub": {
-#         "Laser Scanning": "#ff000050",
-#         "RGB-D Imaging": "#ff000050",
-#         "Real-Time Volumetric Capture": "#ff000050",
-#         "3D Texturing": "#00800050",
-#         "HDR Imaging": "#00800050",
-#         "Range-Based Modeling (RBM)": "#00800050",
-#         "Semantic Data Extraction": "#00800050",
-#         "Texture Mapping": "#00800050",
-#         "Beacon Localization": "#0000ff50",
-#         "Digital Elevation Models (DEM)": "#0000ff50",
-#         "Geographic Information System (GIS)": "#0000ff50",
-#         "Global Navigation Satellite System (GNSS)": "#0000ff50",
-#         "Visual-Inertial SLAM": "#0000ff50",
-#         "Image-Based Modelling (IBM)": "#80000050",
-#         "Multi-View Stereo (MVS)": "#80000050",
-#         "Photogrammetry": "#80000050",
-#         "Spherical Imaging": "#80000050",
-#         "Structure from Motion (SfM)": "#80000050",
-#         "UAV Aerial Imaging": "#80000050",
-#         "3D Modeling": "#00008050",
-#         "BIM (Building Information Modeling)": "#00008050",
-#         "HBIM (Historical Building Information Modeling)": "#00008050",
-#         "Stratigraphic Mapping": "#00008050",
-#         "Virtual Anastylosis": "#00008050",
-#     },
-#     "software_category": {
-#         "software_data": "#ff0000",
-#         "software_modeling": "#008000",
-#         "software_render": "#0000ff",
-#     },
-#     "software": {
-#         "Agisoft Metashape": "#ff000025",
-#         "Autodesk ReCap": "#ff000050",
-#         "Leica Cyclone": "#ff000075",
-#         "Autodesk 3ds Max": "#00800025",
-#         "Autodesk Revit": "#00800050",
-#         "Blender": "#00800075",
-#         "Unity": "#0000ff33",
-#         "Unreal Engine": "#0000ff66",
-#     },
-#     "continent": {
-#         "Africa": "#ff0000",
-#         "Antarctica": "#000000",
-#         "Asia": "#008000",
-#         "Europe": "#0000ff",
-#         "North America": "#800000",
-#         "South America": "#008000",
-#         "Oceania": "#000080",
-#     },
-# }
-
-
 COLORS = {
     "study_focus": {
         "Reconstruction": "#D32F2F",
@@ -100,21 +6,21 @@ COLORS = {
     },
     "historical_site_type": {
         "Archaeological Site": "#D32F2F",
-        "Artistic Feature": "#388E3C",
         "Building": "#1976D2",
+        "Artistic Feature": "#388E3C",
         "Natural Space": "#795548",
     },
     "historical_site_type_sub": {
         # --- Archaeological Site ---
         "LandBased": "#D32F2F99",
         "Underwater": "#D32F2F66",
-        # --- Artistic Feature ---
-        "ArchitecturalAsset": "#388E3C99",
-        "Artifact": "#388E3C66",
         # --- Building ---
-        "Fortification": "#1976D2CC",
-        "Religious": "#1976D299",
+        "Religious": "#1976D2CC",
+        "Fortification": "#1976D299",
         "UrbanSpace": "#1976D266",
+        # --- Artistic Feature ---
+        "Artifact": "#388E3C99",
+        "ArchitecturalAsset": "#388E3C66",
         # --- Natural Space ---
         "Cave": "#79554899",
     },
@@ -163,7 +69,7 @@ COLORS = {
         "Spherical Imaging": "#E6CF0033",
         # --- Modeling & Reconstruction ---
         "3D Modeling": "#673AB7CC",
-        "HBIM (Historical Building Information Modeling)": "#673AB7B3",
+        "HBIM": "#673AB7B3",
         "Virtual Anastylosis": "#673AB780",
         "BIM (Building Information Modeling)": "#673AB766",
         "Stratigraphic Mapping": "#673AB733",
@@ -260,7 +166,7 @@ FONTS_PLOT = {
         "stretch": "condensed",
     },
     "labels_heatmap_numbers": {
-        "size": 10,
+        "size": 8,
         "family": "sans-serif",
         "weight": "bold",
         "style": "normal",

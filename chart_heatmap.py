@@ -35,18 +35,19 @@ heatmap(
     x_axis="historical_site_type",
     y_axis="count",
     z_axis="technique",
-    cmap="viridis",
-    labels_color="white",
+    cmap="BuGn",
+    labels_color="auto",
     coloring_field=None,
+    border=False,
     matrix_numbers=True,
     labels_extra=None,
     labels_spec={
+        "title": "Historical Site Type X Technique",
         "x_label": "Historical Site Type",
         "y_label": "Technique",
-        "title": "Historical Site Type X Technique",
         "rotation": 45,
     },
-    save_name="3.3",
+    save_name="3_3_Site_Technique",
 )
 
 
@@ -61,18 +62,19 @@ heatmap(
     x_axis="software",
     y_axis="count",
     z_axis="technique",
-    cmap="viridis",
-    labels_color="white",
+    cmap="BuGn",
+    labels_color="auto",
     coloring_field="software_category",
+    border=False,
     matrix_numbers=True,
     labels_extra="software_category",
     labels_spec={
+        "title": "Software X Technique",
         "x_label": "",
         "y_label": "Technique",
-        "title": "Software X Technique",
         "rotation": 45,
     },
-    save_name="4.2",
+    save_name="4_2_Software_Technique",
 )
 
 
@@ -87,18 +89,19 @@ heatmap(
     x_axis="software_modeling",
     y_axis="count",
     z_axis="software_data",
-    cmap="viridis",
-    labels_color="white",
+    cmap="BuGn",
+    labels_color="auto",
     coloring_field="software_category",
+    border=False,
     matrix_numbers=True,
     labels_extra=None,
     labels_spec={
+        "title": "Software Modeling X Software Data",
         "x_label": "Software Modeling",
         "y_label": "Software Data",
-        "title": "Software Modeling X Software Data",
         "rotation": 45,
     },
-    save_name="4.3",
+    save_name="4_3_Software_Model_Data",
 )
 
 
@@ -113,16 +116,17 @@ heatmap(
     x_axis="software_modeling",
     y_axis="count",
     z_axis="software_render",
-    cmap="viridis",
-    labels_color="white",
+    cmap="BuGn",
+    labels_color="auto",
     coloring_field="software_category",
+    border=False,
     matrix_numbers=True,
     labels_extra=None,
     labels_spec={
+        "title": "Software Modeling X Software Render",
         "x_label": "Software Modeling",
         "y_label": "Software Render",
-        "title": "Software Modeling X Software Render",
         "rotation": 45,
     },
-    save_name="4.4",
+    save_name="4_4_Software_Model_Render",
 )

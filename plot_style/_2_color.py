@@ -66,8 +66,21 @@ def color_pie(ax, coloring_values, colors_map, border=False):
             slice.set_linewidth(BORDER_WIDTH)
 
 
-def color_heatmap(ax, matrix, cmap):
-    ax.imshow(matrix, cmap=cmap, aspect="auto")
+def color_heatmap(ax, matrix, cmap, border=False):
+    ax.imshow(
+        matrix,
+        cmap=cmap,
+        aspect="auto",
+    )
+
+    if border:
+        for spine in ax.spines.values():
+            spine.set_visible(True)
+            spine.set_color(BORDER_COLOR)
+            spine.set_linewidth(BORDER_WIDTH)
+    else:
+        for spine in ax.spines.values():
+            spine.set_visible(False)
 
 
 def color_scatter(ax, config):
@@ -174,10 +187,22 @@ def color_pie_labels(ax, color, target=None):
 
 
 def color_heatmap_labels(ax, color):
-    for text in ax.texts:
+    numeric_texts = [
+        text for text in ax.texts if text.get_gid() == "labels_heatmap_numbers"
+    ]
 
-        if text.get_gid() == "labels_heatmap_numbers":
+    if color != "auto":
+        for text in numeric_texts:
             text.set_color(color)
+        return
+
+    values = [float(t.get_text()) for t in numeric_texts]
+    threshold = max(values) * 0.5
+    for text, val in zip(numeric_texts, values):
+        if val > threshold:
+            text.set_color("white")
+        else:
+            text.set_color("black")
 
 
 def color_sunburst_labels(ax, color, target=None):

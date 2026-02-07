@@ -47,19 +47,31 @@ def correct_values(values, correction_map):
 
 
 def hide_text_keep_slice(
-    all_labels, all_counts, inner_labels_count, threshold_percent=1
+    all_labels, all_counts, inner_labels_count, labels_hide_percent=1
 ):
-    total_data_count = sum(inner_labels_count)
-    all_labels_filtered = []
-
+    formatted_texts = []
     for label, count in zip(all_labels, all_counts):
-        percent = (count / total_data_count) * 100
-        if percent < threshold_percent:
-            all_labels_filtered.append("")
+        percent = (count / sum(inner_labels_count)) * 100
+        if percent < labels_hide_percent:
+            formatted_texts.append("")
         else:
-            all_labels_filtered.append(label)
+            formatted_texts.append(label)
 
-    return all_labels_filtered
+    return formatted_texts
+
+
+def hide_text_keep_slice_fmt(
+    all_labels, all_counts, inner_labels_count, labels_hide_percent=1
+):
+    labels_display = []
+    for label, count in zip(all_labels, all_counts):
+        percent = (count / sum(inner_labels_count)) * 100
+        if percent < labels_hide_percent:
+            labels_display.append("")
+        else:
+            labels_display.append(f"<b>{label}</b><br>{percent:.1f}%")
+
+    return labels_display
 
 
 def calculate_labels_nested(x_values, y_values, z_values):
@@ -70,17 +82,24 @@ def calculate_labels_nested(x_values, y_values, z_values):
             tree[parent] = []
         tree[parent].append((child, value))
 
+    sorted_parents = sorted(
+        tree.keys(),
+        key=lambda p: sum(item[1] for item in tree[p]),
+        reverse=True,
+    )
+
     inner_labels = []
     inner_labels_count = []
     outer_labels = []
     outer_labels_count = []
     inner_outer_links = []
 
-    for parent in tree.keys():
+    for parent in sorted_parents:
         child_list = tree[parent]
-        parent_total = 0
+        sorted_children = sorted(child_list, key=lambda x: x[1], reverse=True)
 
-        for child, value in child_list:
+        parent_total = 0
+        for child, value in sorted_children:
             outer_labels.append(child)
             outer_labels_count.append(value)
             inner_outer_links.append(parent)
@@ -156,14 +175,17 @@ def calculate_labels_pos_pie(inner_radius, outer_radius):
     return labels_center
 
 
-def format_labels(values, decimal=0):
+def format_labels(values, decimal=0, threshold=1):
     state = {"index": -1}
 
     def fmt(pct):
         state["index"] += 1
         if state["index"] < len(values):
             label = values[state["index"]]
+            if pct < threshold or label == "":
+                return ""
             return f"{label}\n{pct:.{decimal}f}%"
+        return ""
 
     return fmt
 

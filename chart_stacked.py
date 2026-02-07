@@ -113,7 +113,7 @@ stacked(
     coloring_field="software",
     stack_order=None,
     stack_borders=False,
-    bar_numbers=True,
+    bar_numbers=False,
     grids=True,
     labels_spec={
         "x_label": "Year",
@@ -145,5 +145,5 @@ stacked(
             "casetype": "title",
         },
     ],
-    save_name="4.5.area",
+    save_name="4_5_Year_Software_Adoptation_Area",
 )

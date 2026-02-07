@@ -70,7 +70,7 @@ TECHNIQUE_TO_TECHNIQUESUB = {
     "Modeling & Reconstruction": [
         "3D Modeling",
         "BIM (Building Information Modeling)",
-        "HBIM (Historical Building Information Modeling)",
+        "HBIM",
         "Archaeological Data Integration",
         "Stratigraphic Mapping",
         "Virtual Anastylosis",

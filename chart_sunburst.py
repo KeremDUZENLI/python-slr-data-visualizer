@@ -25,6 +25,7 @@ sunburst(
     coloring_field_outer="historical_site_type_sub",
     labels_color_inner="white",
     labels_color_outer="black",
+    labels_hide_percent=2,
     pie_borders=False,
     labels_spec={
         "title": "",
@@ -45,6 +46,7 @@ sunburst(
     coloring_field_outer="technique_sub",
     labels_color_inner="white",
     labels_color_outer="black",
+    labels_hide_percent=2,
     pie_borders=False,
     labels_spec={
         "title": "",

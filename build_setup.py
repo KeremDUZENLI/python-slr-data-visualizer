@@ -8,6 +8,7 @@ from config.config import (
 from helper.helper import (
     add_dataset_id,
     correct_values,
+    hide_text_keep_slice_fmt,
     hide_text_keep_slice,
     calculate_labels_nested,
     calculate_sankey_flows,
@@ -759,6 +760,7 @@ def pie_nested(
     coloring_field_outer,
     labels_color_inner,
     labels_color_outer,
+    labels_hide_percent=1,
     pie_borders=False,
     labels_spec=None,
     save_name="chart",
@@ -811,6 +813,19 @@ def pie_nested(
         _,
     ) = calculate_labels_nested(x_values, y_values, z_values)
 
+    inner_labels_display = hide_text_keep_slice(
+        all_labels=inner_labels,
+        all_counts=inner_labels_count,
+        inner_labels_count=inner_labels_count,
+        labels_hide_percent=labels_hide_percent,
+    )
+    outer_labels_display = hide_text_keep_slice(
+        all_labels=outer_labels,
+        all_counts=outer_labels_count,
+        inner_labels_count=inner_labels_count,
+        labels_hide_percent=labels_hide_percent,
+    )
+
     inner_colors_map = get_colors_map(
         colors=COLORS,
         coloring_field=coloring_field_inner,
@@ -829,6 +844,9 @@ def pie_nested(
         outer_labels=outer_labels,
         outer_labels_count=outer_labels_count,
         labels_spec=labels_spec,
+        inner_labels_display=inner_labels_display,
+        outer_labels_display=outer_labels_display,
+        labels_hide_percent=labels_hide_percent,
     )
 
     color_pie(
@@ -878,6 +896,7 @@ def heatmap(
     cmap,
     labels_color,
     coloring_field=None,
+    border=False,
     matrix_numbers=True,
     labels_extra=None,
     labels_spec=None,
@@ -1075,6 +1094,7 @@ def heatmap(
         ax=ax,
         matrix=matrix,
         cmap=cmap,
+        border=border,
     )
     color_heatmap_labels(
         ax=ax,
@@ -1280,6 +1300,7 @@ def sunburst(
     coloring_field_outer,
     labels_color_inner,
     labels_color_outer,
+    labels_hide_percent=1,
     pie_borders=False,
     labels_spec=None,
     size=(500, 500),
@@ -1335,6 +1356,12 @@ def sunburst(
     all_labels = inner_labels + outer_labels
     all_parents = [""] * len(inner_labels) + inner_outer_links
     all_counts = inner_labels_count + outer_labels_count
+    labels_display = hide_text_keep_slice_fmt(
+        all_labels=all_labels,
+        all_counts=all_counts,
+        inner_labels_count=inner_labels_count,
+        labels_hide_percent=labels_hide_percent,
+    )
 
     inner_colors_map = get_colors_map(
         colors=COLORS,
@@ -1352,6 +1379,7 @@ def sunburst(
         all_labels=all_labels,
         all_parents=all_parents,
         all_counts=all_counts,
+        formatted_texts=labels_display,
     )
     fig.update_layout(
         title=labels_spec.get("title", ""),

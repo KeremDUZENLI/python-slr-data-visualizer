@@ -47,25 +47,13 @@ bar_1D(
     grids=True,
     labels_extra=None,
     labels_spec={
+        "title": "Total Studies Per Year",
         "x_label": "Year",
         "y_label": "Number of Studies",
-        "title": "Studies Per Year",
         "rotation": 45,
     },
-    legends_config=[
-        {
-            "source": "dataset",
-            "values": "year",
-            "coloring_field": "year",
-            "legend_spec": {
-                "title": "Year",
-                "loc": "upper left",
-                "bbox": (1, 0, 0.3, 1),
-            },
-            "casetype": "title",
-        },
-    ],
-    save_name="1.0",
+    legends_config=None,
+    save_name="1_0_Total_Studies_Per_Year",
 )
 
 
@@ -85,40 +73,13 @@ bar_1D(
     grids=True,
     labels_extra="software_category",
     labels_spec={
+        "title": "Software Usage by Category",
         "x_label": "",
         "y_label": "Number of Studies",
-        "title": "Studies Per Year",
         "rotation": 45,
     },
-    legends_config=[
-        {
-            "source": "dataset",
-            "values": "software_category",
-            "coloring_field": "software_category",
-            "legend_spec": {
-                "title": "Software Category",
-                "loc": "upper left",
-                "bbox": (1, 0, 0.3, 1),
-            },
-            "casetype": "title",
-        },
-        {
-            "source": "custom",
-            "values": ["Custom A", "Custom B", "Custom C"],
-            "colors_map": {
-                "Custom A": "#ff0000",
-                "Custom B": "#008000",
-                "Custom C": "#0000ff",
-            },
-            "legend_spec": {
-                "title": "Custom Legend",
-                "loc": "lower left",
-                "bbox": (1, 0, 0.3, 1),
-            },
-            "casetype": "upper",
-        },
-    ],
-    save_name="4.1",
+    legends_config=None,
+    save_name="4_1_Software_Category",
 )
 
 
@@ -138,9 +99,9 @@ bar_1D(
     grids=True,
     labels_extra=None,
     labels_spec={
+        "title": "Studies Per Continent",
         "x_label": "Continents",
         "y_label": "Number of Studies",
-        "title": "Studies Per Year",
         "rotation": 45,
     },
     legends_config=[
@@ -156,5 +117,5 @@ bar_1D(
             "casetype": "title",
         },
     ],
-    save_name="5.0",
+    save_name="5_0_Continent_Studies",
 )

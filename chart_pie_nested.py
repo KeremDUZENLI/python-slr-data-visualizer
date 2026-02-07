@@ -25,9 +25,31 @@ pie_nested(
     coloring_field_outer="historical_site_type_sub",
     labels_color_inner="white",
     labels_color_outer="black",
+    labels_hide_percent=2,
     pie_borders=False,
     labels_spec={
         "title": "Historical Site Type & Sub-Type Distribution",
     },
     save_name="1_4_HistoricalSiteType",
+)
+
+
+pie_nested(
+    dataset=DATASET_TECHNIQUE_HIERARCHY,
+    fields=["technique", "technique_sub"],
+    filter_values=None,
+    filter_count=None,
+    x_axis="technique",
+    y_axis="count",
+    z_axis="technique_sub",
+    coloring_field_inner="technique",
+    coloring_field_outer="technique_sub",
+    labels_color_inner="white",
+    labels_color_outer="black",
+    labels_hide_percent=2,
+    pie_borders=False,
+    labels_spec={
+        "title": "Technique & Sub-Technique Distribution",
+    },
+    save_name="3_2_Technique_TechniqueSub",
 )

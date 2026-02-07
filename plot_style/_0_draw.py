@@ -6,7 +6,13 @@ from helper.helper import (
 import numpy as np
 
 
-def draw_bar_1D(ax, x_values, y_values, labels_spec, orientation="v"):
+def draw_bar_1D(
+    ax,
+    x_values,
+    y_values,
+    labels_spec,
+    orientation="v",
+):
     coloring_values = []
     for x_value in x_values:
         coloring_values.append(str(x_value))
@@ -47,7 +53,13 @@ def draw_bar_1D(ax, x_values, y_values, labels_spec, orientation="v"):
 
 
 def draw_bar_2D(
-    ax, x_values, y_values, z_values, labels_spec, orientation="v", stack_order=None
+    ax,
+    x_values,
+    y_values,
+    z_values,
+    labels_spec,
+    orientation="v",
+    stack_order=None,
 ):
     x_values_list = []
     for x_value in x_values:
@@ -122,7 +134,13 @@ def draw_bar_2D(
 
 
 def draw_stacked(
-    ax, x_values, y_values, z_values, labels_spec, orientation="v", stack_order=None
+    ax,
+    x_values,
+    y_values,
+    z_values,
+    labels_spec,
+    orientation="v",
+    stack_order=None,
 ):
     x_values_list = []
     for x_value in x_values:
@@ -220,7 +238,12 @@ def draw_stacked(
     return coloring_values
 
 
-def draw_pie(ax, x_values, y_values, labels_spec):
+def draw_pie(
+    ax,
+    x_values,
+    y_values,
+    labels_spec,
+):
     coloring_values = []
     for x in x_values:
         coloring_values.append(str(x))
@@ -245,7 +268,12 @@ def draw_pie(ax, x_values, y_values, labels_spec):
 
 
 def draw_pie_nested(
-    ax, inner_labels, inner_labels_count, outer_labels, outer_labels_count, labels_spec
+    ax,
+    inner_labels,
+    inner_labels_count,
+    outer_labels,
+    outer_labels_count,
+    labels_spec,
 ):
     inner_labels_list = []
     for i in inner_labels:
@@ -287,7 +315,62 @@ def draw_pie_nested(
     return inner_labels_list + outer_labels_list
 
 
-def draw_heatmap(ax, x_values, y_values, z_values, labels_spec):
+def draw_pie_nested(
+    ax,
+    inner_labels,
+    inner_labels_count,
+    outer_labels,
+    outer_labels_count,
+    labels_spec,
+    inner_labels_display,
+    outer_labels_display,
+    labels_hide_percent,
+):
+    lbls_inner = format_labels(
+        values=inner_labels_display, decimal=1, threshold=labels_hide_percent
+    )
+    pcnt_inner = calculate_labels_pos_pie(inner_radius=0.0, outer_radius=0.5)
+
+    lbls_outer = format_labels(
+        values=outer_labels_display, decimal=1, threshold=labels_hide_percent
+    )
+    pcnt_outer = calculate_labels_pos_pie(inner_radius=0.5, outer_radius=1.0)
+
+    _, _, autotexts_inner = ax.pie(
+        x=inner_labels_count,
+        autopct=lbls_inner,
+        startangle=0,
+        radius=0.5,
+        pctdistance=pcnt_inner,
+        wedgeprops=dict(width=0.5, edgecolor="w"),
+    )
+    for text in autotexts_inner:
+        text.set_gid("pie_label_inner")
+
+    _, _, autotexts_outer = ax.pie(
+        x=outer_labels_count,
+        autopct=lbls_outer,
+        startangle=0,
+        radius=1.0,
+        pctdistance=pcnt_outer,
+        wedgeprops=dict(width=0.5, edgecolor="w"),
+    )
+    for text in autotexts_outer:
+        text.set_gid("pie_label_outer")
+
+    ax.set_title(labels_spec.get("title", ""))
+    ax.axis("equal")
+
+    return [str(i) for i in inner_labels] + [str(o) for o in outer_labels]
+
+
+def draw_heatmap(
+    ax,
+    x_values,
+    y_values,
+    z_values,
+    labels_spec,
+):
     x_values_list = []
     for x_value in x_values:
         x_values_list.append(str(x_value))
@@ -340,7 +423,13 @@ def draw_heatmap(ax, x_values, y_values, z_values, labels_spec):
 
 
 def draw_scatter(
-    ax, x_values, y_values, z_values, labels_spec, count_values, markersize
+    ax,
+    x_values,
+    y_values,
+    z_values,
+    labels_spec,
+    count_values,
+    markersize,
 ):
     x_values_list = []
     for x_value in x_values:
@@ -414,18 +503,24 @@ def draw_scatter(
     ax.set_title(labels_spec.get("title", ""))
 
 
-def draw_sunburst(ax, all_labels, all_parents, all_counts):
-    fmt = "%{label}<br>%{percentRoot:.1%}"
-
+def draw_sunburst(
+    ax,
+    all_labels,
+    all_parents,
+    all_counts,
+    formatted_texts,
+):
     trace = {
         "type": "sunburst",
         "labels": all_labels,
         "parents": all_parents,
         "values": all_counts,
         "branchvalues": "total",
+        "sort": False,
         "maxdepth": 2,
-        "texttemplate": fmt,
+        "text": formatted_texts,
         "textinfo": "text",
+        "texttemplate": "%{text}",
         "insidetextorientation": "auto",
     }
 
@@ -433,7 +528,13 @@ def draw_sunburst(ax, all_labels, all_parents, all_counts):
     return ax
 
 
-def draw_sankey(ax, labels, sources, targets, values):
+def draw_sankey(
+    ax,
+    labels,
+    sources,
+    targets,
+    values,
+):
     trace = {
         "type": "sankey",
         "node": {
@@ -451,7 +552,11 @@ def draw_sankey(ax, labels, sources, targets, values):
     return ax
 
 
-def draw_map(ax, countries, counts):
+def draw_map(
+    ax,
+    countries,
+    counts,
+):
     trace = {
         "type": "choropleth",
         "locations": countries,
@@ -464,12 +569,18 @@ def draw_map(ax, countries, counts):
     return ax
 
 
-def draw_prisma_nodes(dot, nodes):
+def draw_prisma_nodes(
+    dot,
+    nodes,
+):
     for node_id, label_text in nodes.items():
         dot.node(node_id, label_text)
 
 
-def draw_prisma_edges(dot, edges):
+def draw_prisma_edges(
+    dot,
+    edges,
+):
     for src, dst in edges:
         dot.edge(src, dst)
 

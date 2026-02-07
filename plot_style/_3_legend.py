@@ -17,7 +17,8 @@ def legend_create(ax, handles, legend_spec, **kwargs):
 
 def legend_create_colorbar(ax, title=""):
     im = ax.images[0]
-    ax.figure.colorbar(im, ax=ax, label=title)
+    cbar = ax.figure.colorbar(im, ax=ax, label=title)
+    cbar.outline.set_visible(False)
 
 
 def legend_create_mapbar(ax, title=""):

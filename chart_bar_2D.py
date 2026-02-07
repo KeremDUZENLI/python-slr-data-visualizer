@@ -189,5 +189,5 @@ bar_2D(
             "casetype": "title",
         },
     ],
-    save_name="3.4",
+    save_name="3_4_Technique_StudyFocus",
 )
