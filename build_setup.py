@@ -8,6 +8,7 @@ from config.config import (
 from helper.helper import (
     add_dataset_id,
     correct_values,
+    hide_text_keep_slice,
     calculate_labels_nested,
     calculate_sankey_flows,
     calculate_labels_pos_bar,
@@ -304,6 +305,7 @@ def bar_2D(
     z_axis,
     orientation,
     coloring_field,
+    stack_order=None,
     bar_borders=False,
     bar_numbers=True,
     grids=True,
@@ -364,6 +366,7 @@ def bar_2D(
         z_values=z_values,
         labels_spec=labels_spec,
         orientation=orientation,
+        stack_order=stack_order,
     )
 
     color_bar(
@@ -415,7 +418,7 @@ def bar_2D(
                 colors_map = config.get("colors_map", {})
 
             handles = get_legend_handles(
-                values=values,
+                values=stack_order if stack_order else values,
                 colors_map=colors_map,
             )
             legend = legend_create(
@@ -453,8 +456,8 @@ def stacked(
     y_axis,
     z_axis,
     orientation,
-    stack_order,
     coloring_field,
+    stack_order=None,
     stack_borders=False,
     bar_numbers=True,
     grids=True,
@@ -1469,11 +1472,26 @@ def sankey(
         values=values,
     )
     fig.update_layout(
-        title=labels_spec.get("title", ""),
-        margin=dict(t=60, l=0, r=0, b=0),
+        margin=dict(t=70, l=10, r=10, b=10),
         width=size[0],
         height=size[1],
     )
+
+    titles = ["title1", "title2", "title3"]
+    x_positions = [0.0, 0.5, 1.0]
+    anchors = ["left", "center", "right"]
+    for t_key, x_p, anchor in zip(titles, x_positions, anchors):
+        if labels_spec.get(t_key):
+            fig.add_annotation(
+                x=x_p,
+                y=1.10,
+                text=labels_spec[t_key],
+                showarrow=False,
+                xref="paper",
+                yref="paper",
+                xanchor=anchor,
+                name="sankey_header",
+            )
 
     color_sankey_nodes(
         ax=fig,

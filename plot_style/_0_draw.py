@@ -46,7 +46,9 @@ def draw_bar_1D(ax, x_values, y_values, labels_spec, orientation="v"):
     return coloring_values
 
 
-def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
+def draw_bar_2D(
+    ax, x_values, y_values, z_values, labels_spec, orientation="v", stack_order=None
+):
     x_values_list = []
     for x_value in x_values:
         x_values_list.append(str(x_value))
@@ -56,7 +58,7 @@ def draw_bar_2D(ax, x_values, y_values, z_values, labels_spec, orientation="v"):
         coloring_values.append(str(z_value))
 
     x_uniques_list = get_unique_values(x_values_list)
-    z_uniques_list = get_unique_values(coloring_values)
+    z_uniques_list = stack_order if stack_order else get_unique_values(coloring_values)
 
     num_groups = len(z_uniques_list)
     golden_ratio = 1.618
@@ -260,7 +262,7 @@ def draw_pie_nested(
     _, _, autotexts_inner = ax.pie(
         x=inner_labels_count,
         autopct=lbls_inner,
-        startangle=90,
+        startangle=0,
         radius=0.5,
         pctdistance=pcnt_inner,
         wedgeprops=dict(width=0.5, edgecolor="w"),
@@ -271,7 +273,7 @@ def draw_pie_nested(
     _, _, autotexts_outer = ax.pie(
         x=outer_labels_count,
         autopct=lbls_outer,
-        startangle=90,
+        startangle=0,
         radius=1.0,
         pctdistance=pcnt_outer,
         wedgeprops=dict(width=0.5, edgecolor="w"),

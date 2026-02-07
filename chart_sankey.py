@@ -15,11 +15,13 @@ sankey(
     z_axis="technique",
     nodes_pad=15,
     nodes_thickness=20,
-    links_color="gray",
-    links_opacity=0.25,
+    links_color="source",
+    links_opacity=0.1,
     labels_color="black",
     labels_spec={
-        "title": "Workflow: Study Focus -> Site -> Technique",
+        "title1": "STUDY FOCUS",
+        "title2": "HISTORICAL SITE TYPE",
+        "title3": "TECHNIQUE",
     },
-    size=(1000, 1000),
+    size=(1000, 750),
 )

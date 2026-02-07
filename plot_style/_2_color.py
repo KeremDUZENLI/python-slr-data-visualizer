@@ -207,8 +207,12 @@ def color_sunburst_labels(ax, color, target=None):
 def color_sankey_labels(ax, color):
     for trace in ax.data:
         trace.update(textfont=dict(color=color))
-
     ax.update_layout(title_font=dict(color=color))
+
+    if hasattr(ax.layout, "annotations") and ax.layout.annotations:
+        for annot in ax.layout.annotations:
+            if getattr(annot, "name", "") == "sankey_header":
+                annot.font.update(color=color)
 
 
 def color_map_labels(ax, color):

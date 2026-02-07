@@ -34,10 +34,10 @@ stacked(
     y_axis="count",
     z_axis="platform",
     orientation="area",
-    stack_order=["VR", "AR", "MR", "XR"],
     coloring_field="platform",
+    stack_order=["XR", "MR", "AR", "VR"],
     stack_borders=False,
-    bar_numbers=True,
+    bar_numbers=False,
     grids=True,
     labels_spec={
         "x_label": "Year",
@@ -58,7 +58,7 @@ stacked(
             "casetype": "upper",
         },
     ],
-    save_name="2.3.area",
+    save_name="2_3_Platforms_Adoptation_Area",
 )
 
 
@@ -72,10 +72,10 @@ stacked(
     y_axis="count",
     z_axis="platform",
     orientation="v",
-    stack_order=["VR", "AR", "MR", "XR"],
     coloring_field="platform",
+    stack_order=["XR", "MR", "AR", "VR"],
     stack_borders=False,
-    bar_numbers=True,
+    bar_numbers=False,
     grids=True,
     labels_spec={
         "x_label": "Year",
@@ -96,7 +96,7 @@ stacked(
             "casetype": "upper",
         },
     ],
-    save_name="2.3.bar",
+    save_name="2_3_Platforms_Adoptation",
 )
 
 
@@ -110,8 +110,8 @@ stacked(
     y_axis="count",
     z_axis="software",
     orientation="area",
-    stack_order=None,
     coloring_field="software",
+    stack_order=None,
     stack_borders=False,
     bar_numbers=True,
     grids=True,

@@ -16,6 +16,22 @@ def font_apply_plot(ax, fonts):
                     _font_apply_sunburst(trace, fonts)
                 if trace.type == "sankey":
                     _font_apply_sankey(trace, fonts)
+
+        if hasattr(ax.layout, "annotations") and ax.layout.annotations:
+            for annot in ax.layout.annotations:
+                if annot.name == "sankey_header":
+                    header_config = fonts.get("sankey_header")
+                    if "family" in header_config:
+                        annot.font.family = header_config["family"]
+                    if "size" in header_config:
+                        annot.font.size = header_config["size"]
+                    fmt = annot.text
+                    if header_config.get("weight") == "bold":
+                        fmt = f"<b>{fmt}</b>"
+                    if header_config.get("style") == "italic":
+                        fmt = f"<i>{fmt}</i>"
+                    annot.text = fmt
+
         return
 
     _font_apply_to_text(ax.title, fonts.get("title"))

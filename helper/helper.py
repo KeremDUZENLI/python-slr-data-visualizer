@@ -46,6 +46,22 @@ def correct_values(values, correction_map):
     return corrected_values
 
 
+def hide_text_keep_slice(
+    all_labels, all_counts, inner_labels_count, threshold_percent=1
+):
+    total_data_count = sum(inner_labels_count)
+    all_labels_filtered = []
+
+    for label, count in zip(all_labels, all_counts):
+        percent = (count / total_data_count) * 100
+        if percent < threshold_percent:
+            all_labels_filtered.append("")
+        else:
+            all_labels_filtered.append(label)
+
+    return all_labels_filtered
+
+
 def calculate_labels_nested(x_values, y_values, z_values):
     tree = {}
 

@@ -18,5 +18,5 @@ pie(
     labels_spec={
         "title": "Study Focus Distribution",
     },
-    save_name="1.3",
+    save_name="1_3_StudyFocus",
 )
