@@ -26,9 +26,11 @@ def legend_create_mapbar(ax, title=""):
         colorbar=dict(
             title=title,
             thickness=15,
-            len=0.5,
+            len=0.9,
             x=1.02,
             y=0.5,
+            ypad=0,
+            ticks="outside",
         )
     )
 

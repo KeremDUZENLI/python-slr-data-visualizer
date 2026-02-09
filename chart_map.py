@@ -17,7 +17,7 @@ worldmap(
     borders=True,
     frame=True,
     labels_spec={
-        "title": "Geographical Distribution of Publications",
+        "title": "Geographical Distribution of Studies",
     },
-    size=(1000, 1000),
+    size=(1000, 500),
 )

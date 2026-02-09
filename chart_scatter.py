@@ -38,7 +38,6 @@ scatter(
                 "loc": "upper left",
                 "bbox": (1, 0, 0.3, 1),
             },
-            # "casetype": "upper",
         },
         {
             "source": "dataset",
@@ -52,5 +51,5 @@ scatter(
             "casetype": "title",
         },
     ],
-    save_name="5.1",
+    save_name="5_1_Country_Site",
 )

@@ -1382,7 +1382,12 @@ def sunburst(
         formatted_texts=labels_display,
     )
     fig.update_layout(
-        title=labels_spec.get("title", ""),
+        title={
+            "text": labels_spec.get("title", ""),
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+        },
         margin=dict(t=60, l=0, r=0, b=0),
         width=size[0],
         height=size[1],
@@ -1619,7 +1624,12 @@ def worldmap(
         counts=y_values,
     )
     fig.update_layout(
-        title=labels_spec.get("title", ""),
+        title={
+            "text": labels_spec.get("title", ""),
+            "x": 0.5,
+            "xanchor": "center",
+            "yanchor": "top",
+        },
         margin=dict(t=60, l=0, r=0, b=0),
         width=size[0] if size[0] else None,
         height=size[1] if size[1] else None,
