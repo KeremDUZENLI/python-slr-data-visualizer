@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Tuple
+
 from config.config import (
     COLORS,
     FONTS_PLOT,
@@ -108,23 +110,23 @@ from plot_style._5_text import (
 
 
 def bar_1D(
-    dataset,
-    fields,
-    filter_values,
-    filter_count,
-    x_axis,
-    y_axis,
-    z_axis,
-    orientation,
-    coloring_field,
-    color_mapping=False,
-    bar_borders=False,
-    bar_numbers=True,
-    grids=True,
-    labels_extra=None,
-    labels_spec=None,
-    legends_config=None,
-    save_name="chart",
+    dataset: Dict,
+    fields: List[str],
+    filter_values: Optional[List[str]],
+    filter_count: Optional[str],
+    x_axis: str,
+    y_axis: str,
+    z_axis: Optional[str],
+    orientation: str,
+    coloring_field: str,
+    color_mapping: bool = False,
+    bar_borders: bool = False,
+    bar_numbers: bool = True,
+    grids: bool = True,
+    labels_extra: Optional[str] = None,
+    labels_spec: Optional[Dict[str, Any]] = None,
+    legends_config: Optional[List[Dict[str, Any]]] = None,
+    save_name: str = "chart",
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -297,22 +299,22 @@ def bar_1D(
 
 
 def bar_2D(
-    dataset,
-    fields,
-    filter_values,
-    filter_count,
-    x_axis,
-    y_axis,
-    z_axis,
-    orientation,
-    coloring_field,
-    stack_order=None,
-    bar_borders=False,
-    bar_numbers=True,
-    grids=True,
-    labels_spec=None,
-    legends_config=None,
-    save_name="chart",
+    dataset: Dict,
+    fields: List[str],
+    filter_values: Optional[List[str]],
+    filter_count: Optional[str],
+    x_axis: str,
+    y_axis: str,
+    z_axis: str,
+    orientation: str,
+    coloring_field: str,
+    stack_order: Optional[List[str]] = None,
+    bar_borders: bool = False,
+    bar_numbers: bool = True,
+    grids: bool = True,
+    labels_spec: Optional[Dict[str, Any]] = None,
+    legends_config: Optional[List[Dict[str, Any]]] = None,
+    save_name: str = "chart",
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -448,23 +450,23 @@ def bar_2D(
 
 
 def stacked(
-    dataset,
-    fields,
-    filter_pre,
-    filter_values,
-    filter_count,
-    x_axis,
-    y_axis,
-    z_axis,
-    orientation,
-    coloring_field,
-    stack_order=None,
-    stack_borders=False,
-    bar_numbers=True,
-    grids=True,
-    labels_spec=None,
-    legends_config=None,
-    save_name="chart",
+    dataset: Dict,
+    fields: List[str],
+    filter_pre: Optional[List[str]],
+    filter_values: Optional[List[str]],
+    filter_count: Optional[str],
+    x_axis: str,
+    y_axis: str,
+    z_axis: str,
+    orientation: str,
+    coloring_field: str,
+    stack_order: Optional[List[str]] = None,
+    stack_borders: bool = False,
+    bar_numbers: bool = True,
+    grids: bool = True,
+    labels_spec: Optional[Dict[str, Any]] = None,
+    legends_config: Optional[List[Dict[str, Any]]] = None,
+    save_name: str = "chart",
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -655,17 +657,17 @@ def stacked(
 
 
 def pie(
-    dataset,
-    fields,
-    filter_values,
-    filter_count,
-    x_axis,
-    y_axis,
-    coloring_field,
-    labels_color,
-    pie_borders=False,
-    labels_spec=None,
-    save_name="chart",
+    dataset: Dict,
+    fields: List[str],
+    filter_values: Optional[List[str]],
+    filter_count: Optional[str],
+    x_axis: str,
+    y_axis: str,
+    coloring_field: str,
+    labels_color: str,
+    pie_borders: bool = False,
+    labels_spec: Optional[Dict[str, Any]] = None,
+    save_name: str = "chart",
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -749,21 +751,21 @@ def pie(
 
 
 def pie_nested(
-    dataset,
-    fields,
-    filter_values,
-    filter_count,
-    x_axis,
-    y_axis,
-    z_axis,
-    coloring_field_inner,
-    coloring_field_outer,
-    labels_color_inner,
-    labels_color_outer,
-    labels_hide_percent=1,
-    pie_borders=False,
-    labels_spec=None,
-    save_name="chart",
+    dataset: Dict,
+    fields: List[str],
+    filter_values: Optional[List[str]],
+    filter_count: Optional[str],
+    x_axis: str,
+    y_axis: str,
+    z_axis: str,
+    coloring_field_inner: str,
+    coloring_field_outer: str,
+    labels_color_inner: str,
+    labels_color_outer: str,
+    labels_hide_percent: int = 1,
+    pie_borders: bool = False,
+    labels_spec: Optional[Dict[str, Any]] = None,
+    save_name: str = "chart",
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -883,24 +885,24 @@ def pie_nested(
 
 
 def heatmap(
-    dataset,
-    fields,
-    filter_pre,
-    filter_pre_sep,
-    filter_values,
-    filter_count,
-    filter_count_sep,
-    x_axis,
-    y_axis,
-    z_axis,
-    cmap,
-    labels_color,
-    coloring_field=None,
-    border=False,
-    matrix_numbers=True,
-    labels_extra=None,
-    labels_spec=None,
-    save_name="chart",
+    dataset: Dict,
+    fields: List[str],
+    filter_pre: Optional[List[str]],
+    filter_pre_sep: Optional[List[str]],
+    filter_values: Optional[List[str]],
+    filter_count: Optional[str],
+    filter_count_sep: Optional[List[str]],
+    x_axis: str,
+    y_axis: str,
+    z_axis: str,
+    cmap: str,
+    labels_color: str,
+    coloring_field: Optional[str] = None,
+    border: bool = False,
+    matrix_numbers: bool = True,
+    labels_extra: Optional[Dict[str, Any]] = None,
+    labels_spec: Optional[Dict[str, Any]] = None,
+    save_name: str = "chart",
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1124,19 +1126,19 @@ def heatmap(
 
 
 def scatter(
-    dataset,
-    fields,
-    filter_values,
-    filter_count,
-    x_axis,
-    y_axis,
-    z_axis,
-    coloring_field,
-    color_mapping=False,
-    grids=True,
-    labels_spec=None,
-    legends_config=None,
-    save_name="chart",
+    dataset: Dict,
+    fields: List[str],
+    filter_values: Optional[List[str]],
+    filter_count: Optional[str],
+    x_axis: str,
+    y_axis: str,
+    z_axis: str,
+    coloring_field: str,
+    color_mapping: bool = False,
+    grids: bool = True,
+    labels_spec: Optional[Dict[str, Any]] = None,
+    legends_config: Optional[List[Dict[str, Any]]] = None,
+    save_name: str = "chart",
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1289,21 +1291,21 @@ def scatter(
 
 
 def sunburst(
-    dataset,
-    fields,
-    filter_values,
-    filter_count,
-    x_axis,
-    y_axis,
-    z_axis,
-    coloring_field_inner,
-    coloring_field_outer,
-    labels_color_inner,
-    labels_color_outer,
-    labels_hide_percent=1,
-    pie_borders=False,
-    labels_spec=None,
-    size=(500, 500),
+    dataset: Dict,
+    fields: List[str],
+    filter_values: Optional[List[str]],
+    filter_count: Optional[str],
+    x_axis: str,
+    y_axis: str,
+    z_axis: str,
+    coloring_field_inner: str,
+    coloring_field_outer: str,
+    labels_color_inner: str,
+    labels_color_outer: str,
+    labels_hide_percent: int = 1,
+    pie_borders: bool = False,
+    labels_spec: Optional[Dict[str, Any]] = None,
+    size: Tuple[int, int] = (500, 500),
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1421,20 +1423,20 @@ def sunburst(
 
 
 def sankey(
-    dataset,
-    fields,
-    filter_values,
-    filter_count,
-    x_axis,
-    y_axis,
-    z_axis,
-    nodes_pad,
-    nodes_thickness,
-    links_color,
-    links_opacity,
-    labels_color,
-    labels_spec=None,
-    size=(500, 500),
+    dataset: Dict,
+    fields: List[str],
+    filter_values: Optional[List[str]],
+    filter_count: Optional[str],
+    x_axis: str,
+    y_axis: str,
+    z_axis: str,
+    nodes_pad: int,
+    nodes_thickness: int,
+    links_color: str,
+    links_opacity: float,
+    labels_color: str,
+    labels_spec: Optional[Dict[str, Any]] = None,
+    size: Tuple[int, int] = (500, 500),
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1554,18 +1556,18 @@ def sankey(
 
 
 def worldmap(
-    dataset,
-    fields,
-    filter_values,
-    filter_count,
-    x_axis,
-    y_axis,
-    labels_color,
-    cmap="YlOrRd",
-    borders=True,
-    frame=True,
-    labels_spec=None,
-    size=(500, 500),
+    dataset: Dict,
+    fields: List[str],
+    filter_values: Optional[List[str]],
+    filter_count: Optional[str],
+    x_axis: str,
+    y_axis: str,
+    labels_color: str,
+    cmap: str = "YlOrRd",
+    borders: bool = True,
+    frame: bool = True,
+    labels_spec: Optional[Dict[str, Any]] = None,
+    size: Tuple[int, int] = (500, 500),
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1669,15 +1671,15 @@ def worldmap(
 
 
 def prisma(
-    dataset,
-    fields,
-    filter_seq,
-    manual_values,
-    labels_spec,
-    flow_config,
-    notes_config,
-    style_groups,
-    save_name="chart",
+    dataset: Dict,
+    fields: List[str],
+    filter_seq: Optional[List[Dict[str, Any]]],
+    manual_values: Dict[str, int],
+    labels_spec: Dict[str, str],
+    flow_config: List[Dict[str, Any]],
+    notes_config: Optional[List[Dict[str, Any]]],
+    style_groups: Optional[Dict[str, List[str]]],
+    save_name: str = "chart",
 ):
     dataset_with_id = add_dataset_id(
         dataset=dataset,

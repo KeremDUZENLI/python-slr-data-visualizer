@@ -1,4 +1,4 @@
-from data.maps import TECHNIQUE_TO_TECHNIQUESUB
+from config.maps import TECHNIQUE_TO_TECHNIQUESUB
 from input._1_read import read_dataset
 from input._2_prepare import map_dataset_hierarchy
 from build_setup import sunburst

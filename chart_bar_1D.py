@@ -1,4 +1,4 @@
-from data.maps import COUNTRY_TO_CONTINENT
+from config.maps import COUNTRY_TO_CONTINENT
 from input._1_read import read_dataset
 from input._2_prepare import group_dataset_by_fields, map_dataset_column
 from build_setup import bar_1D
