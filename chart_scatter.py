@@ -1,16 +1,5 @@
-from config.maps import COUNTRY_TO_CONTINENT
-from input._1_read import read_dataset
-from input._2_prepare import map_dataset_column
-from build_setup import scatter
-
-
-DATASET = read_dataset(csv_path="data/dataset.csv")
-DATASET_COUNTRY_MAPPED = map_dataset_column(
-    dataset=DATASET,
-    field_from="country",
-    field_to="continent",
-    mapping=COUNTRY_TO_CONTINENT,
-)
+from setup.setup_datasets import DATASET_COUNTRY_MAPPED
+from setup.setup_functions import scatter
 
 
 scatter(

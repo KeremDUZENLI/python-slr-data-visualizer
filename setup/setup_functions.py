@@ -289,13 +289,14 @@ def bar_1D(
             legends.append(legend)
 
     ### output ###
-    show_plot()
-    save_plot(
-        fig=fig,
-        name=save_name,
-        legends=legends,
-        extra_artists=extra_artists,
-    )
+    # show_plot()
+    # save_plot(
+    #     fig=fig,
+    #     name=save_name,
+    #     legends=legends,
+    #     extra_artists=extra_artists,
+    # )
+    return fig
 
 
 def bar_2D(

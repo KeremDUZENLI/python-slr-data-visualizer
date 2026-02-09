@@ -1,16 +1,5 @@
-from config.maps import TECHNIQUE_TO_TECHNIQUESUB
-from input._1_read import read_dataset
-from input._2_prepare import map_dataset_hierarchy
-from build_setup import sunburst
-
-
-DATASET = read_dataset(csv_path="data/dataset.csv")
-DATASET_TECHNIQUE_HIERARCHY = map_dataset_hierarchy(
-    dataset=DATASET,
-    field_parent="technique",
-    field_child="technique_sub",
-    mapping=TECHNIQUE_TO_TECHNIQUESUB,
-)
+from setup.setup_datasets import DATASET, DATASET_TECHNIQUE_HIERARCHY
+from setup.setup_functions import sunburst
 
 
 sunburst(

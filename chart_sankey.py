@@ -1,8 +1,5 @@
-from input._1_read import read_dataset
-from build_setup import sankey
-
-
-DATASET = read_dataset(csv_path="data/dataset.csv")
+from setup.setup_datasets import DATASET
+from setup.setup_functions import sankey
 
 
 sankey(

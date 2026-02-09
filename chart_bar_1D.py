@@ -1,34 +1,9 @@
-from config.maps import COUNTRY_TO_CONTINENT
-from input._1_read import read_dataset
-from input._2_prepare import group_dataset_by_fields, map_dataset_column
-from build_setup import bar_1D
-
-
-DATASET = read_dataset(csv_path="data/dataset.csv")
-DATASET_SOFTWARE_STACKED = group_dataset_by_fields(
-    datasets=[
-        (
-            DATASET,
-            {"software": "software_data", "year": "year", "technique": "technique"},
-        ),
-        (
-            DATASET,
-            {"software": "software_modeling", "year": "year", "technique": "technique"},
-        ),
-        (
-            DATASET,
-            {"software": "software_render", "year": "year", "technique": "technique"},
-        ),
-    ],
-    stack_by={"software_category": "software"},
-    axes=["software_category", "software", "year", "technique"],
+from setup.setup_datasets import (
+    DATASET,
+    DATASET_SOFTWARE_STACKED,
+    DATASET_COUNTRY_MAPPED,
 )
-DATASET_COUNTRY_MAPPED = map_dataset_column(
-    dataset=DATASET,
-    field_from="country",
-    field_to="continent",
-    mapping=COUNTRY_TO_CONTINENT,
-)
+from setup.setup_functions import bar_1D
 
 
 bar_1D(
