@@ -126,7 +126,7 @@ def bar_1D(
     labels_extra: Optional[str] = None,
     labels_spec: Optional[Dict[str, Any]] = None,
     legends_config: Optional[List[Dict[str, Any]]] = None,
-    save_name: str = "chart",
+    save_name: Optional[str] = None,
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -289,14 +289,16 @@ def bar_1D(
             legends.append(legend)
 
     ### output ###
-    # show_plot()
-    # save_plot(
-    #     fig=fig,
-    #     name=save_name,
-    #     legends=legends,
-    #     extra_artists=extra_artists,
-    # )
-    return fig
+    if save_name:
+        show_plot()
+        save_plot(
+            fig=fig,
+            name=save_name,
+            legends=legends,
+            extra_artists=extra_artists,
+        )
+    else:
+        return fig
 
 
 def bar_2D(
@@ -315,7 +317,7 @@ def bar_2D(
     grids: bool = True,
     labels_spec: Optional[Dict[str, Any]] = None,
     legends_config: Optional[List[Dict[str, Any]]] = None,
-    save_name: str = "chart",
+    save_name: Optional[str] = None,
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -441,13 +443,16 @@ def bar_2D(
             legends.append(legend)
 
     ### output ###
-    show_plot()
-    save_plot(
-        fig=fig,
-        name=save_name,
-        legends=legends,
-        extra_artists=None,
-    )
+    if save_name:
+        show_plot()
+        save_plot(
+            fig=fig,
+            name=save_name,
+            legends=legends,
+            extra_artists=None,
+        )
+    else:
+        return fig
 
 
 def stacked(
@@ -467,7 +472,7 @@ def stacked(
     grids: bool = True,
     labels_spec: Optional[Dict[str, Any]] = None,
     legends_config: Optional[List[Dict[str, Any]]] = None,
-    save_name: str = "chart",
+    save_name: Optional[str] = None,
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -648,13 +653,16 @@ def stacked(
             legends.append(legend)
 
     ### output ###
-    show_plot()
-    save_plot(
-        fig=fig,
-        name=save_name,
-        legends=legends,
-        extra_artists=None,
-    )
+    if save_name:
+        show_plot()
+        save_plot(
+            fig=fig,
+            name=save_name,
+            legends=legends,
+            extra_artists=None,
+        )
+    else:
+        return fig
 
 
 def pie(
@@ -668,7 +676,7 @@ def pie(
     labels_color: str,
     pie_borders: bool = False,
     labels_spec: Optional[Dict[str, Any]] = None,
-    save_name: str = "chart",
+    save_name: Optional[str] = None,
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -742,13 +750,16 @@ def pie(
     )
 
     ### output ###
-    show_plot()
-    save_plot(
-        fig=fig,
-        name=save_name,
-        legends=None,
-        extra_artists=None,
-    )
+    if save_name:
+        show_plot()
+        save_plot(
+            fig=fig,
+            name=save_name,
+            legends=None,
+            extra_artists=None,
+        )
+    else:
+        return fig
 
 
 def pie_nested(
@@ -766,7 +777,7 @@ def pie_nested(
     labels_hide_percent: int = 1,
     pie_borders: bool = False,
     labels_spec: Optional[Dict[str, Any]] = None,
-    save_name: str = "chart",
+    save_name: Optional[str] = None,
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -876,13 +887,16 @@ def pie_nested(
     )
 
     ### output ###
-    show_plot()
-    save_plot(
-        fig=fig,
-        name=save_name,
-        legends=None,
-        extra_artists=None,
-    )
+    if save_name:
+        show_plot()
+        save_plot(
+            fig=fig,
+            name=save_name,
+            legends=None,
+            extra_artists=None,
+        )
+    else:
+        return fig
 
 
 def heatmap(
@@ -903,7 +917,7 @@ def heatmap(
     matrix_numbers: bool = True,
     labels_extra: Optional[Dict[str, Any]] = None,
     labels_spec: Optional[Dict[str, Any]] = None,
-    save_name: str = "chart",
+    save_name: Optional[str] = None,
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1117,13 +1131,16 @@ def heatmap(
     )
 
     ### output ###
-    show_plot()
-    save_plot(
-        fig=fig,
-        name=save_name,
-        legends=None,
-        extra_artists=extra_artists,
-    )
+    if save_name:
+        show_plot()
+        save_plot(
+            fig=fig,
+            name=save_name,
+            legends=None,
+            extra_artists=extra_artists,
+        )
+    else:
+        return fig
 
 
 def scatter(
@@ -1139,7 +1156,7 @@ def scatter(
     grids: bool = True,
     labels_spec: Optional[Dict[str, Any]] = None,
     legends_config: Optional[List[Dict[str, Any]]] = None,
-    save_name: str = "chart",
+    save_name: Optional[str] = None,
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1282,13 +1299,16 @@ def scatter(
             legends.append(legend)
 
     ### output ###
-    show_plot()
-    save_plot(
-        fig=fig,
-        name=save_name,
-        legends=legends,
-        extra_artists=None,
-    )
+    if save_name:
+        show_plot()
+        save_plot(
+            fig=fig,
+            name=save_name,
+            legends=legends,
+            extra_artists=None,
+        )
+    else:
+        return fig
 
 
 def sunburst(
@@ -1680,7 +1700,7 @@ def prisma(
     flow_config: List[Dict[str, Any]],
     notes_config: Optional[List[Dict[str, Any]]],
     style_groups: Optional[Dict[str, List[str]]],
-    save_name: str = "chart",
+    save_name: Optional[str] = None,
 ):
     dataset_with_id = add_dataset_id(
         dataset=dataset,
@@ -1777,8 +1797,11 @@ def prisma(
         )
 
     ### output
-    show_plot_graphviz(dot=dot)
-    save_plot_graphviz(
-        dot=dot,
-        name=name,
-    )
+    if save_name:
+        show_plot_graphviz(dot=dot)
+        save_plot_graphviz(
+            dot=dot,
+            name=name,
+        )
+    else:
+        return dot

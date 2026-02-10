@@ -29,14 +29,14 @@ def map_dataset_column(dataset, field_from, field_to, mapping):
     if field_to not in all_fields:
         all_fields.append(field_to)
 
-    dataset_mapped = create_empty_dataset(all_fields)
+    dataset_mapped_by_col = create_empty_dataset(all_fields)
 
     for key in dataset:
         if key == field_to:
             continue
 
         for value in dataset[key]:
-            dataset_mapped[key].append(value)
+            dataset_mapped_by_col[key].append(value)
 
     if field_from in dataset:
         for row in dataset[field_from]:
@@ -44,13 +44,13 @@ def map_dataset_column(dataset, field_from, field_to, mapping):
             for value in row:
                 mapped_row.append(mapping.get(value, value))
 
-            dataset_mapped[field_to].append(mapped_row)
+            dataset_mapped_by_col[field_to].append(mapped_row)
 
-    return dataset_mapped
+    return dataset_mapped_by_col
 
 
 def map_dataset_hierarchy(dataset, field_parent, field_child, mapping):
-    dataset_mapped = create_empty_dataset([field_parent, field_child])
+    dataset_mapped_by_hier = create_empty_dataset([field_parent, field_child])
     rows = get_num_rows(dataset)
 
     for i in range(rows):
@@ -68,7 +68,7 @@ def map_dataset_hierarchy(dataset, field_parent, field_child, mapping):
             # for every child token in the row, if it is allowed, append pair
             for child in children:
                 if child in allowed_children:
-                    dataset_mapped[field_parent].append([parent])
-                    dataset_mapped[field_child].append([child])
+                    dataset_mapped_by_hier[field_parent].append([parent])
+                    dataset_mapped_by_hier[field_child].append([child])
 
-    return dataset_mapped
+    return dataset_mapped_by_hier
