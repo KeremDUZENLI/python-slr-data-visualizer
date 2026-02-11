@@ -21,10 +21,10 @@ st.sidebar.divider()
 
 if step == "1. Data Preparation":
     st.title("🛠️ Step 1: Data Preparation")
-    c1, c2 = st.columns([0.7, 0.3])
-    with c1:
+    e1, e2 = st.columns([0.7, 0.3])
+    with e1:
         upload_file = st.file_uploader("Upload csv", type="csv")
-    with c2:
+    with e2:
         st.write("")
         st.write("")
         st.write("")
@@ -73,14 +73,14 @@ if step == "1. Data Preparation":
         )
 
         with tab_group:
-            c1, c2 = st.columns(2)
+            e1, e2 = st.columns(2)
 
-            field_name_new = c1.text_input("Field Name New", "software")
-            category_name = c1.text_input("Category Name", "software_category")
-            fields_to_combine = c2.multiselect(
+            field_name_new = e1.text_input("Field Name New", "software")
+            category_name = e1.text_input("Category Name", "software_category")
+            fields_to_combine = e2.multiselect(
                 f"Fields to combine into '{field_name_new}'", options=fields_all
             )
-            fields_other = c2.multiselect("Fields to insert", options=fields_all)
+            fields_other = e2.multiselect("Fields to insert", options=fields_all)
 
             save_name_group = st.text_input(
                 label="Save As",
@@ -106,11 +106,11 @@ if step == "1. Data Preparation":
                 st.dataframe(result, use_container_width=True)
 
         with tab_map:
-            c1, c2 = st.columns(2)
+            e1, e2 = st.columns(2)
 
-            field_from = c1.selectbox("Field From", fields_all)
-            field_to = c2.text_input("Field To", "continent")
-            map_mode = c1.selectbox("Mapping", ["COUNTRY_TO_CONTINENT", "Custom"])
+            field_from = e1.selectbox("Field From", fields_all)
+            field_to = e2.text_input("Field To", "continent")
+            map_mode = e1.selectbox("Mapping", ["COUNTRY_TO_CONTINENT", "Custom"])
 
             mapping = {}
             if map_mode == "COUNTRY_TO_CONTINENT":
@@ -149,10 +149,10 @@ if step == "1. Data Preparation":
                     st.dataframe(result, use_container_width=True)
 
         with tab_hier:
-            c1, c2 = st.columns(2)
-            field_parent = c1.selectbox("Parent Field", fields_all)
-            field_child = c2.selectbox("Child Field", fields_all)
-            hier_mode = c1.selectbox("Mapping", ["TECHNIQUE_TO_TECHNIQUESUB", "Custom"])
+            e1, e2 = st.columns(2)
+            field_parent = e1.selectbox("Parent Field", fields_all)
+            field_child = e2.selectbox("Child Field", fields_all)
+            hier_mode = e1.selectbox("Mapping", ["TECHNIQUE_TO_TECHNIQUESUB", "Custom"])
 
             mapping = {}
             if hier_mode == "TECHNIQUE_TO_TECHNIQUESUB":
@@ -204,29 +204,73 @@ if step == "2. Chart Creation":
         st.divider()
 
         fields = st.multiselect("Fields", options=fields_available)
-        filter_values = st.text_area(
-            "Filter Values (e.g., software != ' ')", height=100
+
+        st.write("🝖 Filter Values (e.g., software != ' ')")
+        if "filter_values_num" not in st.session_state:
+            st.session_state["filter_values_num"] = 1
+
+        filter_values = []
+        for i in range(st.session_state["filter_values_num"]):
+            a1, a2, a3 = st.columns(3)
+
+            f_v_field = a1.selectbox(
+                f"Field {i+1}", options=fields_available, key=f"field_{i}"
+            )
+            f_v_values = a3.text_input(f"Value", key=f"values_{i}")
+            f_v_operation = a2.selectbox(
+                f"Operation",
+                options=["==", "!=", ">=", ">", "<=", "<", "="],
+                key=f"operation_{i}",
+            )
+
+            if f_v_values:
+                filter_values.append(f"{f_v_field} {f_v_operation} {f_v_values}")
+
+        aa1, aa2, _, _ = st.columns([1, 1, 2, 2])
+        if aa1.button("➕ Add"):
+            st.session_state["filter_values_num"] += 1
+            st.rerun()
+        if aa2.button("➖ Remove") and st.session_state["filter_values_num"] > 1:
+            st.session_state["filter_values_num"] -= 1
+            st.rerun()
+
+        apply_filter_values = st.checkbox(
+            "**Apply Filter Values**", value=False, key="apply_filter_values"
         )
-        filter_count = st.text_area("Filter Count (e.g., count >= 5)", height=100)
-        a1, a2, a3 = st.columns(3)
-        x_axis = a1.selectbox("X-axis", options=fields_available)
-        y_axis = a2.selectbox("Y-axis", options=["count"])
-        z_axis = a3.selectbox("Z-axis (Optional)", options=[None] + fields_available)
-        b1, b2 = st.columns(2)
-        orientation = b1.selectbox("Orientation", options=["v", "h"])
-        coloring_field = b2.selectbox("Coloring Field", options=fields_available)
-        c1, c2, c3, c4 = st.columns(4)
-        color_mapping = c1.checkbox("Color Mapping", value=False)
-        bar_borders = c2.checkbox("Bar Borders", value=False)
-        bar_numbers = c3.checkbox("Bar Numbers", value=True)
-        grids = c4.checkbox("Grids", value=True)
+
+        st.write("🝖 Filter Count (e.g., count >= 5)")
+        b1, b2, b3 = st.columns(3)
+        f_c_field = b1.selectbox("Field", options=["count"])
+        f_c_value = b3.number_input("Value", min_value=0, value=0, step=1)
+        f_c_operation = b2.selectbox(
+            "Operation", options=["==", "!=", ">=", ">", "<=", "<", "="]
+        )
+        filter_count = f"{f_c_field} {f_c_operation} {f_c_value}"
+        apply_filter_count = st.checkbox(
+            "**Apply Filter Count**", value=False, key="apply_filter_count"
+        )
+
+        c1, c2, c3 = st.columns(3)
+        x_axis = c1.selectbox("X-axis", options=fields_available)
+        y_axis = c2.selectbox("Y-axis", options=["count"])
+        z_axis = c3.selectbox("Z-axis (Optional)", options=[None] + fields_available)
+
+        d1, d2 = st.columns(2)
+        orientation = d1.selectbox("Orientation", options=["v", "h"])
+        coloring_field = d2.selectbox("Coloring Field", options=fields_available)
+
+        e1, e2, e3, e4 = st.columns(4)
+        color_mapping = e1.checkbox("Color Mapping", value=False)
+        bar_borders = e2.checkbox("Bar Borders", value=False)
+        bar_numbers = e3.checkbox("Bar Numbers", value=True)
+        grids = e4.checkbox("Grids", value=True)
 
         if st.button("Generate Chart"):
             fig = bar_1D(
                 dataset=dataset_selected,
                 fields=[fields],
-                filter_values=filter_values,
-                filter_count=filter_count,
+                filter_values=filter_values if apply_filter_values else None,
+                filter_count=filter_count if apply_filter_count else None,
                 x_axis=fields,
                 y_axis="count",
                 z_axis=None,
