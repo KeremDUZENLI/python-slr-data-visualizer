@@ -1,6 +1,10 @@
-import ast, json, io, os
+import ast
+import json
+import io
+import os
 import streamlit as st
 
+# --- Local Imports ---
 from config.maps import COUNTRY_TO_CONTINENT, TECHNIQUE_TO_TECHNIQUESUB
 from input._1_read import read_dataset
 from input._2_prepare import (
@@ -10,17 +14,25 @@ from input._2_prepare import (
 )
 from setup.setup_functions import bar_1D
 
+# --- Page Config ---
 st.set_page_config(layout="wide", page_title="Data Visualizer")
 
+# --- Session State Init ---
 if "data_versions" not in st.session_state:
     st.session_state["data_versions"] = {}
 
+# --- Navigation ---
 st.sidebar.title("Navigator")
 step = st.sidebar.radio("Go to Step:", ["1. Data Preparation", "2. Chart Creation"])
 st.sidebar.divider()
 
+# ==============================================================================
+# STEP 1: DATA PREPARATION
+# ==============================================================================
 if step == "1. Data Preparation":
     st.title("🛠️ Step 1: Data Preparation")
+
+    # 1. Upload / Load Section
     e1, e2 = st.columns([0.7, 0.3])
     with e1:
         upload_file = st.file_uploader("Upload csv", type="csv")
@@ -54,6 +66,7 @@ if step == "1. Data Preparation":
         else:
             st.error(f"❌ Not Loaded: {file_name}")
 
+    # 2. Manipulation Workbench
     if st.session_state["data_versions"]:
         st.divider()
         st.subheader("Data Manipulation")
@@ -72,9 +85,9 @@ if step == "1. Data Preparation":
             ]
         )
 
+        # --- Tab: Grouping ---
         with tab_group:
             e1, e2 = st.columns(2)
-
             field_name_new = e1.text_input("Field Name New", "software")
             category_name = e1.text_input("Category Name", "software_category")
             fields_to_combine = e2.multiselect(
@@ -106,9 +119,9 @@ if step == "1. Data Preparation":
                 st.dataframe(result, use_container_width=True)
                 st.rerun()
 
+        # --- Tab: Mapping ---
         with tab_map:
             e1, e2 = st.columns(2)
-
             field_from = e1.selectbox("Field From", fields_all)
             field_to = e2.text_input("Field To", "continent")
             map_mode = e1.selectbox("Mapping", ["COUNTRY_TO_CONTINENT", "Custom"])
@@ -150,6 +163,7 @@ if step == "1. Data Preparation":
                     st.dataframe(result, use_container_width=True)
                     st.rerun()
 
+        # --- Tab: Hierarchy ---
         with tab_hier:
             e1, e2 = st.columns(2)
             field_parent = e1.selectbox("Parent Field", fields_all)
@@ -191,12 +205,16 @@ if step == "1. Data Preparation":
                     st.dataframe(result, use_container_width=True)
                     st.rerun()
 
+# ==============================================================================
+# STEP 2: CHART CREATION
+# ==============================================================================
 if step == "2. Chart Creation":
     st.title("📊 Step 2: Chart Creation")
 
     if not st.session_state["data_versions"]:
         st.warning("⚠️ No data available. Please go to Data Preparation")
     else:
+        # 1. Dataset Selection
         dataset = st.sidebar.selectbox(
             "Select Dataset", options=list(st.session_state["data_versions"].keys())
         )
@@ -206,25 +224,30 @@ if step == "2. Chart Creation":
         st.subheader(f"Dataset: {dataset}")
         st.divider()
 
+        # 2. Fields Selection
         st.write("**Fields**")
         fields = st.multiselect("Select Fields", options=fields_available)
         st.divider()
 
+        # 3. Filter Values (Dynamic Loop)
         st.write("**Filter Values**")
         if "filter_values_num" not in st.session_state:
             st.session_state["filter_values_num"] = 1
+
         filter_values = []
         for i in range(st.session_state["filter_values_num"]):
             a1, a2, a3 = st.columns(3)
-
+            # Use 'fields' (selected above) for options
             f_v_field = a1.selectbox(f"Field {i+1}", options=fields, key=f"field_{i}")
-            f_v_values = a3.text_input(f"Value", value=" ", key=f"values_{i}")
             f_v_operation = a2.selectbox(
                 f"Operation",
                 options=["==", "!=", ">=", ">", "<=", "<", "="],
                 key=f"operation_{i}",
             )
-            if f_v_values:
+            # Default value is a space string
+            f_v_values = a3.text_input(f"Value", value=" ", key=f"values_{i}")
+
+            if f_v_values and f_v_values.strip():
                 filter_values.append(f"{f_v_field} {f_v_operation} {f_v_values}")
 
         aa1, aa2, _, _ = st.columns([1, 1, 2, 2])
@@ -234,24 +257,28 @@ if step == "2. Chart Creation":
         if aa2.button("➖ Remove") and st.session_state["filter_values_num"] > 1:
             st.session_state["filter_values_num"] -= 1
             st.rerun()
+
         apply_filter_values = st.checkbox(
             "Apply Filter Values", value=False, key="apply_filter_values"
         )
         st.divider()
 
+        # 4. Filter Count
         st.write("**Filter Count**")
         b1, b2, b3 = st.columns(3)
         f_c_field = b1.selectbox("Field", options=["count"])
-        f_c_value = b3.number_input("Value", min_value=0, value=0, step=1)
         f_c_operation = b2.selectbox(
             "Operation", options=["==", "!=", ">=", ">", "<=", "<", "="]
         )
+        f_c_value = b3.number_input("Value", min_value=0, value=0, step=1)
+
         filter_count = f"{f_c_field} {f_c_operation} {f_c_value}"
         apply_filter_count = st.checkbox(
             "Apply Filter Count", value=False, key="apply_filter_count"
         )
         st.divider()
 
+        # 5. Axes Selection
         st.write("**Axes**")
         c1, c2, c3 = st.columns(3)
         x_axis = c1.selectbox("X-axis", options=fields)
@@ -259,12 +286,14 @@ if step == "2. Chart Creation":
         z_axis = c3.selectbox("Z-axis (Optional)", options=[None] + fields)
         st.divider()
 
+        # 6. Other Options
         st.write("**Other Options**")
         d1, d2 = st.columns(2)
         orientation = d1.selectbox("Orientation", options=["v", "h"])
         coloring_field = d2.selectbox("Coloring Field", options=fields)
         st.divider()
 
+        # 7. Graph Options
         st.write("**Graph Options**")
         e1, e2, e3, e4 = st.columns(4)
         color_mapping = e1.checkbox("Color Mapping", value=False)
@@ -273,89 +302,92 @@ if step == "2. Chart Creation":
         grids = e4.checkbox("Grids", value=True)
         st.divider()
 
-        st.write("**Extras**")
-        f1, _, _ = st.columns(3)
-        labels_extra = f1.selectbox(f"Labels Extra", options=[None] + fields)
-        st.divider()
+        # 8. Appearance (Labels & Legend) - GENERIC IMPLEMENTATION
+        st.write("**Appearance**")
 
-        st.write("**Labels**")
-        with st.expander("Chart Labels", expanded=False):
-            g1, g2, g3, g4 = st.columns(4)
-            title = g1.text_input("Chart Title")
-            xlabel = g2.text_input("X-axis Label")
-            ylabel = g3.text_input("Y-axis Label")
-            rotation = g4.number_input(
-                "Label Rotation", min_value=0, max_value=360, value=45, step=5
-            )
+        # Labels Configuration
+        with st.expander("📝 Labels & Titles", expanded=False):
+            l1, l2 = st.columns(2)
+            l_title = l1.text_input("Chart Title", value=f"Count by {x_axis}")
+            l_rot = l2.number_input("X Label Rotation", value=45, step=5)
+
+            l3, l4, l5 = st.columns(3)
+            l_xlabel = l3.text_input("X-Axis Label", value=x_axis)
+            l_ylabel = l4.text_input("Y-Axis Label", value="Number of Studies")
+            labels_extra = l5.selectbox("Extra Labels Field", options=[None] + fields)
+
+            # Construct the Generic labels_spec dictionary
             labels_spec = {
-                "title": title,
-                "x_label": xlabel,
-                "y_label": ylabel,
-                "rotation": rotation,
+                "title": l_title,
+                "x_label": l_xlabel,
+                "y_label": l_ylabel,
+                "rotation": l_rot,
             }
+
+        # Legends Configuration
+        legends_config = None
+        with st.expander("De Legend Configuration", expanded=False):
+            show_legend = st.checkbox("Show Legend", value=True)
+
+            if show_legend:
+                lg1, lg2 = st.columns(2)
+                # Defaults to the coloring field or x-axis
+                leg_source = coloring_field if coloring_field else x_axis
+                leg_title = lg1.text_input("Legend Title", value=leg_source)
+                leg_loc = lg2.selectbox(
+                    "Location",
+                    ["best", "upper left", "upper right", "lower left", "lower right"],
+                    index=0,
+                )
+
+                use_bbox = st.checkbox("Place Outside (BBox)", value=True)
+                bbox_val = (1.05, 1) if use_bbox else None
+
+                # Construct the Generic legends_config list
+                legends_config = [
+                    {
+                        "source": "dataset",
+                        "values": leg_source,
+                        "coloring_field": leg_source,
+                        "legend_spec": {
+                            "title": leg_title,
+                            "loc": leg_loc,
+                            "bbox_to_anchor": bbox_val,
+                        },
+                        "casetype": "title",
+                    }
+                ]
         st.divider()
 
-        st.write("**Legends**")
-        with st.expander("Legend Labels", expanded=False):
-            h1, h2, h3, h4 = st.columns(4)
-            l_source = h1.selectbox(
-                "Legend Source",
-                options=["dataset", "custom"],
-                key="legend_source",
-            )
-            l_values = h2.selectbox(
-                "Labels Values",
-                options=fields,
-                key="legend_values",
-            )
-            l_coloring_field = h3.selectbox(
-                "Coloring Field",
-                options=fields,
-                key="legend_coloring_field",
-            )
-            l_casetype = h4.selectbox(
-                "Case Type",
-                options=["title", "upper", "original"],
-                key="legend_casetype",
-            )
-
-            i1, i2, i3 = st.columns(3)
-            l_title = i1.text_input("Legend Title")
-            l_loc = i2.selectbox(
-                "Legend Location",
-                options=["upper left", "upper right", "lower left", "lower right"],
-                key="legend_loc",
-            )
-
-            st.caption("**BBox Anchor (Advanced Positioning)**: (x, y, width, height)")
-            j1, j2, j3, j4 = st.columns(4)
-            bbox_x = j1.number_input("X (Horiz)", value=1.00, step=0.05)
-            bbox_y = j2.number_input("Y (Vert)", value=1.00, step=0.05)
-            bbox_w = j3.number_input("Width", value=0.30, step=0.05)
-            bbox_h = j4.number_input("Height", value=1.00, step=0.05)
-
-            legends_config = [
-                {
-                    "source": l_source,
-                    "values": l_values,
-                    "coloring_field": l_coloring_field,
-                    "legend_spec": {
-                        "title": l_title,
-                        "loc": l_loc,
-                        "bbox": (bbox_x, bbox_y, bbox_w, bbox_h),
-                    },
-                    "casetype": l_casetype,
-                }
-            ]
-        st.divider()
-
+        # 9. Draw Chart Button
         st.write("**Draw Chart**")
-        if st.button("Draw Chart"):
-            fig, legends, extra_artists = bar_1D(
+        if st.button("Generate Chart"):
+            # A. Calculate which fields are actually used (Axes + Coloring + Extra)
+            # This prevents passing the entire 'fields' list which breaks aggregation.
+            chart_fields = [x_axis]
+            if z_axis:
+                chart_fields.append(z_axis)
+            if coloring_field:
+                chart_fields.append(coloring_field)
+            if labels_extra:
+                chart_fields.append(labels_extra)
+            # Remove duplicates
+            chart_fields = list(set(chart_fields))
+
+            # B. Prepare Filters
+            f_vals_clean = (
+                [f.strip() for f in filter_values if f.strip()]
+                if apply_filter_values
+                else None
+            )
+            f_count_clean = filter_count if apply_filter_count else None
+
+            # C. Call the bar_1D function
+            fig = bar_1D(
                 dataset=dataset_selected,
-                fields=fields,
-                filter_values=filter_values if apply_filter_values else None,
-                filter_count=filter_count if apply_filter_count else None,
+                fields=chart_fields,  # <--- Fixed: Only passing relevant fields
+                filter_values=f_vals_clean,
+                filter_count=f_count_clean,
                 x_axis=x_axis,
                 y_axis=y_axis,
                 z_axis=z_axis,
@@ -366,38 +398,44 @@ if step == "2. Chart Creation":
                 bar_numbers=bar_numbers,
                 grids=grids,
                 labels_extra=labels_extra,
-                labels_spec=labels_spec,
-                legends_config=legends_config,
+                labels_spec=labels_spec,  # <--- Passed dynamically
+                legends_config=legends_config,  # <--- Passed dynamically
                 save_name=None,
             )
+
+            # D. Display and Store in Session State
             st.pyplot(fig)
             st.session_state["generated_fig"] = fig
-            st.session_state["generated_legends"] = legends
-            st.session_state["generated_extra_artists"] = extra_artists
+
         st.divider()
 
+        # 10. Save Chart Section
         st.write("**Save Chart**")
         if "generated_fig" in st.session_state:
             s1, s2 = st.columns(2)
             save_filename = s1.text_input("Filename", "chart")
-            save_fileformat = s2.selectbox("Format", ["png", "jpg", "svg", "pdf"])
+            file_fmt = s2.selectbox("Format", ["png", "pdf", "svg", "jpg"])
+
+            # Create an in-memory buffer
             buffer = io.BytesIO()
 
+            # Save the figure to the buffer
             st.session_state["generated_fig"].savefig(
                 buffer,
-                format=save_fileformat,
+                format=file_fmt,
                 dpi=300,
                 bbox_inches="tight",
-                bbox_extra_artists=st.session_state["generated_legends"]
-                + st.session_state["generated_extra_artists"],
             )
+            # Rewind buffer
             buffer.seek(0)
 
             st.download_button(
-                label="Save Chart",
+                label=f"💾 Download {file_fmt.upper()}",
                 data=buffer,
-                file_name=f"{save_filename}.{save_fileformat}",
-                mime=f"image/{save_fileformat}",
+                file_name=f"{save_filename}.{file_fmt}",
+                mime=f"image/{file_fmt}",
             )
         else:
             st.info("ℹ️ Please generate a chart first to enable downloading.")
+
+        st.divider()

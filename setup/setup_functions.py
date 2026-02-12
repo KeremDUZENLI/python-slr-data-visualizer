@@ -298,7 +298,7 @@ def bar_1D(
             extra_artists=extra_artists,
         )
     else:
-        return fig
+        return fig, legends, extra_artists
 
 
 def bar_2D(
