@@ -1,6 +1,12 @@
 import ast, json, io, os
 import streamlit as st
 
+from config.config import (
+    COLORS,
+    FONTS_PLOT,
+    FONTS_LEGEND,
+    STYLE_PRISMA,
+)
 from config.maps import (
     COUNTRY_TO_CONTINENT,
     TECHNIQUE_TO_TECHNIQUESUB,
@@ -15,6 +21,7 @@ from input._2_prepare import (
     map_dataset_hierarchy,
 )
 
+import setup.setup_functions as setup_module
 from setup.setup_functions import (
     bar_1D,
 )
@@ -23,17 +30,28 @@ st.set_page_config(layout="wide", page_title="Data Visualizer")
 
 if "data_versions" not in st.session_state:
     st.session_state["data_versions"] = {}
+if "cfg_colors" not in st.session_state:
+    st.session_state["cfg_colors"] = COLORS
+if "cfg_fonts_plot" not in st.session_state:
+    st.session_state["cfg_fonts_plot"] = FONTS_PLOT
+if "cfg_fonts_legend" not in st.session_state:
+    st.session_state["cfg_fonts_legend"] = FONTS_LEGEND
+if "cfg_prisma" not in st.session_state:
+    st.session_state["cfg_prisma"] = STYLE_PRISMA
 
 st.sidebar.title("Navigator")
-step = st.sidebar.radio("Go to Step:", ["1. Data Preparation", "2. Chart Creation"])
+step = st.sidebar.radio(
+    "Go to Step:", ["1. Data Preparation", "2. Chart Creation", "3. Configurations"]
+)
 st.sidebar.divider()
+
 
 if step == "1. Data Preparation":
     st.title("🛠️ Step 1: Data Preparation")
-    e1, e2 = st.columns([0.7, 0.3])
-    with e1:
+    m1, m2 = st.columns([0.7, 0.3])
+    with m1:
         upload_file = st.file_uploader("Upload csv", type="csv")
-    with e2:
+    with m2:
         st.write("")
         st.write("")
         st.write("")
@@ -65,7 +83,7 @@ if step == "1. Data Preparation":
             st.warning(f"⚠️ Already Loaded: {file_name}")
         else:
             st.error(f"❌ Not Loaded: {file_name}")
-        st.divider()
+    st.divider()
 
     if st.session_state["data_versions"]:
         input_name = st.selectbox(
@@ -85,14 +103,14 @@ if step == "1. Data Preparation":
         )
 
         with tab_group:
-            e1, e2 = st.columns(2)
+            m1, m2 = st.columns(2)
 
-            field_name_new = e1.text_input("Field Name New", "software")
-            category_name = e1.text_input("Category Name", "software_category")
-            fields_to_combine = e2.multiselect(
+            field_name_new = m1.text_input("Field Name New", "software")
+            category_name = m1.text_input("Category Name", "software_category")
+            fields_to_combine = m2.multiselect(
                 f"Fields to combine into '{field_name_new}'", options=fields_all
             )
-            fields_other = e2.multiselect("Fields to insert", options=fields_all)
+            fields_other = m2.multiselect("Fields to insert", options=fields_all)
 
             save_name_group = st.text_input(
                 label="Save As",
@@ -121,27 +139,29 @@ if step == "1. Data Preparation":
                 st.rerun()
 
         with tab_map:
-            e1, e2 = st.columns(2)
+            m1, m2 = st.columns(2)
 
-            field_from = e1.selectbox("Field From", fields_all)
-            field_to = e2.text_input("Field To", "continent")
-            map_mode = e1.selectbox("Mapping", ["COUNTRY_TO_CONTINENT", "Custom"])
+            field_from = m1.selectbox("Field From", fields_all)
+            field_to = m2.text_input("Field To", "continent")
+            map_mode = m1.selectbox("Mapping", ["COUNTRY_TO_CONTINENT", "Custom"])
 
             mapping = {}
             if map_mode == "COUNTRY_TO_CONTINENT":
-                example_map = json.dumps(COUNTRY_TO_CONTINENT, indent=4)
-                txt = st.text_area("View/Edit Map", value=example_map, height=250)
+                map_country = json.dumps(COUNTRY_TO_CONTINENT, indent=4)
+                txt_country = st.text_area(
+                    "View/Edit Map", value=map_country, height=250
+                )
                 try:
-                    mapping = ast.literal_eval(txt)
+                    mapping = ast.literal_eval(txt_country)
                 except:
                     st.error("❌ Invalid Dictionary Format")
             if map_mode == "Custom":
-                example_text = (
+                txt_example = (
                     '{\n    "USA": "North America",\n    "Germany": "Europe"\n}'
                 )
-                txt = st.text_area("Custom Map", value=example_text, height=250)
+                txt_country = st.text_area("Custom Map", value=txt_example, height=250)
                 try:
-                    mapping = ast.literal_eval(txt)
+                    mapping = ast.literal_eval(txt_country)
                 except:
                     st.error("❌ Invalid Dictionary Format")
 
@@ -167,24 +187,25 @@ if step == "1. Data Preparation":
                     st.rerun()
 
         with tab_hier:
-            e1, e2 = st.columns(2)
-            field_parent = e1.selectbox("Parent Field", fields_all)
-            field_child = e2.selectbox("Child Field", fields_all)
-            hier_mode = e1.selectbox("Mapping", ["TECHNIQUE_TO_TECHNIQUESUB", "Custom"])
+            m1, m2 = st.columns(2)
+
+            field_parent = m1.selectbox("Parent Field", fields_all)
+            field_child = m2.selectbox("Child Field", fields_all)
+            hier_mode = m1.selectbox("Mapping", ["TECHNIQUE_TO_TECHNIQUESUB", "Custom"])
 
             mapping = {}
             if hier_mode == "TECHNIQUE_TO_TECHNIQUESUB":
-                example_map = json.dumps(TECHNIQUE_TO_TECHNIQUESUB, indent=4)
-                txt = st.text_area("View/Edit Map", value=example_map, height=250)
+                map_hier = json.dumps(TECHNIQUE_TO_TECHNIQUESUB, indent=4)
+                txt_hier = st.text_area("View/Edit Map", value=map_hier, height=250)
                 try:
-                    mapping = ast.literal_eval(txt)
+                    mapping = ast.literal_eval(txt_hier)
                 except:
                     st.error("❌ Invalid Dictionary Format")
             if hier_mode == "Custom":
-                example_text = '{\n    "Parent": ["Child1", "Child2"]\n}'
-                txt = st.text_area("Custom Map", value=example_text, height=250)
+                txt_example = '{\n    "Parent": ["Child1", "Child2"]\n}'
+                txt_hier = st.text_area("Custom Map", value=txt_example, height=250)
                 try:
-                    mapping = ast.literal_eval(txt)
+                    mapping = ast.literal_eval(txt_hier)
                 except:
                     st.error("❌ Invalid Dictionary Format")
 
@@ -222,6 +243,7 @@ if step == "1. Data Preparation":
                     use_container_width=True,
                 )
 
+
 if step == "2. Chart Creation":
     st.title("📊 Step 2: Chart Creation")
 
@@ -244,6 +266,7 @@ if step == "2. Chart Creation":
         st.write("**Filter Values**")
         if "filter_values_num" not in st.session_state:
             st.session_state["filter_values_num"] = 1
+
         filter_values = []
         for i in range(st.session_state["filter_values_num"]):
             a1, a2, a3 = st.columns(3)
@@ -277,6 +300,7 @@ if step == "2. Chart Creation":
         f_c_operation = b2.selectbox(
             "Operation", options=["==", "!=", ">=", ">", "<=", "<", "="]
         )
+
         filter_count = f"{f_c_field} {f_c_operation} {f_c_value}"
         apply_filter_count = st.checkbox(
             "Apply Filter Count", value=False, key="apply_filter_count"
@@ -388,6 +412,15 @@ if step == "2. Chart Creation":
 
         st.write("**Draw Chart**")
         if st.button("Draw Chart"):
+            if "cfg_colors" in st.session_state:
+                setup_module.COLORS = st.session_state["cfg_colors"]
+            if "cfg_fonts_plot" in st.session_state:
+                setup_module.FONTS_PLOT = st.session_state["cfg_fonts_plot"]
+            if "cfg_fonts_legend" in st.session_state:
+                setup_module.FONTS_LEGEND = st.session_state["cfg_fonts_legend"]
+            if "cfg_prisma" in st.session_state:
+                setup_module.STYLE_PRISMA = st.session_state["cfg_prisma"]
+
             fig, legends, extra_artists = bar_1D(
                 dataset=dataset_selected,
                 fields=fields,
@@ -441,3 +474,75 @@ if step == "2. Chart Creation":
             )
         else:
             st.info("ℹ️ Please generate a chart first to enable downloading.")
+
+
+if step == "3. Configurations":
+    st.title("⚙️ Configurations")
+    st.info("💡 Changes made here apply immediately to Chart Creation")
+
+    tab_colors, tab_fonts_plot, tab_fonts_legend, tab_prisma = st.tabs(
+        [
+            "🎨 Colors",
+            "🔤 Fonts (Plot)",
+            "🔤 Fonts (Legend)",
+            "💠 Prisma Style",
+        ]
+    )
+
+    with tab_colors:
+        st.write("**Chart Colors**")
+        cfg_colors = json.dumps(st.session_state["cfg_colors"], indent=4)
+        txt_colors = st.text_area("Colors Config", value=cfg_colors, height=500)
+
+        if st.button("Save Colors"):
+            try:
+                st.session_state["cfg_colors"] = ast.literal_eval(txt_colors)
+                st.success("✅ Colors updated successfully!")
+                st.rerun()
+            except Exception as e:
+                st.error(f"❌ Invalid format: {e}")
+
+    with tab_fonts_plot:
+        st.write("**Plot Fonts**")
+        cfg_fonts_plot = json.dumps(st.session_state["cfg_fonts_plot"], indent=4)
+        txt_fonts_plot = st.text_area(
+            "Plot Fonts Config", value=cfg_fonts_plot, height=500
+        )
+
+        if st.button("Save Plot Fonts"):
+            try:
+                st.session_state["cfg_fonts_plot"] = ast.literal_eval(txt_fonts_plot)
+                st.success("✅ Plot Fonts updated successfully!")
+                st.rerun()
+            except Exception as e:
+                st.error(f"❌ Invalid format: {e}")
+
+    with tab_fonts_legend:
+        st.write("**Legend Fonts**")
+        cfg_fonts_legend = json.dumps(st.session_state["cfg_fonts_legend"], indent=4)
+        txt_fonts_legend = st.text_area(
+            "Legend Fonts Config", value=cfg_fonts_legend, height=500
+        )
+
+        if st.button("Save Legend Fonts"):
+            try:
+                st.session_state["cfg_fonts_legend"] = ast.literal_eval(
+                    txt_fonts_legend
+                )
+                st.success("✅ Legend Fonts updated successfully!")
+                st.rerun()
+            except Exception as e:
+                st.error(f"❌ Invalid format: {e}")
+
+    with tab_prisma:
+        st.write("**Prisma Diagram Styles**")
+        cfg_prisma = json.dumps(st.session_state["cfg_prisma"], indent=4)
+        txt_prisma = st.text_area("Prisma Styles Config", value=cfg_prisma, height=500)
+
+        if st.button("Save Prisma Style"):
+            try:
+                st.session_state["cfg_prisma"] = ast.literal_eval(txt_prisma)
+                st.success("✅ Prisma Style updated successfully!")
+                st.rerun()
+            except Exception as e:
+                st.error(f"❌ Invalid format: {e}")
