@@ -1,7 +1,7 @@
-def number_bar(ax, orientation="v", offset=1):
+def number_bar(ax, orientation="vertical", offset=1):
     for rect in ax.patches:
 
-        if orientation == "v":
+        if orientation == "vertical":
             height = rect.get_height()
             if height <= 0:
                 continue
@@ -11,7 +11,7 @@ def number_bar(ax, orientation="v", offset=1):
             ha = "center"
             va = "bottom"
 
-        if orientation == "h":
+        if orientation == "horizontal":
             height = rect.get_width()
             if height <= 0:
                 continue
@@ -80,15 +80,15 @@ def number_heatmap(ax, matrix):
             )
 
 
-def add_labels_extra(ax, labels_center, orientation="v", offset=15):
+def add_labels_extra(ax, labels_center, orientation="vertical", offset=15):
     texts = []
 
     for value, center in labels_center.items():
-        if orientation == "v":
+        if orientation == "vertical":
             x = center
             y = -offset
             rotation = 0
-        if orientation == "h":
+        if orientation == "horizontal":
             x = -offset
             y = center
             rotation = 90
@@ -107,11 +107,11 @@ def add_labels_extra(ax, labels_center, orientation="v", offset=15):
     return texts
 
 
-def add_grid(ax, orientation="v", linewidth=0.5, opacity=0.5):
+def add_grid(ax, orientation="vertical", linewidth=0.5, opacity=0.5):
     ax.set_axisbelow(True)
-    if orientation == "v":
+    if orientation == "vertical":
         ax.yaxis.grid(visible=True, linestyle="--", linewidth=linewidth, alpha=opacity)
-    if orientation == "h":
+    if orientation == "horizontal":
         ax.xaxis.grid(visible=True, linestyle="--", linewidth=linewidth, alpha=opacity)
     if orientation == "both":
         ax.yaxis.grid(visible=True, linestyle="--", linewidth=linewidth, alpha=opacity)

@@ -11,7 +11,7 @@ def draw_bar_1D(
     x_values,
     y_values,
     labels_spec,
-    orientation="v",
+    orientation="vertical",
 ):
     coloring_values = []
     for x_value in x_values:
@@ -23,7 +23,7 @@ def draw_bar_1D(
         positions.append(index)
         index += 1
 
-    if orientation == "v":
+    if orientation == "vertical":
         for pos, height in zip(positions, y_values):
             ax.bar(pos, height)
 
@@ -36,7 +36,7 @@ def draw_bar_1D(
         ax.set_xlabel(labels_spec.get("x_label", ""))
         ax.set_ylabel(labels_spec.get("y_label", ""))
 
-    if orientation == "h":
+    if orientation == "horizontal":
         for pos, width in zip(positions, y_values):
             ax.barh(pos, width)
 
@@ -58,7 +58,7 @@ def draw_bar_2D(
     y_values,
     z_values,
     labels_spec,
-    orientation="v",
+    orientation="vertical",
     stack_order=None,
 ):
     x_values_list = []
@@ -84,7 +84,7 @@ def draw_bar_2D(
     pos_map = dict(zip(x_uniques_list, positions))
     z_map = {val: i for i, val in enumerate(z_uniques_list)}
 
-    if orientation == "v":
+    if orientation == "vertical":
         for x_val, y_val, z_val in zip(x_values_list, y_values, coloring_values):
             x_center = pos_map[x_val]
             z_index = z_map[z_val]
@@ -107,7 +107,7 @@ def draw_bar_2D(
         ax.set_xlabel(labels_spec.get("x_label", ""))
         ax.set_ylabel(labels_spec.get("y_label", ""))
 
-    if orientation == "h":
+    if orientation == "horizontal":
         for x_val, y_val, z_val in zip(x_values_list, y_values, coloring_values):
             x_center = pos_map[x_val]
             z_index = z_map[z_val]
@@ -139,7 +139,7 @@ def draw_stacked(
     y_values,
     z_values,
     labels_spec,
-    orientation="v",
+    orientation="vertical",
     stack_order=None,
 ):
     x_values_list = []
@@ -184,7 +184,7 @@ def draw_stacked(
     y_values_total = [0.0] * len(x_uniques_list)
     coloring_values = []
 
-    if orientation == "v":
+    if orientation == "vertical":
         for z_value in reversed(z_uniques_list):
             row_data = z_map[z_value]
             ax.bar(positions, row_data, bottom=y_values_total, label=z_value)
@@ -200,7 +200,7 @@ def draw_stacked(
         ax.set_xlabel(labels_spec.get("x_label", ""))
         ax.set_ylabel(labels_spec.get("y_label", ""))
 
-    if orientation == "h":
+    if orientation == "horizontal":
         for z_value in reversed(z_uniques_list):
             row_data = z_map[z_value]
             ax.barh(positions, row_data, left=y_values_total, label=z_value)
@@ -230,7 +230,7 @@ def draw_stacked(
         )
         ax.set_xlabel(labels_spec.get("x_label", ""))
         ax.set_ylabel(labels_spec.get("y_label", ""))
-        orientation = "v"
+        orientation = "vertical"
 
     _offset_frame(ax=ax, height=y_values_total, orientation=orientation, offset=1)
     ax.set_title(labels_spec.get("title", ""))
@@ -589,10 +589,10 @@ def _offset_frame(ax, height, orientation, offset=1):
     max_height = max(height)
     change = max_height * (1 + (offset * 0.1))
 
-    if orientation == "v":
+    if orientation == "vertical":
         if max_height > 0:
             ax.set_ylim(0, change)
 
-    if orientation == "h":
+    if orientation == "horizontal":
         if max_height > 0:
             ax.set_xlim(0, change)

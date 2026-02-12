@@ -49,7 +49,7 @@ stacked(
     x_axis="year",
     y_axis="count",
     z_axis="platform",
-    orientation="v",
+    orientation="vertical",
     coloring_field="platform",
     stack_order=["XR", "MR", "AR", "VR"],
     stack_borders=False,

@@ -161,10 +161,10 @@ def color_map(ax, cmap, border=False, frame=False):
     ax.update_layout(geo=dict(showframe=frame))
 
 
-def color_bar_labels(ax, colors_map, orientation="v"):
-    if orientation == "v":
+def color_bar_labels(ax, colors_map, orientation="vertical"):
+    if orientation == "vertical":
         labels = ax.get_xticklabels()
-    if orientation == "h":
+    if orientation == "horizontal":
         labels = ax.get_yticklabels()
 
     for label in labels:

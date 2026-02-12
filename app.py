@@ -261,7 +261,7 @@ if step == "2. Chart Creation":
 
         st.write("**Other Options**")
         d1, d2 = st.columns(2)
-        orientation = d1.selectbox("Orientation", options=["v", "h"])
+        orientation = d1.selectbox("Orientation", options=["vertical", "horizontal"])
         coloring_field = d2.selectbox("Coloring Field", options=fields)
         st.divider()
 
@@ -329,8 +329,8 @@ if step == "2. Chart Creation":
 
             st.caption("**BBox Anchor (Advanced Positioning)**: (x, y, width, height)")
             j1, j2, j3, j4 = st.columns(4)
-            bbox_x = j1.number_input("X (Horiz)", value=1.00, step=0.05)
-            bbox_y = j2.number_input("Y (Vert)", value=1.00, step=0.05)
+            bbox_x = j1.number_input("X (Horizontal)", value=1.00, step=0.05)
+            bbox_y = j2.number_input("Y (Vertical)", value=1.00, step=0.05)
             bbox_w = j3.number_input("Width", value=0.30, step=0.05)
             bbox_h = j4.number_input("Height", value=1.00, step=0.05)
 

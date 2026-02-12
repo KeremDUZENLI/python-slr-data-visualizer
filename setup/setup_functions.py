@@ -571,7 +571,7 @@ def stacked(
     )
 
     if orientation == "area":
-        orientation = "v"
+        orientation = "vertical"
         color_area(
             ax=ax,
             coloring_values=coloring_values,
@@ -1075,7 +1075,7 @@ def heatmap(
         )
     extra_artists = None
     if labels_extra:
-        orientation = "v"
+        orientation = "vertical"
         values = [i[0] for i in dataset_counted_pre[labels_extra]]
         colors_mapped = map_colors_map(
             colors_from=valid_items,
@@ -1240,7 +1240,7 @@ def scatter(
         color_bar_labels(
             ax=ax,
             colors_map=colors_mapped,
-            orientation="v",
+            orientation="vertical",
         )
     if grids:
         add_grid(
