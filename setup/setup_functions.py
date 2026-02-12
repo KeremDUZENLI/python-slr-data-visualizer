@@ -388,6 +388,7 @@ def bar_2D(
     )
 
     ### extra ###
+    extra_artists = None
     if bar_numbers:
         number_bar(
             ax=ax,
@@ -449,10 +450,10 @@ def bar_2D(
             fig=fig,
             name=save_name,
             legends=legends,
-            extra_artists=None,
+            extra_artists=extra_artists,
         )
     else:
-        return fig
+        return fig, legends, extra_artists
 
 
 def stacked(

@@ -22,8 +22,14 @@ from input._2_prepare import (
 )
 
 import setup.setup_functions as setup_module
+
 from setup.setup_functions import (
     bar_1D,
+    bar_2D,
+)
+
+from web.web_functions import (
+    bar_1D_web,
 )
 
 st.set_page_config(layout="wide", page_title="Data Visualizer")
@@ -253,198 +259,37 @@ if step == "2. Chart Creation":
         dataset = st.sidebar.selectbox(
             "Select Dataset", options=list(st.session_state["data_versions"].keys())
         )
+        chart_type = st.sidebar.selectbox("Select Chart", options=["bar_1D", "bar_2D"])
+
         dataset_selected = st.session_state["data_versions"][dataset]
         fields_available = list(dataset_selected.keys())
 
         st.subheader(f"Dataset: {dataset}")
         st.divider()
 
-        st.write("**Fields**")
-        fields = st.multiselect("Select Fields", options=fields_available)
-        st.divider()
+        if chart_type == "bar_1D":
+            params = bar_1D_web(fields_available)
+            params["dataset"] = dataset_selected
+            params["save_name"] = None
+            st.divider()
 
-        st.write("**Filter Values**")
-        if "filter_values_num" not in st.session_state:
-            st.session_state["filter_values_num"] = 1
+            st.write("**Draw Chart**")
+            if st.button("🖌️ Draw Chart"):
+                if "cfg_colors" in st.session_state:
+                    setup_module.COLORS = st.session_state["cfg_colors"]
+                if "cfg_fonts_plot" in st.session_state:
+                    setup_module.FONTS_PLOT = st.session_state["cfg_fonts_plot"]
+                if "cfg_fonts_legend" in st.session_state:
+                    setup_module.FONTS_LEGEND = st.session_state["cfg_fonts_legend"]
+                if "cfg_prisma" in st.session_state:
+                    setup_module.STYLE_PRISMA = st.session_state["cfg_prisma"]
 
-        filter_values = []
-        for i in range(st.session_state["filter_values_num"]):
-            a1, a2, a3 = st.columns(3)
-
-            f_v_field = a1.selectbox(f"Field {i+1}", options=fields, key=f"field_{i}")
-            f_v_values = a3.text_input(f"Value", value=" ", key=f"values_{i}")
-            f_v_operation = a2.selectbox(
-                f"Operation",
-                options=["==", "!=", ">=", ">", "<=", "<", "="],
-                key=f"operation_{i}",
-            )
-            if f_v_values:
-                filter_values.append(f"{f_v_field} {f_v_operation} {f_v_values}")
-
-        aa1, aa2, _, _ = st.columns([1, 1, 2, 2])
-        if aa1.button("➕ Add"):
-            st.session_state["filter_values_num"] += 1
-            st.rerun()
-        if aa2.button("➖ Remove") and st.session_state["filter_values_num"] > 1:
-            st.session_state["filter_values_num"] -= 1
-            st.rerun()
-        apply_filter_values = st.checkbox(
-            "Apply Filter Values", value=False, key="apply_filter_values"
-        )
-        st.divider()
-
-        st.write("**Filter Count**")
-        b1, b2, b3 = st.columns(3)
-        f_c_field = b1.selectbox("Field", options=["count"])
-        f_c_value = b3.number_input("Value", min_value=0, value=0, step=1)
-        f_c_operation = b2.selectbox(
-            "Operation", options=["==", "!=", ">=", ">", "<=", "<", "="]
-        )
-
-        filter_count = f"{f_c_field} {f_c_operation} {f_c_value}"
-        apply_filter_count = st.checkbox(
-            "Apply Filter Count", value=False, key="apply_filter_count"
-        )
-        st.divider()
-
-        st.write("**Axes**")
-        c1, c2, c3 = st.columns(3)
-        x_axis = c1.selectbox("X-axis", options=fields)
-        y_axis = c2.selectbox("Y-axis", options=["count"])
-        z_axis = c3.selectbox("Z-axis (Optional)", options=[None] + fields)
-        st.divider()
-
-        st.write("**Other Options**")
-        d1, d2 = st.columns(2)
-        orientation = d1.selectbox("Orientation", options=["vertical", "horizontal"])
-        coloring_field = d2.selectbox("Coloring Field", options=fields)
-        st.divider()
-
-        st.write("**Graph Options**")
-        e1, e2, e3, e4 = st.columns(4)
-        color_mapping = e1.checkbox("Color Mapping", value=False)
-        bar_borders = e2.checkbox("Bar Borders", value=False)
-        bar_numbers = e3.checkbox("Bar Numbers", value=True)
-        grids = e4.checkbox("Grids", value=True)
-        st.divider()
-
-        st.write("**Extras**")
-        f1, _, _ = st.columns(3)
-        labels_extra = f1.selectbox(f"Labels Extra", options=[None] + fields)
-        st.divider()
-
-        st.write("**Labels**")
-        with st.expander("Chart Labels", expanded=False):
-            g1, g2, g3, g4 = st.columns(4)
-            title = g1.text_input("Chart Title")
-            xlabel = g2.text_input("X-axis Label")
-            ylabel = g3.text_input("Y-axis Label")
-            rotation = g4.number_input(
-                "Label Rotation", min_value=0, max_value=360, value=45, step=5
-            )
-            labels_spec = {
-                "title": title,
-                "x_label": xlabel,
-                "y_label": ylabel,
-                "rotation": rotation,
-            }
-        apply_labels_spec = st.checkbox(
-            "Apply Labels Spec", value=False, key="apply_labels_spec"
-        )
-        st.divider()
-
-        st.write("**Legends**")
-        with st.expander("Legend Labels", expanded=False):
-            h1, h2, h3, h4 = st.columns(4)
-            l_source = h1.selectbox(
-                "Legend Source",
-                options=["dataset", "custom"],
-                key="legend_source",
-            )
-            l_values = h2.selectbox(
-                "Labels Values",
-                options=fields,
-                key="legend_values",
-            )
-            l_coloring_field = h3.selectbox(
-                "Coloring Field",
-                options=fields,
-                key="legend_coloring_field",
-            )
-            l_casetype = h4.selectbox(
-                "Case Type",
-                options=["title", "upper", "original"],
-                key="legend_casetype",
-            )
-
-            i1, i2, i3 = st.columns(3)
-            l_title = i1.text_input("Legend Title")
-            l_loc = i2.selectbox(
-                "Legend Location",
-                options=["upper left", "upper right", "lower left", "lower right"],
-                key="legend_loc",
-            )
-
-            st.caption("**BBox Anchor (Advanced Positioning)**: (x, y, width, height)")
-            j1, j2, j3, j4 = st.columns(4)
-            bbox_x = j1.number_input("X (Horizontal)", value=1.00, step=0.05)
-            bbox_y = j2.number_input("Y (Vertical)", value=1.00, step=0.05)
-            bbox_w = j3.number_input("Width", value=0.30, step=0.05)
-            bbox_h = j4.number_input("Height", value=1.00, step=0.05)
-
-            legends_config = [
-                {
-                    "source": l_source,
-                    "values": l_values,
-                    "coloring_field": l_coloring_field,
-                    "legend_spec": {
-                        "title": l_title,
-                        "loc": l_loc,
-                        "bbox": (bbox_x, bbox_y, bbox_w, bbox_h),
-                    },
-                    "casetype": l_casetype,
-                }
-            ]
-        apply_legends_config = st.checkbox(
-            "Apply Legends Config", value=False, key="apply_legends_config"
-        )
-        st.divider()
-
-        st.write("**Draw Chart**")
-        if st.button("🖌️ Draw Chart"):
-            if "cfg_colors" in st.session_state:
-                setup_module.COLORS = st.session_state["cfg_colors"]
-            if "cfg_fonts_plot" in st.session_state:
-                setup_module.FONTS_PLOT = st.session_state["cfg_fonts_plot"]
-            if "cfg_fonts_legend" in st.session_state:
-                setup_module.FONTS_LEGEND = st.session_state["cfg_fonts_legend"]
-            if "cfg_prisma" in st.session_state:
-                setup_module.STYLE_PRISMA = st.session_state["cfg_prisma"]
-
-            fig, legends, extra_artists = bar_1D(
-                dataset=dataset_selected,
-                fields=fields,
-                filter_values=filter_values if apply_filter_values else None,
-                filter_count=filter_count if apply_filter_count else None,
-                x_axis=x_axis,
-                y_axis=y_axis,
-                z_axis=z_axis,
-                orientation=orientation,
-                coloring_field=coloring_field,
-                color_mapping=color_mapping,
-                bar_borders=bar_borders,
-                bar_numbers=bar_numbers,
-                grids=grids,
-                labels_extra=labels_extra,
-                labels_spec=labels_spec if apply_labels_spec else None,
-                legends_config=legends_config if apply_legends_config else None,
-                save_name=None,
-            )
-            st.pyplot(fig)
-            st.session_state["generated_fig"] = fig
-            st.session_state["generated_legends"] = legends
-            st.session_state["generated_extra_artists"] = extra_artists
-        st.divider()
+                fig, legends, extra_artists = bar_1D(**params)
+                st.pyplot(fig)
+                st.session_state["generated_fig"] = fig
+                st.session_state["generated_legends"] = legends
+                st.session_state["generated_extra_artists"] = extra_artists
+            st.divider()
 
         st.write("**Save Chart**")
         if "generated_fig" in st.session_state:
