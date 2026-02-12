@@ -178,7 +178,7 @@ def bar_1D(
         ax=ax,
         x_values=x_values,
         y_values=y_values,
-        labels_spec=labels_spec,
+        labels_spec=labels_spec if labels_spec else {},
         orientation=orientation,
     )
 
@@ -370,7 +370,7 @@ def bar_2D(
         x_values=x_values,
         y_values=y_values,
         z_values=z_values,
-        labels_spec=labels_spec,
+        labels_spec=labels_spec if labels_spec else {},
         orientation=orientation,
         stack_order=stack_order,
     )
@@ -565,7 +565,7 @@ def stacked(
         x_values=x_values,
         y_values=y_values,
         z_values=z_values,
-        labels_spec=labels_spec,
+        labels_spec=labels_spec if labels_spec else {},
         orientation=orientation,
         stack_order=stack_order,
     )
@@ -728,7 +728,7 @@ def pie(
         ax=ax,
         x_values=x_values,
         y_values=y_values,
-        labels_spec=labels_spec,
+        labels_spec=labels_spec if labels_spec else {},
     )
 
     color_pie(
@@ -857,7 +857,7 @@ def pie_nested(
         inner_labels_count=inner_labels_count,
         outer_labels=outer_labels,
         outer_labels_count=outer_labels_count,
-        labels_spec=labels_spec,
+        labels_spec=labels_spec if labels_spec else {},
         inner_labels_display=inner_labels_display,
         outer_labels_display=outer_labels_display,
         labels_hide_percent=labels_hide_percent,
@@ -1064,7 +1064,7 @@ def heatmap(
         x_values=x_values,
         y_values=y_values,
         z_values=z_values,
-        labels_spec=labels_spec,
+        labels_spec=labels_spec if labels_spec else {},
     )
 
     ### extra ###
@@ -1225,7 +1225,7 @@ def scatter(
         x_values=x_values,
         y_values=y_values,
         z_values=z_values,
-        labels_spec=labels_spec,
+        labels_spec=labels_spec if labels_spec else {},
         count_values=[min(y_values), max(y_values)],
         markersize=marker_config["markersize"],
     )

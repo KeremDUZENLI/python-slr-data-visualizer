@@ -1,14 +1,23 @@
 import ast, json, io, os
 import streamlit as st
 
-from config.maps import COUNTRY_TO_CONTINENT, TECHNIQUE_TO_TECHNIQUESUB
-from input._1_read import read_dataset
+from config.maps import (
+    COUNTRY_TO_CONTINENT,
+    TECHNIQUE_TO_TECHNIQUESUB,
+)
+
+from input._1_read import (
+    read_dataset,
+)
 from input._2_prepare import (
     group_dataset_by_fields,
     map_dataset_column,
     map_dataset_hierarchy,
 )
-from setup.setup_functions import bar_1D
+
+from setup.setup_functions import (
+    bar_1D,
+)
 
 st.set_page_config(layout="wide", page_title="Data Visualizer")
 
@@ -42,15 +51,22 @@ if step == "1. Data Preparation":
             )
             os.remove(temp_path)
             st.success(f"✅ Loaded: {file_name}")
+        elif file_name in st.session_state["data_versions"]:
+            st.warning(f"⚠️ Already Loaded: {file_name}")
+        else:
+            st.error(f"❌ Not Loaded: {file_name}")
 
     if load_example:
         file_name = "dataset.example.csv"
         example_path = "data/dataset.example.csv"
+
         if file_name not in st.session_state["data_versions"]:
             st.session_state["data_versions"][file_name] = read_dataset(
                 csv_path=example_path
             )
             st.success(f"✅ Loaded: {file_name}")
+        elif file_name in st.session_state["data_versions"]:
+            st.warning(f"⚠️ Already Loaded: {file_name}")
         else:
             st.error(f"❌ Not Loaded: {file_name}")
 
@@ -293,6 +309,9 @@ if step == "2. Chart Creation":
                 "y_label": ylabel,
                 "rotation": rotation,
             }
+        apply_labels_spec = st.checkbox(
+            "Apply Labels Spec", value=False, key="apply_labels_spec"
+        )
         st.divider()
 
         st.write("**Legends**")
@@ -347,6 +366,9 @@ if step == "2. Chart Creation":
                     "casetype": l_casetype,
                 }
             ]
+        apply_legends_config = st.checkbox(
+            "Apply Legends Config", value=False, key="apply_legends_config"
+        )
         st.divider()
 
         st.write("**Draw Chart**")
@@ -366,8 +388,8 @@ if step == "2. Chart Creation":
                 bar_numbers=bar_numbers,
                 grids=grids,
                 labels_extra=labels_extra,
-                labels_spec=labels_spec,
-                legends_config=legends_config,
+                labels_spec=labels_spec if apply_labels_spec else None,
+                legends_config=legends_config if apply_legends_config else None,
                 save_name=None,
             )
             st.pyplot(fig)
@@ -383,13 +405,16 @@ if step == "2. Chart Creation":
             save_fileformat = s2.selectbox("Format", ["png", "jpg", "svg", "pdf"])
             buffer = io.BytesIO()
 
+            saved_legends = st.session_state.get("generated_legends", []) or []
+            saved_extras = st.session_state.get("generated_extra_artists", []) or []
+            all_artists = saved_legends + saved_extras
+
             st.session_state["generated_fig"].savefig(
                 buffer,
                 format=save_fileformat,
                 dpi=300,
                 bbox_inches="tight",
-                bbox_extra_artists=st.session_state["generated_legends"]
-                + st.session_state["generated_extra_artists"],
+                bbox_extra_artists=all_artists,
             )
             buffer.seek(0)
 
