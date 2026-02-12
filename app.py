@@ -51,10 +51,6 @@ if step == "1. Data Preparation":
             )
             os.remove(temp_path)
             st.success(f"✅ Loaded: {file_name}")
-        elif file_name in st.session_state["data_versions"]:
-            st.warning(f"⚠️ Already Loaded: {file_name}")
-        else:
-            st.error(f"❌ Not Loaded: {file_name}")
 
     if load_example:
         file_name = "dataset.example.csv"
@@ -69,17 +65,17 @@ if step == "1. Data Preparation":
             st.warning(f"⚠️ Already Loaded: {file_name}")
         else:
             st.error(f"❌ Not Loaded: {file_name}")
+        st.divider()
 
     if st.session_state["data_versions"]:
-        st.divider()
-        st.subheader("Data Manipulation")
-
         input_name = st.selectbox(
             "Select csv", options=list(st.session_state["data_versions"].keys())
         )
         DATASET = st.session_state["data_versions"][input_name]
-        fields_all = list(DATASET.keys())
+        st.divider()
 
+        st.write("**Data Manipulation**")
+        fields_all = list(DATASET.keys())
         tab_group, tab_map, tab_hier = st.tabs(
             [
                 "1️⃣ Group Dataset by Fields",
@@ -118,8 +114,10 @@ if step == "1. Data Preparation":
                     axes=[category_name, field_name_new] + fields_other,
                 )
                 st.session_state["data_versions"][save_name_group] = result
-                st.success(f"✅ Saved dataset: {save_name_group}")
-                st.dataframe(result, use_container_width=True)
+                st.session_state["data_manipulation_msg"] = (
+                    f"✅ Saved dataset: {save_name_group}"
+                )
+                st.session_state["preview_dataset"] = save_name_group
                 st.rerun()
 
         with tab_map:
@@ -162,8 +160,10 @@ if step == "1. Data Preparation":
                         mapping=mapping,
                     )
                     st.session_state["data_versions"][save_name_map] = result
-                    st.success(f"✅ Saved dataset: {save_name_map}")
-                    st.dataframe(result, use_container_width=True)
+                    st.session_state["data_manipulation_msg"] = (
+                        f"✅ Saved dataset: {save_name_map}"
+                    )
+                    st.session_state["preview_dataset"] = save_name_map
                     st.rerun()
 
         with tab_hier:
@@ -203,9 +203,24 @@ if step == "1. Data Preparation":
                         mapping=mapping,
                     )
                     st.session_state["data_versions"][save_name_hier] = result
-                    st.success(f"✅ Saved dataset: {save_name_hier}")
-                    st.dataframe(result, use_container_width=True)
+                    st.session_state["data_manipulation_msg"] = (
+                        f"✅ Saved dataset: {save_name_hier}"
+                    )
+                    st.session_state["preview_dataset"] = save_name_hier
                     st.rerun()
+        st.divider()
+
+        st.write("**Preview**")
+        if "data_manipulation_msg" in st.session_state:
+            st.success(st.session_state["data_manipulation_msg"])
+            del st.session_state["data_manipulation_msg"]
+        if "preview_dataset" in st.session_state:
+            preview_name = st.session_state["preview_dataset"]
+            if preview_name in st.session_state["data_versions"]:
+                st.dataframe(
+                    st.session_state["data_versions"][preview_name],
+                    use_container_width=True,
+                )
 
 if step == "2. Chart Creation":
     st.title("📊 Step 2: Chart Creation")
