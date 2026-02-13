@@ -467,10 +467,10 @@ def stacked(
     z_axis: str,
     orientation: str,
     coloring_field: str,
-    stack_order: Optional[List[str]] = None,
     stack_borders: bool = False,
     bar_numbers: bool = True,
     grids: bool = True,
+    stack_order: Optional[List[str]] = None,
     labels_spec: Optional[Dict[str, Any]] = None,
     legends_config: Optional[List[Dict[str, Any]]] = None,
     save_name: Optional[str] = None,
@@ -605,6 +605,7 @@ def stacked(
     )
 
     ### extra ###
+    extra_artists = None
     if grids:
         add_grid(
             ax=ax,
@@ -660,10 +661,10 @@ def stacked(
             fig=fig,
             name=save_name,
             legends=legends,
-            extra_artists=None,
+            extra_artists=extra_artists,
         )
     else:
-        return fig
+        return fig, legends, extra_artists
 
 
 def pie(

@@ -26,6 +26,7 @@ from web.web_datasets import (
 from web.web_functions import (
     bar_1D_web,
     bar_2D_web,
+    stacked_web,
 )
 from web.web_settings import (
     settings_web,
@@ -66,12 +67,14 @@ if step == "2. Chart Creation":
             options=[
                 "bar_1D",
                 "bar_2D",
+                "stacked",
             ],
         )
 
         CHARTS = {
             "bar_1D": {"setup": bar_1D, "web": bar_1D_web},
             "bar_2D": {"setup": bar_2D, "web": bar_2D_web},
+            "stacked": {"setup": stacked, "web": stacked_web},
         }
 
         dataset_selected = st.session_state["data_versions"][dataset]
