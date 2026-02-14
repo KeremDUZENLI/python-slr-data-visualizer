@@ -73,7 +73,9 @@ def save_config(config_name, chart_type):
         if k.startswith(prefix):
             if any(sub in k for sub in forbidden_substrings):
                 continue
-            state_to_save[k] = v
+
+            generic_key = k[len(prefix) :]
+            state_to_save[generic_key] = v
 
     st.session_state["saved_configs"][config_name] = {
         "chart_type": chart_type,
@@ -83,7 +85,7 @@ def save_config(config_name, chart_type):
     st.session_state["config_action_msg"] = f"Saved: {config_name}"
 
 
-def load_config(config_name, fields_available):
+def load_config(config_name, target_chart_type, fields_available):
     if not config_name or config_name == "Select Config":
         return
 
@@ -96,39 +98,63 @@ def load_config(config_name, fields_available):
 
     state_to_load = config["state"]
 
-    field_substrings = [
-        "_x",
-        "_y",
-        "_z",
-        "_col",
-        "_f_",
-        "_val_",
-        "_le",
-        "_fc_f",
-        "filter_pre",
+    prefix_map = {
+        "bar_1D": "1d_",
+        "bar_2D": "2d_",
+        "stacked": "stk_",
+        "pie": "pie_",
+        "pie_nested": "pien_",
+        "heatmap": "hm_",
+        "scatter": "sct_",
+        "sunburst": "sb_",
+        "sankey": "snk_",
+        "worldmap": "wm_",
+        "prisma": "prm_",
+    }
+    target_prefix = prefix_map.get(target_chart_type, "")
+
+    list_field_keys = ["fields", "filter_pre", "pre_1", "pre_2"]
+    single_field_exact = [
+        "x",
+        "y",
+        "z",
+        "color",
+        "col_in",
+        "col_out",
+        "le",
+        "fc_f",
+        "fc_f1",
+        "fc_f2",
     ]
 
     forbidden_substrings = ["add", "rem", "btn"]
 
-    for k, v in state_to_load.items():
-        if any(sub in k for sub in forbidden_substrings):
+    for generic_k, v in state_to_load.items():
+        if any(sub in generic_k for sub in forbidden_substrings):
             continue
 
-        if k.endswith("_fields") or k.endswith("filter_pre"):
-            st.session_state[k] = [f for f in v if f in fields_available]
+        target_key = target_prefix + generic_k
+
+        if generic_k in list_field_keys:
+            if isinstance(v, list):
+                st.session_state[target_key] = [f for f in v if f in fields_available]
 
         elif (
-            any(sub in k for sub in field_substrings)
-            and not k.endswith("_v_")
-            and not k.endswith("_t_")
+            generic_k in single_field_exact
+            or generic_k.startswith("f_")
+            or generic_k.startswith("leg_val_")
+            or generic_k.startswith("leg_col_")
+            or generic_k.startswith("fsf_")
         ):
+
             if v in fields_available or v in ["count", None]:
-                st.session_state[k] = v
+                st.session_state[target_key] = v
             else:
-                if k in st.session_state:
-                    del st.session_state[k]
+                if target_key in st.session_state:
+                    del st.session_state[target_key]
+
         else:
-            st.session_state[k] = v
+            st.session_state[target_key] = v
 
     st.session_state["config_action_msg"] = f"Loaded: {config_name}"
 

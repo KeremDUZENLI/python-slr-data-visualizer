@@ -154,6 +154,7 @@ if step == "2. Chart Creation":
 
         with c1:
             config_name = st.text_input("Config Name", value=f"{chart_type}_config")
+
         with c2:
             st.write("")
             st.write("")
@@ -163,15 +164,12 @@ if step == "2. Chart Creation":
                 on_click=save_config,
                 args=(config_name, chart_type),
             )
+
         with c3:
             saved_configs = st.session_state.get("saved_configs", {})
-            compatible_configs = [
-                name
-                for name, conf in saved_configs.items()
-                if conf["chart_type"] == chart_type
-            ]
-            options = compatible_configs
+            options = list(saved_configs.keys())
             selected_config = st.selectbox("Saved Configs", options=options)
+
         with c4:
             st.write("")
             st.write("")
@@ -179,7 +177,7 @@ if step == "2. Chart Creation":
                 "📂 Load Config",
                 use_container_width=True,
                 on_click=load_config,
-                args=(selected_config, fields_available),
+                args=(selected_config, chart_type, fields_available),
             )
 
         if "config_action_msg" in st.session_state:

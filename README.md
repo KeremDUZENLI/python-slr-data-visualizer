@@ -22,3 +22,11 @@ dataset.example = [
     # Add more entries as needed, following the same 13-field structure
 ]
 ```
+
+```bash
+python -m xamples.chart_xxx
+```
+
+```bash
+streamlit run web_app.py
+```
