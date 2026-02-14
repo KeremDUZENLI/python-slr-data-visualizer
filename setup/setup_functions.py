@@ -752,16 +752,18 @@ def pie(
     )
 
     ### output ###
+    legends = None
+    extra_artists = None
     if save_name:
         show_plot()
         save_plot(
             fig=fig,
             name=save_name,
-            legends=None,
-            extra_artists=None,
+            legends=legends,
+            extra_artists=extra_artists,
         )
     else:
-        return fig
+        return fig, legends, extra_artists
 
 
 def pie_nested(
@@ -889,16 +891,18 @@ def pie_nested(
     )
 
     ### output ###
+    legends = None
+    extra_artists = None
     if save_name:
         show_plot()
         save_plot(
             fig=fig,
             name=save_name,
-            legends=None,
-            extra_artists=None,
+            legends=legends,
+            extra_artists=extra_artists,
         )
     else:
-        return fig
+        return fig, legends, extra_artists
 
 
 def heatmap(
@@ -1133,16 +1137,17 @@ def heatmap(
     )
 
     ### output ###
+    legends = None
     if save_name:
         show_plot()
         save_plot(
             fig=fig,
             name=save_name,
-            legends=None,
+            legends=legends,
             extra_artists=extra_artists,
         )
     else:
-        return fig
+        return fig, legends, extra_artists
 
 
 def scatter(
@@ -1301,16 +1306,17 @@ def scatter(
             legends.append(legend)
 
     ### output ###
+    extra_artists = None
     if save_name:
         show_plot()
         save_plot(
             fig=fig,
             name=save_name,
             legends=legends,
-            extra_artists=None,
+            extra_artists=extra_artists,
         )
     else:
-        return fig
+        return fig, legends, extra_artists
 
 
 def sunburst(
@@ -1329,6 +1335,7 @@ def sunburst(
     pie_borders: bool = False,
     labels_spec: Optional[Dict[str, Any]] = None,
     size: Tuple[int, int] = (500, 500),
+    show_plot: bool = True,
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1442,7 +1449,12 @@ def sunburst(
     )
 
     ### output
-    show_plot_plotly(fig)
+    legends = None
+    extra_artists = None
+    if show_plot:
+        show_plot_plotly(fig)
+    else:
+        return fig, legends, extra_artists
 
 
 def sankey(
@@ -1460,6 +1472,7 @@ def sankey(
     labels_color: str,
     labels_spec: Optional[Dict[str, Any]] = None,
     size: Tuple[int, int] = (500, 500),
+    show_plot: bool = True,
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1575,7 +1588,12 @@ def sankey(
     )
 
     ### output
-    show_plot_plotly(fig)
+    legends = None
+    extra_artists = None
+    if show_plot:
+        show_plot_plotly(fig)
+    else:
+        return fig, legends, extra_artists
 
 
 def worldmap(
@@ -1591,6 +1609,7 @@ def worldmap(
     frame: bool = True,
     labels_spec: Optional[Dict[str, Any]] = None,
     size: Tuple[int, int] = (500, 500),
+    show_plot: bool = True,
 ):
     ### operation
     dataset_filtered = filter_dataset_by_fields(
@@ -1690,7 +1709,12 @@ def worldmap(
     )
 
     ### output
-    show_plot_plotly(fig)
+    legends = None
+    extra_artists = None
+    if show_plot:
+        show_plot_plotly(fig)
+    else:
+        return fig, legends, extra_artists
 
 
 def prisma(
@@ -1798,7 +1822,9 @@ def prisma(
             edges=notes_config,
         )
 
-    ### output
+    ### output ###
+    legends = None
+    extra_artists = None
     if save_name:
         show_plot_graphviz(dot=dot)
         save_plot_graphviz(
@@ -1806,4 +1832,4 @@ def prisma(
             name=name,
         )
     else:
-        return dot
+        return dot, legends, extra_artists

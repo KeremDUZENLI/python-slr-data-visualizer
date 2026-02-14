@@ -94,9 +94,9 @@ stacked(
     grids=True,
     stack_order=None,
     labels_spec={
+        "title": "Software Adoption Over Time",
         "x_label": "Year",
         "y_label": "Number of Studies",
-        "title": "Software Adoption Over Time",
         "rotation": 45,
     },
     legends_config=[

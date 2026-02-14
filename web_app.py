@@ -1,24 +1,26 @@
 import streamlit as st
-import io
 
 import setup.setup_functions as setup_module
 from setup.setup_functions import (
     bar_1D,
     bar_2D,
-    heatmap,
-    pie_nested,
-    pie,
-    prisma,
-    sankey,
-    scatter,
     stacked,
+    pie,
+    pie_nested,
+    heatmap,
+    scatter,
     sunburst,
+    sankey,
     worldmap,
+    prisma,
 )
 
 from web.tools import (
     initialize_state,
     inject_config_to_module,
+    save_config,
+    load_config,
+    save_chart,
 )
 from web.web_datasets import (
     data_preparation_web,
@@ -27,6 +29,14 @@ from web.web_functions import (
     bar_1D_web,
     bar_2D_web,
     stacked_web,
+    pie_web,
+    pie_nested_web,
+    heatmap_web,
+    scatter_web,
+    sunburst_web,
+    sankey_web,
+    worldmap_web,
+    prisma_web,
 )
 from web.web_settings import (
     settings_web,
@@ -68,6 +78,14 @@ if step == "2. Chart Creation":
                 "bar_1D",
                 "bar_2D",
                 "stacked",
+                "pie",
+                "pie_nested",
+                "heatmap",
+                "scatter",
+                "sunburst",
+                "sankey",
+                "worldmap",
+                "prisma",
             ],
         )
 
@@ -75,6 +93,14 @@ if step == "2. Chart Creation":
             "bar_1D": {"setup": bar_1D, "web": bar_1D_web},
             "bar_2D": {"setup": bar_2D, "web": bar_2D_web},
             "stacked": {"setup": stacked, "web": stacked_web},
+            "pie": {"setup": pie, "web": pie_web},
+            "pie_nested": {"setup": pie_nested, "web": pie_nested_web},
+            "heatmap": {"setup": heatmap, "web": heatmap_web},
+            "scatter": {"setup": scatter, "web": scatter_web},
+            "sunburst": {"setup": sunburst, "web": sunburst_web},
+            "sankey": {"setup": sankey, "web": sankey_web},
+            "worldmap": {"setup": worldmap, "web": worldmap_web},
+            "prisma": {"setup": prisma, "web": prisma_web},
         }
 
         dataset_selected = st.session_state["data_versions"][dataset]
@@ -83,14 +109,15 @@ if step == "2. Chart Creation":
         setup_function = CHARTS[chart_type]["setup"]
         web_function = CHARTS[chart_type]["web"]
 
+        # Chart Header
         st.subheader(f"Dataset: {dataset}")
         st.divider()
 
-        # Render Chart UI
+        # Chart Parameters
         params_chart = web_function(dataset_selected, fields_available)
         st.divider()
 
-        # Draw Logic
+        # Chart Draw
         st.write("**Draw Chart**")
         if st.button("🖌️ Draw Chart"):
             inject_config_to_module(setup_module)
@@ -104,44 +131,65 @@ if step == "2. Chart Creation":
                 st.error(f"❌ Error: {e}")
 
         if "generated_fig" in st.session_state:
-            saved_legends = st.session_state.get("generated_legends", []) or []
-            saved_extras = st.session_state.get("generated_extra_artists", []) or []
-            all_artists = saved_legends + saved_extras
-            st.pyplot(
-                st.session_state["generated_fig"],
-                bbox_inches="tight",
-                bbox_extra_artists=all_artists,
-            )
+            fig = st.session_state["generated_fig"]
+
+            if type(fig).__name__ == "Digraph":
+                st.graphviz_chart(fig)
+            elif type(fig).__module__.startswith("plotly"):
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                saved_legends = st.session_state.get("generated_legends", []) or []
+                saved_extras = st.session_state.get("generated_extra_artists", []) or []
+                all_artists = saved_legends + saved_extras
+                st.pyplot(
+                    st.session_state["generated_fig"],
+                    bbox_inches="tight",
+                    bbox_extra_artists=all_artists,
+                )
         st.divider()
 
+        # Configs
+        st.write("**Configs**")
+        c1, c2, c3, c4 = st.columns([3, 2, 3, 2])
+
+        with c1:
+            config_name = st.text_input("Config Name", value=f"{chart_type}_config")
+        with c2:
+            st.write("")
+            st.write("")
+            st.button(
+                "💾 Save Config",
+                use_container_width=True,
+                on_click=save_config,
+                args=(config_name, chart_type),
+            )
+        with c3:
+            saved_configs = st.session_state.get("saved_configs", {})
+            compatible_configs = [
+                name
+                for name, conf in saved_configs.items()
+                if conf["chart_type"] == chart_type
+            ]
+            options = compatible_configs
+            selected_config = st.selectbox("Saved Configs", options=options)
+        with c4:
+            st.write("")
+            st.write("")
+            st.button(
+                "📂 Load Config",
+                use_container_width=True,
+                on_click=load_config,
+                args=(selected_config, fields_available),
+            )
+
+        if "config_action_msg" in st.session_state:
+            st.success(st.session_state["config_action_msg"])
+            del st.session_state["config_action_msg"]
+        st.divider()
+
+        # Save
         st.write("**Save Chart**")
-        if "generated_fig" in st.session_state:
-            s1, s2 = st.columns(2)
-            save_filename = s1.text_input("Filename", "chart")
-            save_fileformat = s2.selectbox("Format", ["png", "jpg", "svg", "pdf"])
-            buffer = io.BytesIO()
-
-            saved_legends = st.session_state.get("generated_legends", []) or []
-            saved_extras = st.session_state.get("generated_extra_artists", []) or []
-            all_artists = saved_legends + saved_extras
-
-            st.session_state["generated_fig"].savefig(
-                buffer,
-                format=save_fileformat,
-                dpi=300,
-                bbox_inches="tight",
-                bbox_extra_artists=all_artists,
-            )
-            buffer.seek(0)
-
-            st.download_button(
-                label="💾 Save Chart",
-                data=buffer,
-                file_name=f"{save_filename}.{save_fileformat}",
-                mime=f"image/{save_fileformat}",
-            )
-        else:
-            st.info("ℹ️ Please generate a chart first to enable downloading.")
+        save_chart()
 
 # ==============================================================================
 # 3. SETTINGS
