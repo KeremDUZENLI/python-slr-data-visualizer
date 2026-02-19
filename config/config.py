@@ -233,7 +233,7 @@ STYLE_PRISMA = {
     "box_main": {
         "id": "box",
         ### font ###
-        "fontsize": "14",
+        "fontsize": "18",
         "fontname": "Calibri Bold",
         ### color ###
         "fontcolor": "black",
@@ -248,7 +248,7 @@ STYLE_PRISMA = {
     "box_excluded": {
         "id": "box",
         ### font ###
-        "fontsize": "14",
+        "fontsize": "18",
         "fontname": "Calibri Bold",
         ### color ###
         "fontcolor": "black",
@@ -263,7 +263,7 @@ STYLE_PRISMA = {
     "note": {
         "id": "note",
         ### font ###
-        "fontsize": "12",
+        "fontsize": "16",
         "fontname": "Calibri",
         ### color ###
         "fontcolor": "black",
@@ -275,7 +275,7 @@ STYLE_PRISMA = {
     "edge_flow": {
         "id": "edge",
         ### font ###
-        "fontsize": "10",
+        "fontsize": "14",
         "fontname": "Calibri",
         ### color ###
         "fontcolor": "black",
@@ -287,7 +287,7 @@ STYLE_PRISMA = {
     "edge_note": {
         "id": "edge",
         ### font ###
-        "fontsize": "10",
+        "fontsize": "14",
         "fontname": "Calibri",
         ### color ###
         "fontcolor": "black",
