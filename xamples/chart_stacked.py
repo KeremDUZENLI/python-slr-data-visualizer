@@ -83,7 +83,7 @@ stacked(
     fields=["software_category", "software", "year"],
     filter_pre=["software_category", "software"],
     filter_values=["software != "],
-    filter_count="count >= 10",
+    filter_count="count > 13",
     x_axis="year",
     y_axis="count",
     z_axis="software",

@@ -13,7 +13,7 @@ bar_2D(
     orientation="vertical",
     coloring_field="historical_site_type",
     bar_borders=False,
-    bar_numbers=True,
+    bar_numbers=False,
     grids=True,
     stack_order=None,
     labels_spec={
@@ -50,7 +50,7 @@ bar_2D(
     orientation="vertical",
     coloring_field="historical_site_type_sub",
     bar_borders=False,
-    bar_numbers=True,
+    bar_numbers=False,
     grids=True,
     stack_order=None,
     labels_spec={
@@ -87,7 +87,7 @@ bar_2D(
     orientation="vertical",
     coloring_field="device",
     bar_borders=False,
-    bar_numbers=True,
+    bar_numbers=False,
     grids=True,
     stack_order=["HMD", "PC", "Mobile", "Immersive Display"],
     labels_spec={

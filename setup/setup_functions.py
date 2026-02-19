@@ -543,9 +543,9 @@ def stacked(
                 value=int(values[0]),
                 operation=operation,
             )
+        print_counts(dataset_counted, decimal=1)
 
     ### output
-    print_counts(dataset_counted, decimal=1)
     fig, ax = draw_plot(8, 6)
 
     ### plot_get

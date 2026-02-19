@@ -1,16 +1,16 @@
 ﻿order,year,country,study_focus,historical_site_type,historical_site_type_sub,platform,device,technique,technique_sub,software_data,software_modeling,software_render
-20,2023,Italy,Visualization,Archaeological Site,LandBased,VR,HMD,Image-Based Techniques,Photogrammetry,Reality Capture,,Unreal Engine
-23,2020,Spain,Reconstruction,Building,Religious,VR,HMD,Image-Based Techniques,Photogrammetry,Dstretch,Blender,Unity
-31,2016,Indonesia,Visualization,Archaeological Site,LandBased,AR,HMD,Image-Based Techniques,Photogrammetry,Agisoft Metashape,Autodesk Remake,Unity
-36,2019,Iraq,Visualization,Building,Fortification,VR,HMD,3D Scanning;Modeling & Reconstruction,Laser Scanning;3D Modeling,Processing,Meshlab,Unity
-40,2019,USA,Visualization,Natural Space,Cave,VR,HMD,Image-Based Techniques,Photogrammetry,Agisoft Metashape,,Unity
-41,2015,South Korea,Visualization,Building,Religious,VR,HMD,3D Scanning;Modeling & Reconstruction,Laser Scanning;3D Modeling,Australis Photometric,Autodesk 3ds Max,Unity
-47,2021,Italy,Visualization,Archaeological Site,LandBased,VR,PC;Mobile,Image-Based Techniques,Photogrammetry;Structure from Motion (SfM),Agisoft Metashape,,Three.js
-48,2022,Spain,Visualization,Building,Religious,VR,HMD,Image-Based Techniques;Modeling & Reconstruction,Photogrammetry;HBIM,Autodesk ReCap;Agisoft Metashape,Autodesk Revit,Unreal Engine
-50,2024,Greece,Visualization,Building,Religious,VR,HMD,Image-Based Techniques,Photogrammetry,ContextCapture,Blender,Unreal Engine
-52,2021,Greece,Visualization,Building,Religious,XR,HMD,3D Scanning;Image-Based Techniques,Real-Time Volumetric Capture;Photogrammetry,Agisoft Metashape,,Unity
-55,2018,Hungary,Reconstruction,Building,Religious,VR,HMD,3D Scanning;Image-Based Techniques,Laser Scanning;UAV Aerial Imaging,,,MaxWhere
-57,2023,Italy,Visualization,Building,Fortification,VR,HMD,Image-Based Techniques;Modeling & Reconstruction,Photogrammetry;3D Modeling,Agisoft Metashape,Blender,Unity
-58,2024,Greece,Visualization,Archaeological Site,LandBased,MR,HMD,Geospatial Techniques;Modeling & Reconstruction,Geographic Information System (GIS);3D Modeling,MySQL,Blender,Unity
-71,2017,Saudi Arabia,Visualization,Archaeological Site,LandBased,VR,HMD,3D Scanning;Image-Based Techniques;Modeling & Reconstruction,Laser Scanning;Photogrammetry;Structure from Motion (SfM);3D Modeling,,Autodesk Revit,Unity
-80,2023,Brazil,Visualization,Archaeological Site,LandBased,AR,Mobile,3D Scanning;Image-Based Techniques,Laser Scanning;Photogrammetry;UAV Aerial Imaging,Agisoft Metashape,SketchUp,Unity
+001,2015,South Korea,Visualization,Building,Religious,VR,HMD,3D Scanning;Modeling & Reconstruction,Laser Scanning;3D Modeling,Australis Photometric,Autodesk 3ds Max,Unity
+002,2015,Spain,Reconstruction,Archaeological Site,LandBased,AR,Mobile,Image-Based Techniques;Modeling & Reconstruction,Photogrammetry;Structure from Motion (SfM);3D Modeling,Agisoft Metashape,Blender,
+003,2015,Peru,Visualization,Archaeological Site,LandBased,AR,Mobile,Image-Based Techniques,Photogrammetry;Structure from Motion (SfM),Agisoft Metashape,,
+004,2015,Greece,Reconstruction,Archaeological Site,LandBased,AR;MR,HMD;Mobile,Image-Based Techniques;Geospatial Techniques,Photogrammetry;Structure from Motion (SfM);Geographic Information System (GIS),Agisoft Metashape,Blender;Autodesk 3ds Max,Unity
+005,2015,Italy,Reconstruction,Archaeological Site,LandBased,VR,HMD;Mobile,Image-Based Techniques;Geospatial Techniques;Modeling & Reconstruction,Photogrammetry;Geographic Information System (GIS);3D Modeling,QGIS,Autodesk Maya,Unity
+006,2016,Italy,Visualization,Archaeological Site,LandBased,AR,Mobile,Image-Based Techniques,Photogrammetry,ArcGIS,Blender,Unity
+007,2016,Indonesia,Visualization,Archaeological Site,LandBased,AR,HMD,Image-Based Techniques,Photogrammetry,Agisoft Metashape,Autodesk Remake,Unity
+008,2016,Peru,Visualization,Archaeological Site,LandBased,AR,Mobile,Image-Based Techniques,Photogrammetry,,,
+009,2016,Romania,Visualization,Artistic Feature,Artifact,VR;AR,HMD;Mobile,3D Scanning;Image-Based Techniques;Modeling & Reconstruction,Laser Scanning;Photogrammetry;3D Modeling,,,Unity
+010,2017,Cyprus,Visualization,Archaeological Site,LandBased,VR,HMD,Image-Based Techniques;Modeling & Reconstruction,Photogrammetry;3D Modeling,Agisoft Metashape,,Unity
+011,2017,Saudi Arabia,Visualization,Archaeological Site,LandBased,VR,HMD,3D Scanning;Image-Based Techniques;Modeling & Reconstruction,Laser Scanning;Photogrammetry;Structure from Motion (SfM);3D Modeling,,Autodesk Revit,Unity
+012,2017,China,Visualization,Building,Fortification,VR,HMD;PC;Mobile,3D Scanning;Image-Based Techniques;Modeling & Reconstruction,Laser Scanning;Photogrammetry;3D Modeling,Agisoft Metashape;Reality Capture,Blender;Rhinoceros,Unreal Engine;ARKit
+013,2017,Spain,Restoration,Artistic Feature,Artifact,VR,Mobile,3D Scanning;Image-Based Techniques,Laser Scanning;Photogrammetry,Autodesk ReCap;Agisoft Metashape,Blender;Rhinoceros,Unity
+014,2017,Italy,Reconstruction,Building,Religious,VR;AR,HMD;Mobile,Image-Based Techniques,Photogrammetry,Agisoft Metashape,Blender,
+015,2017,Turkiye,Reconstruction,Archaeological Site,LandBased,VR;AR,HMD;Immersive Display,3D Scanning;Image-Based Techniques,Laser Scanning;Photogrammetry;Structure from Motion (SfM),Agisoft Metashape,,
