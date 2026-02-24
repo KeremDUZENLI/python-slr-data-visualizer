@@ -136,7 +136,7 @@ if step == "2. Chart Creation":
             if type(fig).__name__ == "Digraph":
                 st.graphviz_chart(fig)
             elif type(fig).__module__.startswith("plotly"):
-                st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, width="stretch")
             else:
                 saved_legends = st.session_state.get("generated_legends", []) or []
                 saved_extras = st.session_state.get("generated_extra_artists", []) or []
@@ -160,7 +160,7 @@ if step == "2. Chart Creation":
             st.write("")
             st.button(
                 "💾 Save Config",
-                use_container_width=True,
+                width="stretch",
                 on_click=save_config,
                 args=(config_name, chart_type),
             )
@@ -175,7 +175,7 @@ if step == "2. Chart Creation":
             st.write("")
             st.button(
                 "📂 Load Config",
-                use_container_width=True,
+                width="stretch",
                 on_click=load_config,
                 args=(selected_config, chart_type, fields_available),
             )

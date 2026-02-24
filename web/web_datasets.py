@@ -26,7 +26,7 @@ def data_preparation_web():
         st.write("")
         st.write("")
         st.write("")
-        load_example = st.button("Load dataset.example.csv", use_container_width=True)
+        load_example = st.button("Load dataset.example.csv", width="stretch")
 
     if upload_file:
         file_name = upload_file.name
@@ -211,5 +211,5 @@ def data_preparation_web():
             if preview_name in st.session_state["data_versions"]:
                 st.dataframe(
                     st.session_state["data_versions"][preview_name],
-                    use_container_width=True,
+                    width="stretch",
                 )

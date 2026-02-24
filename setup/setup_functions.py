@@ -1278,10 +1278,6 @@ def scatter(
                     colors_map=colors_map,
                 )
                 kwargs = {}
-                text_clean_legend(
-                    legend=legend,
-                    casetype=config.get("casetype"),
-                )
             if config.get("source") == "bubble":
                 handles = get_legend_handles_bubble(
                     values=[min(y_values), max(y_values)],
@@ -1303,6 +1299,11 @@ def scatter(
                 legend=legend,
                 fonts=FONTS_LEGEND,
             )
+            if config.get("casetype"):
+                text_clean_legend(
+                    legend=legend,
+                    casetype=config.get("casetype"),
+                )
             legends.append(legend)
 
     ### output ###
@@ -1543,6 +1544,7 @@ def sankey(
         values=values,
     )
     fig.update_layout(
+        title_text="",
         margin=dict(t=70, l=10, r=10, b=10),
         width=size[0],
         height=size[1],
@@ -1556,7 +1558,7 @@ def sankey(
             fig.add_annotation(
                 x=x_p,
                 y=1.10,
-                text=labels_spec[t_key],
+                text=labels_spec.get(t_key),
                 showarrow=False,
                 xref="paper",
                 yref="paper",

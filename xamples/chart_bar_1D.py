@@ -27,7 +27,23 @@ bar_1D(
         "y_label": "Number of Studies",
         "rotation": 45,
     },
-    legends_config=None,
+    legends_config=[
+        {
+            "source": "custom",
+            "values": ["A", "B", "C", "D", "E"],
+            "colors_map": {
+                "A": "#636EFA",
+                "B": "#EF553B",
+                "C": "#00CC96",
+            },
+            "legend_spec": {
+                "title": "Continents",
+                "loc": "upper left",
+                "bbox": (1, 0, 0.3, 1),
+            },
+            "casetype": "title",
+        },
+    ],
     save_name="1_0_Total_Studies_Per_Year",
 )
 

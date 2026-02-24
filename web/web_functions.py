@@ -1,3 +1,4 @@
+import ast
 import streamlit as st
 
 
@@ -121,12 +122,30 @@ def bar_1D_web(dataset, fields_available):
             l_source = c1.selectbox(
                 "Source", options=["dataset", "custom"], key=f"1d_leg_src_{i}"
             )
-            l_values = c2.selectbox(
-                "Labels Values", options=params["fields"], key=f"1d_leg_val_{i}"
-            )
-            l_coloring_field = c3.selectbox(
-                "Coloring Field", options=params["fields"], key=f"1d_leg_col_{i}"
-            )
+
+            is_custom = l_source == "custom"
+            if is_custom:
+                l_values_custom = c2.text_input(
+                    "Labels Values (Comma Separated)",
+                    value="A, B, C, D, E",
+                    key=f"1d_leg_val_cust_{i}",
+                )
+
+                default_dict = '{\n    "A": "#636EFA",\n    "B": "#EF553B",\n    "C": "#00CC96",\n    "D": "#AB63FA",\n    "E": "#FFA15A"\n}'
+                l_colors_custom = c3.text_area(
+                    "View/Edit Map (Dict format)",
+                    value=default_dict,
+                    height=250,
+                    key=f"1d_leg_col_cust_{i}",
+                )
+            else:
+                l_values = c2.selectbox(
+                    "Labels Values", options=params["fields"], key=f"1d_leg_val_{i}"
+                )
+                l_coloring_field = c3.selectbox(
+                    "Coloring Field", options=params["fields"], key=f"1d_leg_col_{i}"
+                )
+
             l_casetype = c4.selectbox(
                 "Case Type",
                 options=["title", "upper", "original"],
@@ -148,19 +167,32 @@ def bar_1D_web(dataset, fields_available):
             bbox_w = j3.number_input("Width", value=0.30, step=0.05, key=f"1d_bw_{i}")
             bbox_h = j4.number_input("Height", value=1.00, step=0.05, key=f"1d_bh_{i}")
 
-            legends_config.append(
-                {
-                    "source": l_source,
-                    "values": l_values,
-                    "coloring_field": l_coloring_field,
-                    "legend_spec": {
-                        "title": l_title,
-                        "loc": l_loc,
-                        "bbox": (bbox_x, bbox_y, bbox_w, bbox_h),
-                    },
-                    "casetype": l_casetype,
-                }
-            )
+            legend_item = {
+                "source": l_source,
+                "legend_spec": {
+                    "title": l_title,
+                    "loc": l_loc,
+                    "bbox": (bbox_x, bbox_y, bbox_w, bbox_h),
+                },
+                "casetype": l_casetype,
+            }
+
+            if is_custom:
+                legend_item["values"] = (
+                    [x.strip() for x in l_values_custom.split(",")]
+                    if l_values_custom
+                    else []
+                )
+                try:
+                    legend_item["colors_map"] = ast.literal_eval(l_colors_custom)
+                except Exception:
+                    st.error("❌ Invalid Dictionary Format")
+                    legend_item["colors_map"] = {}
+            else:
+                legend_item["values"] = l_values
+                legend_item["coloring_field"] = l_coloring_field
+
+            legends_config.append(legend_item)
 
     l_btn1, l_btn2, _, _ = st.columns([1, 1, 2, 2])
     if l_btn1.button("➕ Add", key="1d_add_leg"):
@@ -179,19 +211,6 @@ def bar_1D_web(dataset, fields_available):
     params["legends_config"] = legends_config if apply_legends_config else None
 
     params["save_name"] = None
-
-    potential_fields = [
-        params["x_axis"],
-        params["z_axis"],
-        params["coloring_field"],
-        params["labels_extra"],
-    ]
-    if params["legends_config"]:
-        potential_fields.append(params["legends_config"][0]["values"])
-        potential_fields.append(params["legends_config"][0]["coloring_field"])
-
-    active_fields = [f for f in potential_fields if f is not None]
-    params["fields"] = list(set(params["fields"] + active_fields))
 
     return params
 
@@ -321,12 +340,30 @@ def bar_2D_web(dataset, fields_available):
             l_source = c1.selectbox(
                 "Source", options=["dataset", "custom"], key=f"2d_leg_src_{i}"
             )
-            l_values = c2.selectbox(
-                "Labels Values", options=params["fields"], key=f"2d_leg_val_{i}"
-            )
-            l_coloring_field = c3.selectbox(
-                "Coloring Field", options=params["fields"], key=f"2d_leg_col_{i}"
-            )
+
+            is_custom = l_source == "custom"
+            if is_custom:
+                l_values_custom = c2.text_input(
+                    "Labels Values (Comma Separated)",
+                    value="A, B, C, D, E",
+                    key=f"2d_leg_val_cust_{i}",
+                )
+
+                default_dict = '{\n    "A": "#636EFA",\n    "B": "#EF553B",\n    "C": "#00CC96",\n    "D": "#AB63FA",\n    "E": "#FFA15A"\n}'
+                l_colors_custom = c3.text_area(
+                    "View/Edit Map (Dict format)",
+                    value=default_dict,
+                    height=250,
+                    key=f"2d_leg_col_cust_{i}",
+                )
+            else:
+                l_values = c2.selectbox(
+                    "Labels Values", options=params["fields"], key=f"2d_leg_val_{i}"
+                )
+                l_coloring_field = c3.selectbox(
+                    "Coloring Field", options=params["fields"], key=f"2d_leg_col_{i}"
+                )
+
             l_casetype = c4.selectbox(
                 "Case Type",
                 options=["title", "upper", "original"],
@@ -348,19 +385,32 @@ def bar_2D_web(dataset, fields_available):
             bbox_w = j3.number_input("Width", value=0.30, step=0.05, key=f"2d_bw_{i}")
             bbox_h = j4.number_input("Height", value=1.00, step=0.05, key=f"2d_bh_{i}")
 
-            legends_config.append(
-                {
-                    "source": l_source,
-                    "values": l_values,
-                    "coloring_field": l_coloring_field,
-                    "legend_spec": {
-                        "title": l_title,
-                        "loc": l_loc,
-                        "bbox": (bbox_x, bbox_y, bbox_w, bbox_h),
-                    },
-                    "casetype": l_casetype,
-                }
-            )
+            legend_item = {
+                "source": l_source,
+                "legend_spec": {
+                    "title": l_title,
+                    "loc": l_loc,
+                    "bbox": (bbox_x, bbox_y, bbox_w, bbox_h),
+                },
+                "casetype": l_casetype,
+            }
+
+            if is_custom:
+                legend_item["values"] = (
+                    [x.strip() for x in l_values_custom.split(",")]
+                    if l_values_custom
+                    else []
+                )
+                try:
+                    legend_item["colors_map"] = ast.literal_eval(l_colors_custom)
+                except Exception:
+                    st.error("❌ Invalid Dictionary Format")
+                    legend_item["colors_map"] = {}
+            else:
+                legend_item["values"] = l_values
+                legend_item["coloring_field"] = l_coloring_field
+
+            legends_config.append(legend_item)
 
     l_btn1, l_btn2, _, _ = st.columns([1, 1, 2, 2])
     if l_btn1.button("➕ Add", key="2d_add_leg"):
@@ -379,18 +429,6 @@ def bar_2D_web(dataset, fields_available):
     params["legends_config"] = legends_config if apply_legends_config else None
 
     params["save_name"] = None
-
-    potential_fields = [
-        params["x_axis"],
-        params["z_axis"],
-        params["coloring_field"],
-    ]
-    if params["legends_config"]:
-        potential_fields.append(params["legends_config"][0]["values"])
-        potential_fields.append(params["legends_config"][0]["coloring_field"])
-
-    active_fields = [f for f in potential_fields if f is not None]
-    params["fields"] = list(set(params["fields"] + active_fields))
 
     return params
 
@@ -525,12 +563,30 @@ def stacked_web(dataset, fields_available):
             l_source = c1.selectbox(
                 "Source", options=["dataset", "custom"], key=f"stk_leg_src_{i}"
             )
-            l_values = c2.selectbox(
-                "Labels Values", options=params["fields"], key=f"stk_leg_val_{i}"
-            )
-            l_coloring_field = c3.selectbox(
-                "Coloring Field", options=params["fields"], key=f"stk_leg_col_{i}"
-            )
+
+            is_custom = l_source == "custom"
+            if is_custom:
+                l_values_custom = c2.text_input(
+                    "Labels Values (Comma Separated)",
+                    value="A, B, C, D, E",
+                    key=f"stk_leg_val_cust_{i}",
+                )
+
+                default_dict = '{\n    "A": "#636EFA",\n    "B": "#EF553B",\n    "C": "#00CC96",\n    "D": "#AB63FA",\n    "E": "#FFA15A"\n}'
+                l_colors_custom = c3.text_area(
+                    "View/Edit Map (Dict format)",
+                    value=default_dict,
+                    height=250,
+                    key=f"stk_leg_col_cust_{i}",
+                )
+            else:
+                l_values = c2.selectbox(
+                    "Labels Values", options=params["fields"], key=f"stk_leg_val_{i}"
+                )
+                l_coloring_field = c3.selectbox(
+                    "Coloring Field", options=params["fields"], key=f"stk_leg_col_{i}"
+                )
+
             l_casetype = c4.selectbox(
                 "Case Type",
                 options=["title", "upper", "original"],
@@ -552,19 +608,32 @@ def stacked_web(dataset, fields_available):
             bbox_w = j3.number_input("Width", value=0.30, step=0.05, key=f"stk_bw_{i}")
             bbox_h = j4.number_input("Height", value=1.00, step=0.05, key=f"stk_bh_{i}")
 
-            legends_config.append(
-                {
-                    "source": l_source,
-                    "values": l_values,
-                    "coloring_field": l_coloring_field,
-                    "legend_spec": {
-                        "title": l_title,
-                        "loc": l_loc,
-                        "bbox": (bbox_x, bbox_y, bbox_w, bbox_h),
-                    },
-                    "casetype": l_casetype,
-                }
-            )
+            legend_item = {
+                "source": l_source,
+                "legend_spec": {
+                    "title": l_title,
+                    "loc": l_loc,
+                    "bbox": (bbox_x, bbox_y, bbox_w, bbox_h),
+                },
+                "casetype": l_casetype,
+            }
+
+            if is_custom:
+                legend_item["values"] = (
+                    [x.strip() for x in l_values_custom.split(",")]
+                    if l_values_custom
+                    else []
+                )
+                try:
+                    legend_item["colors_map"] = ast.literal_eval(l_colors_custom)
+                except Exception:
+                    st.error("❌ Invalid Dictionary Format")
+                    legend_item["colors_map"] = {}
+            else:
+                legend_item["values"] = l_values
+                legend_item["coloring_field"] = l_coloring_field
+
+            legends_config.append(legend_item)
 
     l_btn1, l_btn2, _, _ = st.columns([1, 1, 2, 2])
     if l_btn1.button("➕ Add", key="stk_add_leg"):
@@ -583,22 +652,6 @@ def stacked_web(dataset, fields_available):
     params["legends_config"] = legends_config if apply_legends_config else None
 
     params["save_name"] = None
-
-    potential_fields = [
-        params["x_axis"],
-        params["z_axis"],
-        params["coloring_field"],
-    ]
-    if params["filter_pre"]:
-        potential_fields.extend(params["filter_pre"])
-
-    if params["legends_config"]:
-        for leg in params["legends_config"]:
-            potential_fields.append(leg["values"])
-            potential_fields.append(leg["coloring_field"])
-
-    active_fields = [f for f in potential_fields if f is not None]
-    params["fields"] = list(set(params["fields"] + active_fields))
 
     return params
 
@@ -625,7 +678,7 @@ def pie_web(dataset, fields_available):
             "Operation", ["==", "!=", ">=", ">", "<=", "<", "="], key=f"pie_o_{i}"
         )
         v = c3.text_input("Value", value=" ", key=f"pie_fv_v_{i}")
-        if v.strip():
+        if v:
             filter_values.append(f"{f} {o} {v}")
 
     c11, c12, _, _ = st.columns([1, 1, 2, 2])
@@ -684,14 +737,6 @@ def pie_web(dataset, fields_available):
 
     params["save_name"] = None
 
-    potential_fields = [
-        params["x_axis"],
-        params["coloring_field"],
-    ]
-
-    active_fields = [f for f in potential_fields if f is not None]
-    params["fields"] = list(set(params["fields"] + active_fields))
-
     return params
 
 
@@ -717,7 +762,7 @@ def pie_nested_web(dataset, fields_available):
             "Operation", ["==", "!=", ">=", ">", "<=", "<", "="], key=f"pien_o_{i}"
         )
         v = c3.text_input("Value", value=" ", key=f"pien_fv_v_{i}")
-        if v.strip():
+        if v:
             filter_values.append(f"{f} {o} {v}")
 
     c11, c12, _, _ = st.columns([1, 1, 2, 2])
@@ -789,16 +834,6 @@ def pie_nested_web(dataset, fields_available):
 
     params["save_name"] = None
 
-    potential_fields = [
-        params["x_axis"],
-        params["z_axis"],
-        params["coloring_field_inner"],
-        params["coloring_field_outer"],
-    ]
-
-    active_fields = [f for f in potential_fields if f is not None]
-    params["fields"] = list(set(params["fields"] + active_fields))
-
     return params
 
 
@@ -845,7 +880,7 @@ def heatmap_web(dataset, fields_available):
             "Operation", ["==", "!=", ">=", ">", "<=", "<", "="], key=f"hm_o_{i}"
         )
         v = c3.text_input("Value", value=" ", key=f"hm_fv_v_{i}")
-        if v.strip():
+        if v:
             filter_values.append(f"{f} {o} {v}")
 
     c11, c12, _, _ = st.columns([1, 1, 2, 2])
@@ -913,7 +948,7 @@ def heatmap_web(dataset, fields_available):
 
     st.write("**Graph Options & Extras**")
     c1, c2, c3 = st.columns(3)
-    params["border"] = c1.checkbox("Matrix Borders", False, key="hm_b")
+    params["border"] = c1.checkbox("Border", False, key="hm_b")
     params["matrix_numbers"] = c2.checkbox("Matrix Numbers", True, key="hm_n")
     params["labels_extra"] = c3.selectbox(
         "Labels Extra", [None] + params["fields"], key="hm_le"
@@ -947,21 +982,6 @@ def heatmap_web(dataset, fields_available):
 
     params["save_name"] = None
 
-    potential_fields = [
-        params["x_axis"],
-        params["z_axis"],
-        params["coloring_field"],
-        params["labels_extra"],
-    ]
-    if params["filter_pre"]:
-        potential_fields.extend(params["filter_pre"])
-    if params["filter_pre_sep"]:
-        potential_fields.extend(params["filter_pre_sep"][0])
-        potential_fields.extend(params["filter_pre_sep"][1])
-
-    active_fields = [f for f in potential_fields if f is not None]
-    params["fields"] = list(set(params["fields"] + active_fields))
-
     return params
 
 
@@ -987,7 +1007,7 @@ def scatter_web(dataset, fields_available):
             "Operation", ["==", "!=", ">=", ">", "<=", "<", "="], key=f"sct_o_{i}"
         )
         v = c3.text_input("Value", value=" ", key=f"sct_fv_v_{i}")
-        if v.strip():
+        if v:
             filter_values.append(f"{f} {o} {v}")
 
     c11, c12, _, _ = st.columns([1, 1, 2, 2])
@@ -1073,16 +1093,42 @@ def scatter_web(dataset, fields_available):
                 options=["dataset", "custom", "bubble"],
                 key=f"sct_leg_src_{i}",
             )
-            l_values = c2.selectbox(
-                "Labels Values", options=params["fields"], key=f"sct_leg_val_{i}"
-            )
-            l_coloring_field = c3.selectbox(
-                "Coloring Field", options=params["fields"], key=f"sct_leg_col_{i}"
-            )
+
+            is_bubble = l_source == "bubble"
+            is_custom = l_source == "custom"
+            if is_custom:
+                l_values_custom = c2.text_input(
+                    "Labels Values (Comma Separated)",
+                    value="A, B, C, D, E",
+                    key=f"sct_leg_val_cust_{i}",
+                )
+
+                default_dict = '{\n    "A": "#636EFA",\n    "B": "#EF553B",\n    "C": "#00CC96",\n    "D": "#AB63FA",\n    "E": "#FFA15A"\n}'
+                l_colors_custom = c3.text_area(
+                    "View/Edit Map (Dict format)",
+                    value=default_dict,
+                    height=250,
+                    key=f"sct_leg_col_cust_{i}",
+                )
+            else:
+                l_values = c2.selectbox(
+                    "Labels Values",
+                    options=params["fields"],
+                    key=f"sct_leg_val_{i}",
+                    disabled=is_bubble,
+                )
+                l_coloring_field = c3.selectbox(
+                    "Coloring Field",
+                    options=params["fields"],
+                    key=f"sct_leg_col_{i}",
+                    disabled=is_bubble,
+                )
+
             l_casetype = c4.selectbox(
                 "Case Type",
                 options=["title", "upper", "original"],
                 key=f"sct_leg_case_{i}",
+                disabled=is_bubble,
             )
 
             c11, c12 = st.columns(2)
@@ -1100,19 +1146,34 @@ def scatter_web(dataset, fields_available):
             bbox_w = j3.number_input("Width", value=0.30, step=0.05, key=f"sct_bw_{i}")
             bbox_h = j4.number_input("Height", value=1.00, step=0.05, key=f"sct_bh_{i}")
 
-            legends_config.append(
-                {
-                    "source": l_source,
-                    "values": l_values,
-                    "coloring_field": l_coloring_field,
-                    "legend_spec": {
-                        "title": l_title,
-                        "loc": l_loc,
-                        "bbox": (bbox_x, bbox_y, bbox_w, bbox_h),
-                    },
-                    "casetype": l_casetype,
-                }
-            )
+            legend_item = {
+                "source": l_source,
+                "legend_spec": {
+                    "title": l_title,
+                    "loc": l_loc,
+                    "bbox": (bbox_x, bbox_y, bbox_w, bbox_h),
+                },
+            }
+
+            if not is_bubble:
+                legend_item["casetype"] = l_casetype
+
+            if is_custom:
+                legend_item["values"] = (
+                    [x.strip() for x in l_values_custom.split(",")]
+                    if l_values_custom
+                    else []
+                )
+                try:
+                    legend_item["colors_map"] = ast.literal_eval(l_colors_custom)
+                except Exception:
+                    st.error("❌ Invalid Dictionary Format")
+                    legend_item["colors_map"] = {}
+            elif not is_bubble:
+                legend_item["values"] = l_values
+                legend_item["coloring_field"] = l_coloring_field
+
+            legends_config.append(legend_item)
 
     l_btn1, l_btn2, _, _ = st.columns([1, 1, 2, 2])
     if l_btn1.button("➕ Add", key="sct_add_leg"):
@@ -1131,20 +1192,6 @@ def scatter_web(dataset, fields_available):
     params["legends_config"] = legends_config if apply_legends_config else None
 
     params["save_name"] = None
-
-    potential_fields = [
-        params["x_axis"],
-        params["z_axis"],
-        params["coloring_field"],
-    ]
-    if params["legends_config"]:
-        for leg in params["legends_config"]:
-            if leg["source"] != "bubble":
-                potential_fields.append(leg["values"])
-                potential_fields.append(leg["coloring_field"])
-
-    active_fields = [f for f in potential_fields if f is not None]
-    params["fields"] = list(set(params["fields"] + active_fields))
 
     return params
 
@@ -1171,7 +1218,7 @@ def sunburst_web(dataset, fields_available):
             "Operation", ["==", "!=", ">=", ">", "<=", "<", "="], key=f"sb_o_{i}"
         )
         v = c3.text_input("Value", value=" ", key=f"sb_fv_v_{i}")
-        if v.strip():
+        if v:
             filter_values.append(f"{f} {o} {v}")
 
     c11, c12, _, _ = st.columns([1, 1, 2, 2])
@@ -1250,16 +1297,6 @@ def sunburst_web(dataset, fields_available):
 
     params["show_plot"] = False
 
-    potential_fields = [
-        params["x_axis"],
-        params["z_axis"],
-        params["coloring_field_inner"],
-        params["coloring_field_outer"],
-    ]
-
-    active_fields = [f for f in potential_fields if f is not None]
-    params["fields"] = list(set(params["fields"] + active_fields))
-
     return params
 
 
@@ -1285,7 +1322,7 @@ def sankey_web(dataset, fields_available):
             "Operation", ["==", "!=", ">=", ">", "<=", "<", "="], key=f"snk_o_{i}"
         )
         v = c3.text_input("Value", value=" ", key=f"snk_fv_v_{i}")
-        if v.strip():
+        if v:
             filter_values.append(f"{f} {o} {v}")
 
     c11, c12, _, _ = st.columns([1, 1, 2, 2])
@@ -1370,15 +1407,6 @@ def sankey_web(dataset, fields_available):
 
     params["show_plot"] = False
 
-    potential_fields = [
-        params["x_axis"],
-        params["y_axis"],
-        params["z_axis"],
-    ]
-
-    active_fields = [f for f in potential_fields if f is not None]
-    params["fields"] = list(set(params["fields"] + active_fields))
-
     return params
 
 
@@ -1404,7 +1432,7 @@ def worldmap_web(dataset, fields_available):
             "Operation", ["==", "!=", ">=", ">", "<=", "<", "="], key=f"wm_o_{i}"
         )
         v = c3.text_input("Value", value=" ", key=f"wm_fv_v_{i}")
-        if v.strip():
+        if v:
             filter_values.append(f"{f} {o} {v}")
 
     c11, c12, _, _ = st.columns([1, 1, 2, 2])
@@ -1447,8 +1475,8 @@ def worldmap_web(dataset, fields_available):
     )
 
     c3, c4 = st.columns(2)
-    params["borders"] = c3.checkbox("Show Borders", True, key="wm_b")
-    params["frame"] = c4.checkbox("Show Frame", True, key="wm_f")
+    params["borders"] = c3.checkbox("Borders", True, key="wm_b")
+    params["frame"] = c4.checkbox("Frame", True, key="wm_f")
     st.divider()
 
     st.write("**Labels**")
@@ -1470,13 +1498,6 @@ def worldmap_web(dataset, fields_available):
 
     params["show_plot"] = False
 
-    potential_fields = [
-        params["x_axis"],
-    ]
-
-    active_fields = [f for f in potential_fields if f is not None]
-    params["fields"] = list(set(params["fields"] + active_fields))
-
     return params
 
 
@@ -1485,6 +1506,9 @@ def prisma_web(dataset, fields_available):
     params["dataset"] = dataset
 
     st.write("**Fields**")
+    st.info(
+        "Strict Mode: You MUST select the fields here first before using them in the filter sequence!"
+    )
     params["fields"] = st.multiselect(
         "Select Fields", options=fields_available, key="prm_fields"
     )
@@ -1502,7 +1526,7 @@ def prisma_web(dataset, fields_available):
         v = c2.number_input(
             f"Value {i+1}", min_value=0, value=0, step=1, key=f"prm_mvv_{i}"
         )
-        if k.strip():
+        if k:
             manual_values[k.strip()] = v
 
     c11, c12, _, _ = st.columns([1, 1, 2, 2])
@@ -1531,7 +1555,8 @@ def prisma_web(dataset, fields_available):
             "Op", ["==", "!=", ">=", ">", "<=", "<", "="], key=f"prm_fso_{i}"
         )
         v = c4.text_input(f"Value {i+1}", value=" ", key=f"prm_fsv_{i}")
-        if k.strip() and v.strip():
+
+        if k and v:
             filter_seq.append({"key": k.strip(), "filter": f"{f} {o} {v}"})
 
     c21, c22, _, _ = st.columns([1, 1, 2, 2])
@@ -1557,8 +1582,10 @@ def prisma_web(dataset, fields_available):
         c1, c2 = st.columns([1, 3])
         k = c1.text_input(f"Node Key {i+1}", key=f"prm_lblk_{i}")
         v = c2.text_area(f"Label Text {i+1}", key=f"prm_lblv_{i}", height=68)
-        if k.strip() and v.strip():
-            labels_spec[k.strip()] = v.strip()
+
+        if k and v:
+            clean_text = v.strip().replace("\\n", "\n")
+            labels_spec[k.strip()] = clean_text
 
     c31, c32, _, _ = st.columns([1, 1, 2, 2])
     if c31.button("➕ Add", key="prm_lbl_add"):
@@ -1585,7 +1612,8 @@ def prisma_web(dataset, fields_available):
         c1, c2 = st.columns(2)
         src = c1.text_input(f"Source Node {i+1}", key=f"prm_flws_{i}")
         tgt = c2.text_input(f"Target Node {i+1}", key=f"prm_flwt_{i}")
-        if src.strip() and tgt.strip():
+
+        if src and tgt:
             flow_config.append((src.strip(), tgt.strip()))
 
     c41, c42, _, _ = st.columns([1, 1, 2, 2])
@@ -1613,7 +1641,8 @@ def prisma_web(dataset, fields_available):
         c1, c2 = st.columns(2)
         src = c1.text_input(f"Source Node {i+1}", key=f"prm_nots_{i}")
         tgt = c2.text_input(f"Note Node {i+1}", key=f"prm_nott_{i}")
-        if src.strip() and tgt.strip():
+
+        if src and tgt:
             notes_config.append((src.strip(), tgt.strip()))
 
     c51, c52, _, _ = st.columns([1, 1, 2, 2])
@@ -1641,28 +1670,19 @@ def prisma_web(dataset, fields_available):
     sg_not = st.text_area("Note Nodes (note)", key="prm_sg_n")
 
     style_groups = {}
-    if sg_main.strip():
+
+    if sg_main:
         style_groups["box_main"] = [x.strip() for x in sg_main.split(",") if x.strip()]
-    if sg_exc.strip():
+    if sg_exc:
         style_groups["box_excluded"] = [
             x.strip() for x in sg_exc.split(",") if x.strip()
         ]
-    if sg_not.strip():
+    if sg_not:
         style_groups["note"] = [x.strip() for x in sg_not.split(",") if x.strip()]
 
     apply_sg = st.checkbox("Apply Style Groups", key="prm_app_sg")
     params["style_groups"] = style_groups if apply_sg else None
 
     params["save_name"] = None
-
-    potential_fields = []
-    if params.get("filter_seq"):
-        for step in params["filter_seq"]:
-            fld = step["filter"].split()[0]
-            if fld in fields_available:
-                potential_fields.append(fld)
-
-    active_fields = [f for f in potential_fields if f is not None]
-    params["fields"] = list(set(params["fields"] + active_fields))
 
     return params

@@ -14,9 +14,9 @@ scatter(
     color_mapping=True,
     grids=True,
     labels_spec={
+        "title": "Country X Historical Site Type",
         "x_label": "Country",
         "y_label": "Historical Site Type",
-        "title": "Country X Historical Site Type",
         "rotation": 45,
     },
     legends_config=[
