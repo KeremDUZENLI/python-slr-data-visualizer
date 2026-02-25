@@ -7,7 +7,7 @@ from input._2_prepare import (
 )
 
 
-DATASET = read_dataset(csv_path="data/dataset.csv")
+DATASET = read_dataset(csv_path="data/dataset.example.csv")
 DATASET_SOFTWARE_STACKED = group_dataset_by_fields(
     datasets=[
         (
