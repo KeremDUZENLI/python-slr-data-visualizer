@@ -197,7 +197,7 @@ def color_heatmap_labels(ax, color):
         return
 
     values = [float(t.get_text()) for t in numeric_texts]
-    threshold = max(values) * 0.5
+    threshold = max(values) * 0.5 if values else 0
     for text, val in zip(numeric_texts, values):
         if val > threshold:
             text.set_color("white")
