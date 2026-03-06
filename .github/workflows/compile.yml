@@ -1,0 +1,66 @@
+name: Build Executables
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install streamlit plotly matplotlib graphviz kaleido pyinstaller
+
+      # --- WINDOWS BUILD ---
+      - name: Compile Windows
+        if: matrix.os == 'windows-latest'
+        run: |
+          pyinstaller --noconfirm --onefile --name DataVisualizer_Windows --add-data "web_app.py;." --add-data "data/dataset.example.csv;data" --hidden-import web_app --collect-all streamlit --collect-all plotly --copy-metadata streamlit web_run.py
+
+      # --- LINUX BUILD ---
+      - name: Compile Linux
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          pyinstaller --noconfirm --onefile --name DataVisualizer_Linux --add-data "web_app.py:." --add-data "data/dataset.example.csv:data" --hidden-import web_app --collect-all streamlit --collect-all plotly --copy-metadata streamlit web_run.py
+
+      # --- MACOS BUILD ---
+      - name: Compile macOS
+        if: matrix.os == 'macos-latest'
+        run: |
+          pyinstaller --noconfirm --onefile --name DataVisualizer_MacOS --add-data "web_app.py:." --add-data "data/dataset.example.csv:data" --hidden-import web_app --collect-all streamlit --collect-all plotly --copy-metadata streamlit web_run.py
+
+      # --- UPLOAD FILES ---
+      - name: Upload Windows File
+        if: matrix.os == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: DataVisualizer_Windows
+          path: dist/DataVisualizer_Windows.exe
+
+      - name: Upload Linux File
+        if: matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: DataVisualizer_Linux
+          path: dist/DataVisualizer_Linux
+
+      - name: Upload macOS File
+        if: matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: DataVisualizer_MacOS
+          path: dist/DataVisualizer_MacOS
