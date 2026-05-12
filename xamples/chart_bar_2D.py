@@ -113,6 +113,46 @@ bar_2D(
 )
 
 
+from setup.setup_datasets import DATASET
+from setup.setup_functions import bar_2D
+
+bar_2D(
+    dataset=DATASET,
+    fields=["device", "platform"],
+    filter_values=None,
+    filter_count=None,
+    x_axis="device",
+    y_axis="count",
+    z_axis="platform",
+    orientation="vertical",
+    coloring_field="platform",
+    bar_borders=False,
+    bar_numbers=False,
+    grids=True,
+    stack_order=["XR", "MR", "AR", "VR"], 
+    labels_spec={
+        "title": "Distribution of Platforms Across Devices",
+        "x_label": "Device",
+        "y_label": "Number of Studies",
+        "rotation": 45,
+    },
+    legends_config=[
+        {
+            "source": "dataset", 
+            "values": "platform",
+            "coloring_field": "platform",
+            "legend_spec": {
+                "title": "Platform",
+                "loc": "upper left",
+                "bbox": (1, 0, 0.3, 1),
+            },
+            "casetype": "original",
+        },
+    ],
+    save_name="2_1_Platforms_Publications_inverse",
+)
+
+
 bar_2D(
     dataset=DATASET,
     fields=["platform", "device", "historical_site_type", "historical_site_type_sub"],
@@ -149,7 +189,7 @@ bar_2D(
             "casetype": "original",
         },
     ],
-    save_name="2_2_Platforms_Publications_Building_Religious",
+    save_name="2_2_Platforms_Publications_Buildings_Religious",
 )
 
 

@@ -97,6 +97,13 @@ COLORS = {
         "South America": "#F57C00",
         "Oceania": "#0097A7",
     },
+    "vr_experience": {
+        "daily": "#1976D2",
+        "often": "#388E3C",
+        "occasionally": "#E6CF00",
+        "rarely": "#F57C00",
+        "never": "#D32F2F",
+    },
 }
 
 
