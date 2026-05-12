@@ -163,6 +163,6 @@ __marimo__/
 
 # Others
 data/dataset.csv
-dataset_csv
 figure/*
+dataset_csv
 xamples_new
