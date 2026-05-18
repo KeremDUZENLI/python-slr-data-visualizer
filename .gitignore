@@ -164,5 +164,5 @@ __marimo__/
 # Others
 data/dataset.csv
 figure/*
-dataset_csv
+export
 xamples_new
